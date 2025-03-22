@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -9,7 +8,7 @@ export default function Home() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
-              <span className="font-bold text-xl text-gray-800">Escencias Robjan's</span>
+              <span className="font-bold text-xl text-gray-800">Escencias Robjan&apos;s</span>
             </div>
             <div className="hidden md:flex space-x-8">
               <Link href="/" className="text-gray-800 hover:text-gray-600">Inicio</Link>
@@ -136,7 +135,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div>
-              <h3 className="text-lg font-semibold mb-4">Escencias Robjan's</h3>
+              <h3 className="text-lg font-semibold mb-4">Escencias Robjan&apos;s</h3>
               <p className="text-gray-400">
                 Tu tienda de confianza para encontrar las mejores fragancias a precios accesibles.
               </p>
@@ -174,7 +173,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-10 pt-8 border-t border-gray-800 text-center">
-            <p className="text-gray-400">&copy; {new Date().getFullYear()} Escencias Robjan's. Todos los derechos reservados.</p>
+            <p className="text-gray-400">&copy; {new Date().getFullYear()} Escencias Robjan&apos;s. Todos los derechos reservados.</p>
           </div>
         </div>
       </footer>
