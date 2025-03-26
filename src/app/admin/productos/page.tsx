@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 // Tipos
 type Nota = {
@@ -11,7 +12,7 @@ type Nota = {
 };
 
 type Producto = {
-  id: number;
+  _id: string;
   nombre: string;
   categoria: string;
   precio: number;
@@ -22,75 +23,17 @@ type Producto = {
   notas: Nota[];
 };
 
-// Datos de ejemplo
-const productosIniciales: Producto[] = [
-  {
-    id: 1,
-    nombre: "Aroma Celestial",
-    categoria: "Mujer",
-    precio: 69.99,
-    stock: 15,
-    descripcion: "Una fragancia floral con notas de jazmín y rosa.",
-    imagen: "/placeholder.jpg",
-    inspirado_en: "J'adore (Dior)",
-    notas: [
-      { nombre: "Jazmín", intensidad: 9, color: "#FFFFFF" },
-      { nombre: "Rosa", intensidad: 8, color: "#FF007F" },
-      { nombre: "Vainilla", intensidad: 6, color: "#F3E5AB" }
-    ]
-  },
-  {
-    id: 2,
-    nombre: "Bosque Místico",
-    categoria: "Hombre",
-    precio: 74.99,
-    stock: 20,
-    descripcion: "Aroma amaderado con toques de sándalo y cedro.",
-    imagen: "/placeholder.jpg",
-    inspirado_en: "Sauvage (Dior)",
-    notas: [
-      { nombre: "Sándalo", intensidad: 8, color: "#8B4513" },
-      { nombre: "Cedro", intensidad: 7, color: "#D2691E" },
-      { nombre: "Bergamota", intensidad: 6, color: "#FFA500" }
-    ]
-  },
-  {
-    id: 3,
-    nombre: "Brisa Marina",
-    categoria: "Unisex",
-    precio: 79.99,
-    stock: 10,
-    descripcion: "Fragancia fresca con notas de cítricos y sal marina.",
-    imagen: "/placeholder.jpg",
-    inspirado_en: "Light Blue (Dolce & Gabbana)",
-    notas: [
-      { nombre: "Limón", intensidad: 9, color: "#FFFF00" },
-      { nombre: "Sal Marina", intensidad: 7, color: "#E0FFFF" },
-      { nombre: "Manzana", intensidad: 5, color: "#4CC417" }
-    ]
-  }
-];
-
 export default function ProductosAdmin() {
+  const router = useRouter();
   const [productos, setProductos] = useState<Producto[]>([]);
+  const [cargando, setCargando] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [productoEditando, setProductoEditando] = useState<Producto | null>(null);
   const [imagenPreview, setImagenPreview] = useState<string | null>(null);
   
-  // Cargar productos desde localStorage o usar los iniciales
-  useEffect(() => {
-    const productosGuardados = localStorage.getItem('productos');
-    if (productosGuardados) {
-      setProductos(JSON.parse(productosGuardados));
-    } else {
-      setProductos(productosIniciales);
-      localStorage.setItem('productos', JSON.stringify(productosIniciales));
-    }
-  }, []);
-  
   // Producto vacío para el formulario de creación
-  const productoNuevo: Producto = {
-    id: Date.now(), // Usamos timestamp como ID temporal
+  const productoNuevo: Omit<Producto, '_id'> = {
     nombre: "",
     categoria: "Unisex",
     precio: 0,
@@ -102,8 +45,34 @@ export default function ProductosAdmin() {
   };
   
   // Estado para el formulario
-  const [formulario, setFormulario] = useState<Producto>(productoNuevo);
+  const [formulario, setFormulario] = useState<any>(productoNuevo);
   const [nuevaNota, setNuevaNota] = useState<Nota>({ nombre: "", intensidad: 5, color: "#CCCCCC" });
+  
+  // Cargar productos desde la API
+  const cargarProductos = async () => {
+    setCargando(true);
+    setError(null);
+    
+    try {
+      const respuesta = await fetch('/api/productos');
+      if (!respuesta.ok) {
+        throw new Error('Error al cargar productos');
+      }
+      
+      const datos = await respuesta.json();
+      setProductos(datos.productos);
+    } catch (err: any) {
+      console.error('Error al obtener productos:', err);
+      setError(err.message || 'Error al cargar productos');
+    } finally {
+      setCargando(false);
+    }
+  };
+  
+  // Cargar productos al montar el componente
+  useEffect(() => {
+    cargarProductos();
+  }, []);
   
   // Manejadores de eventos
   const abrirFormularioCrear = () => {
@@ -183,39 +152,71 @@ export default function ProductosAdmin() {
   const eliminarNota = (index: number) => {
     setFormulario({
       ...formulario,
-      notas: formulario.notas.filter((_, i) => i !== index)
+      notas: formulario.notas.filter((_: Nota, i: number) => i !== index)
     });
   };
   
-  const guardarProducto = () => {
+  const guardarProducto = async () => {
     if (formulario.nombre.trim() === "") {
       alert("El nombre del producto es obligatorio");
       return;
     }
     
-    let nuevosProductos: Producto[];
-    
-    if (productoEditando) {
-      // Actualizar producto existente
-      nuevosProductos = productos.map(p => p.id === formulario.id ? formulario : p);
-    } else {
-      // Agregar nuevo producto
-      nuevosProductos = [...productos, formulario];
+    try {
+      let respuesta;
+      
+      if (productoEditando) {
+        // Actualizar producto existente
+        respuesta = await fetch(`/api/productos/${productoEditando._id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formulario)
+        });
+      } else {
+        // Agregar nuevo producto
+        respuesta = await fetch('/api/productos', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formulario)
+        });
+      }
+      
+      if (!respuesta.ok) {
+        throw new Error('Error al guardar el producto');
+      }
+      
+      // Recargar productos
+      await cargarProductos();
+      cerrarFormulario();
+      
+    } catch (err: any) {
+      console.error('Error al guardar producto:', err);
+      alert(err.message || 'Error al guardar el producto');
     }
-    
-    setProductos(nuevosProductos);
-    
-    // Guardar en localStorage
-    localStorage.setItem('productos', JSON.stringify(nuevosProductos));
-    
-    cerrarFormulario();
   };
   
-  const eliminarProducto = (id: number) => {
+  const eliminarProducto = async (id: string) => {
     if (confirm("¿Estás seguro de eliminar este producto?")) {
-      const nuevosProductos = productos.filter(p => p.id !== id);
-      setProductos(nuevosProductos);
-      localStorage.setItem('productos', JSON.stringify(nuevosProductos));
+      try {
+        const respuesta = await fetch(`/api/productos/${id}`, {
+          method: 'DELETE'
+        });
+        
+        if (!respuesta.ok) {
+          throw new Error('Error al eliminar el producto');
+        }
+        
+        // Recargar productos
+        await cargarProductos();
+        
+      } catch (err: any) {
+        console.error('Error al eliminar producto:', err);
+        alert(err.message || 'Error al eliminar el producto');
+      }
     }
   };
   
@@ -262,89 +263,116 @@ export default function ProductosAdmin() {
           </button>
         </div>
         
+        {/* Estado de carga o error */}
+        {cargando && (
+          <div className="text-center py-8">
+            <p className="text-lg text-[#312b2b] font-raleway">Cargando productos...</p>
+          </div>
+        )}
+        
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            <p className="font-raleway">{error}</p>
+            <button 
+              onClick={cargarProductos}
+              className="mt-2 bg-red-600 text-white px-3 py-1 rounded-md text-sm font-raleway"
+            >
+              Reintentar
+            </button>
+          </div>
+        )}
+        
         {/* Tabla de productos */}
-        <div className="overflow-x-auto bg-white shadow-md rounded-lg border border-[#fed856]">
-          <table className="min-w-full divide-y divide-[#fed856]">
-            <thead className="bg-[#312b2b]">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
-                  Producto
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
-                  Categoría
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
-                  Precio
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
-                  Stock
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
-                  Inspirado en
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
-                  Acciones
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-[#fed856]">
-              {productos.map((producto) => (
-                <tr key={producto.id} className="hover:bg-[#f8f1d8]">
-                  <td className="px-6 py-4 whitespace-nowrap font-raleway">
-                    <div className="flex items-center">
-                      <div className="h-10 w-10 flex-shrink-0 rounded-full overflow-hidden">
-                        {producto.imagen.startsWith("data:") ? (
-                          <img src={producto.imagen} alt={producto.nombre} className="h-full w-full object-cover" />
-                        ) : (
-                          <div className="bg-[#312b2b] h-full w-full flex items-center justify-center">
-                            <span className="text-[#fed856] text-xs">Foto</span>
+        {!cargando && !error && (
+          <div className="overflow-x-auto bg-white shadow-md rounded-lg border border-[#fed856]">
+            {productos.length > 0 ? (
+              <table className="min-w-full divide-y divide-[#fed856]">
+                <thead className="bg-[#312b2b]">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
+                      Producto
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
+                      Categoría
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
+                      Precio
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
+                      Stock
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
+                      Inspirado en
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
+                      Acciones
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-[#fed856]">
+                  {productos.map((producto) => (
+                    <tr key={producto._id} className="hover:bg-[#f8f1d8]">
+                      <td className="px-6 py-4 whitespace-nowrap font-raleway">
+                        <div className="flex items-center">
+                          <div className="h-10 w-10 flex-shrink-0 rounded-full overflow-hidden">
+                            {producto.imagen.startsWith("data:") ? (
+                              <img src={producto.imagen} alt={producto.nombre} className="h-full w-full object-cover" />
+                            ) : (
+                              <div className="bg-[#312b2b] h-full w-full flex items-center justify-center">
+                                <span className="text-[#fed856] text-xs">Foto</span>
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-[#312b2b]">
-                          {producto.nombre}
+                          <div className="ml-4">
+                            <div className="text-sm font-medium text-[#312b2b]">
+                              {producto.nombre}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#312b2b] font-raleway">
-                    {producto.categoria}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#312b2b] font-raleway">
-                    ${producto.precio.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#312b2b] font-raleway">
-                    {producto.stock}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#312b2b] font-raleway">
-                    {producto.inspirado_en}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium font-raleway">
-                    <button
-                      onClick={() => abrirFormularioEditar(producto)}
-                      className="text-[#312b2b] hover:text-[#fed856] mr-4"
-                    >
-                      Editar
-                    </button>
-                    <Link
-                      href={`/admin/productos/detalle?id=${producto.id}`}
-                      className="text-[#312b2b] hover:text-[#fed856] mr-4"
-                    >
-                      Ver Detalle
-                    </Link>
-                    <button
-                      onClick={() => eliminarProducto(producto.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      Eliminar
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#312b2b] font-raleway">
+                        {producto.categoria}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#312b2b] font-raleway">
+                        ${producto.precio.toFixed(2)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#312b2b] font-raleway">
+                        {producto.stock}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#312b2b] font-raleway">
+                        {producto.inspirado_en}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium font-raleway">
+                        <button
+                          onClick={() => abrirFormularioEditar(producto)}
+                          className="text-[#312b2b] hover:text-[#fed856] mr-4"
+                        >
+                          Editar
+                        </button>
+                        <Link
+                          href={`/admin/productos/detalle?id=${producto._id}`}
+                          className="text-[#312b2b] hover:text-[#fed856] mr-4"
+                        >
+                          Ver Detalle
+                        </Link>
+                        <button
+                          onClick={() => eliminarProducto(producto._id)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-[#312b2b] font-raleway">No hay productos disponibles. ¡Crea el primero!</p>
+              </div>
+            )}
+          </div>
+        )}
         
         {/* Formulario modal */}
         {mostrarFormulario && (
@@ -538,7 +566,7 @@ export default function ProductosAdmin() {
                           </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                          {formulario.notas.map((nota, index) => (
+                          {formulario.notas.map((nota: Nota, index: number) => (
                             <tr key={index}>
                               <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 font-raleway">
                                 {nota.nombre}

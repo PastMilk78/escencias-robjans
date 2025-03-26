@@ -12,7 +12,7 @@ type Nota = {
 };
 
 type Producto = {
-  id: number;
+  _id: string;
   nombre: string;
   categoria: string;
   precio: number;
@@ -131,21 +131,73 @@ export default function DetalleProducto() {
   const searchParams = useSearchParams();
   const idParam = searchParams.get('id');
   const [producto, setProducto] = useState<Producto | null>(null);
+  const [cargando, setCargando] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Cargar producto desde la API
+  const cargarProducto = async (id: string) => {
+    setCargando(true);
+    setError(null);
+    
+    try {
+      const respuesta = await fetch(`/api/productos/${id}`);
+      
+      if (!respuesta.ok) {
+        if (respuesta.status === 404) {
+          throw new Error('Producto no encontrado');
+        }
+        throw new Error('Error al cargar el producto');
+      }
+      
+      const datos = await respuesta.json();
+      setProducto(datos.producto);
+    } catch (err: any) {
+      console.error('Error al obtener producto:', err);
+      setError(err.message || 'Error al cargar el producto');
+    } finally {
+      setCargando(false);
+    }
+  };
   
   useEffect(() => {
-    if (idParam && typeof window !== 'undefined') {
-      const id = parseInt(idParam);
-      const productosGuardados = localStorage.getItem('productos');
-      
-      if (productosGuardados) {
-        const productos = JSON.parse(productosGuardados);
-        const productoEncontrado = productos.find((p: Producto) => p.id === id);
-        if (productoEncontrado) {
-          setProducto(productoEncontrado);
-        }
-      }
+    if (idParam) {
+      cargarProducto(idParam);
     }
   }, [idParam]);
+  
+  if (cargando) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8f1d8]">
+        <p className="text-[#312b2b] text-xl font-raleway">Cargando información del producto...</p>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8f1d8]">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg max-w-md">
+          <p className="text-lg font-raleway mb-4">{error}</p>
+          <div className="flex justify-center">
+            <Link 
+              href="/admin/productos" 
+              className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md hover:bg-[#e5c24c] transition-colors font-raleway mr-4"
+            >
+              Volver a la lista
+            </Link>
+            {idParam && (
+              <button 
+                onClick={() => cargarProducto(idParam)}
+                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors font-raleway"
+              >
+                Reintentar
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
   
   if (!producto) {
     return (
@@ -197,7 +249,7 @@ export default function DetalleProducto() {
             Detalle de Producto
           </h1>
           <Link
-            href={`/admin/productos?edit=${producto.id}`}
+            href={`/admin/productos?edit=${producto._id}`}
             className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md hover:bg-[#e5c24c] transition-colors font-raleway"
           >
             Editar Producto

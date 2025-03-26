@@ -11,7 +11,7 @@ type Nota = {
 };
 
 type Producto = {
-  id: number;
+  _id: string;
   nombre: string;
   categoria: string;
   precio: number;
@@ -22,70 +22,37 @@ type Producto = {
   notas: Nota[];
 };
 
-// Datos de ejemplo para los productos (se usarán si no hay datos en localStorage)
-const productosIniciales = [
-  {
-    id: 1,
-    nombre: "Aroma Celestial",
-    categoria: "Mujer",
-    precio: 69.99,
-    stock: 15,
-    descripcion: "Una fragancia floral con notas de jazmín y rosa.",
-    imagen: "/placeholder.jpg",
-    inspirado_en: "J'adore (Dior)",
-    notas: [
-      { nombre: "Jazmín", intensidad: 9, color: "#FFFFFF" },
-      { nombre: "Rosa", intensidad: 8, color: "#FF007F" },
-      { nombre: "Vainilla", intensidad: 6, color: "#F3E5AB" }
-    ]
-  },
-  {
-    id: 2,
-    nombre: "Bosque Místico",
-    categoria: "Hombre",
-    precio: 74.99,
-    stock: 20,
-    descripcion: "Aroma amaderado con toques de sándalo y cedro.",
-    imagen: "/placeholder.jpg",
-    inspirado_en: "Sauvage (Dior)",
-    notas: [
-      { nombre: "Sándalo", intensidad: 8, color: "#8B4513" },
-      { nombre: "Cedro", intensidad: 7, color: "#D2691E" },
-      { nombre: "Bergamota", intensidad: 6, color: "#FFA500" }
-    ]
-  },
-  {
-    id: 3,
-    nombre: "Brisa Marina",
-    categoria: "Unisex",
-    precio: 79.99,
-    stock: 10,
-    descripcion: "Fragancia fresca con notas de cítricos y sal marina.",
-    imagen: "/placeholder.jpg",
-    inspirado_en: "Light Blue (Dolce & Gabbana)",
-    notas: [
-      { nombre: "Limón", intensidad: 9, color: "#FFFF00" },
-      { nombre: "Sal Marina", intensidad: 7, color: "#E0FFFF" },
-      { nombre: "Manzana", intensidad: 5, color: "#4CC417" }
-    ]
-  }
-];
-
 export default function ProductosPage() {
   const [productos, setProductos] = useState<Producto[]>([]);
+  const [cargando, setCargando] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todos");
   const [ordenPrecio, setOrdenPrecio] = useState("ninguno");
   
-  // Cargar productos desde localStorage
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const productosGuardados = localStorage.getItem('productos');
-      if (productosGuardados) {
-        setProductos(JSON.parse(productosGuardados));
-      } else {
-        setProductos(productosIniciales);
+  // Cargar productos desde la API
+  const cargarProductos = async () => {
+    setCargando(true);
+    setError(null);
+    
+    try {
+      const respuesta = await fetch('/api/productos');
+      if (!respuesta.ok) {
+        throw new Error('Error al cargar productos');
       }
+      
+      const datos = await respuesta.json();
+      setProductos(datos.productos);
+    } catch (err: any) {
+      console.error('Error al obtener productos:', err);
+      setError(err.message || 'Error al cargar productos');
+    } finally {
+      setCargando(false);
     }
+  };
+  
+  // Cargar productos al montar el componente
+  useEffect(() => {
+    cargarProductos();
   }, []);
   
   // Filtrar productos por categoría
@@ -191,49 +158,72 @@ export default function ProductosPage() {
           </div>
         </div>
 
+        {/* Estado de carga o error */}
+        {cargando && (
+          <div className="text-center py-12">
+            <p className="text-lg text-[#312b2b] font-raleway">Cargando productos...</p>
+          </div>
+        )}
+        
+        {error && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+              <p className="font-raleway">{error}</p>
+              <button 
+                onClick={cargarProductos}
+                className="mt-2 bg-red-600 text-white px-3 py-1 rounded-md text-sm font-raleway"
+              >
+                Reintentar
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Lista de productos */}
-        <div className="bg-[#f8f1d8] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {productosOrdenados.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {productosOrdenados.map((producto) => (
-                <div key={producto.id} className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-[#fed856]">
-                  <div className="h-64 bg-[#473f3f] flex items-center justify-center overflow-hidden">
-                    {producto.imagen.startsWith("data:") ? (
-                      <img src={producto.imagen} alt={producto.nombre} className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-[#fed856]">Imagen de producto</span>
-                    )}
-                  </div>
-                  <div className="p-5">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-lg font-semibold text-[#fed856] font-raleway">{producto.nombre}</h3>
-                        <p className="text-sm text-[#f8f1d8] font-raleway">{producto.categoria}</p>
+        {!cargando && !error && (
+          <div className="bg-[#f8f1d8] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            {productosOrdenados.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {productosOrdenados.map((producto) => (
+                  <div key={producto._id} className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-[#fed856]">
+                    <div className="h-64 bg-[#473f3f] flex items-center justify-center overflow-hidden">
+                      {producto.imagen.startsWith("data:") ? (
+                        <img src={producto.imagen} alt={producto.nombre} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-[#fed856]">Imagen de producto</span>
+                      )}
+                    </div>
+                    <div className="p-5">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="text-lg font-semibold text-[#fed856] font-raleway">{producto.nombre}</h3>
+                          <p className="text-sm text-[#f8f1d8] font-raleway">{producto.categoria}</p>
+                        </div>
+                        <span className="text-lg font-bold text-[#fed856] font-raleway">${producto.precio.toFixed(2)}</span>
                       </div>
-                      <span className="text-lg font-bold text-[#fed856] font-raleway">${producto.precio.toFixed(2)}</span>
-                    </div>
-                    <p className="mt-2 text-[#f8f1d8] text-sm font-raleway">{producto.descripcion}</p>
-                    <p className="mt-1 text-[#f8f1d8] text-sm font-raleway">
-                      <span className="text-[#fed856]">Inspirado en:</span> {producto.inspirado_en}
-                    </p>
-                    <div className="mt-4 flex justify-between items-center">
-                      <Link href={`/admin/productos/detalle?id=${producto.id}`} className="text-[#fed856] hover:text-white text-sm font-medium font-raleway">
-                        Ver detalles
-                      </Link>
-                      <button className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md text-sm hover:bg-[#e5c24c] transition-colors border border-[#fed856] font-raleway">
-                        Añadir al carrito
-                      </button>
+                      <p className="mt-2 text-[#f8f1d8] text-sm font-raleway">{producto.descripcion}</p>
+                      <p className="mt-1 text-[#f8f1d8] text-sm font-raleway">
+                        <span className="text-[#fed856]">Inspirado en:</span> {producto.inspirado_en}
+                      </p>
+                      <div className="mt-4 flex justify-between items-center">
+                        <Link href={`/admin/productos/detalle?id=${producto._id}`} className="text-[#fed856] hover:text-white text-sm font-medium font-raleway">
+                          Ver detalles
+                        </Link>
+                        <button className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md text-sm hover:bg-[#e5c24c] transition-colors border border-[#fed856] font-raleway">
+                          Añadir al carrito
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-lg text-[#312b2b] font-raleway">No hay productos disponibles en este momento.</p>
-            </div>
-          )}
-        </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-lg text-[#312b2b] font-raleway">No hay productos disponibles en este momento.</p>
+              </div>
+            )}
+          </div>
+        )}
       </main>
 
       {/* Sección de Contacto con Mapa */}
