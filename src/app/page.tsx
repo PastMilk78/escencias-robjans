@@ -1,5 +1,41 @@
 import Link from "next/link";
 
+// Datos de ejemplo para los productos
+const productos = [
+  {
+    id: 1,
+    nombre: "Aroma Celestial",
+    categoria: "Mujer",
+    precio: 69.99,
+    descripcion: "Una fragancia floral con notas de jazmín y rosa.",
+    imagen: "/placeholder.jpg"
+  },
+  {
+    id: 2,
+    nombre: "Bosque Místico",
+    categoria: "Hombre",
+    precio: 74.99,
+    descripcion: "Aroma amaderado con toques de sándalo y cedro.",
+    imagen: "/placeholder.jpg"
+  },
+  {
+    id: 3,
+    nombre: "Brisa Marina",
+    categoria: "Unisex",
+    precio: 79.99,
+    descripcion: "Fragancia fresca con notas de cítricos y sal marina.",
+    imagen: "/placeholder.jpg"
+  },
+  {
+    id: 4,
+    nombre: "Pasión Nocturna",
+    categoria: "Mujer",
+    precio: 84.99,
+    descripcion: "Aroma sensual con vainilla y ámbar.",
+    imagen: "/placeholder.jpg"
+  }
+];
+
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
@@ -11,10 +47,6 @@ export default function Home() {
               <span className="font-bold text-xl text-[#fed856]">Escencias Robjan&apos;s</span>
             </div>
             <div className="hidden md:flex space-x-8">
-              <Link href="/" className="text-[#fed856] hover:text-white">Inicio</Link>
-              <Link href="/productos" className="text-[#fed856] hover:text-white">Productos</Link>
-              <Link href="/categorias" className="text-[#fed856] hover:text-white">Categorías</Link>
-              <Link href="/nosotros" className="text-[#fed856] hover:text-white">Nosotros</Link>
               <Link href="/contacto" className="text-[#fed856] hover:text-white">Contacto</Link>
             </div>
             <div className="flex items-center space-x-4">
@@ -46,12 +78,9 @@ export default function Home() {
                 Perfumes de alta calidad a precios accesibles.
               </p>
               <div className="flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
-                <Link href="/productos" className="button bg-[#fed856] text-[#312b2b] border border-[#fed856]">
+                <button className="button bg-[#fed856] text-[#312b2b] border border-[#fed856]">
                   Ver Catálogo
-                </Link>
-                <Link href="/destacados" className="button bg-transparent text-[#fed856] border border-[#fed856]">
-                  Destacados
-                </Link>
+                </button>
               </div>
             </div>
             <div className="md:w-1/2">
@@ -66,66 +95,37 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categorías destacadas */}
+      {/* Inventario de productos */}
       <section className="py-16 bg-[#f8f1d8]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-[#312b2b] mb-12">Categorías Destacadas</h2>
+          <h2 className="text-3xl font-bold text-center text-[#312b2b] mb-12">Nuestros Perfumes</h2>
+          
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Categoría 1 */}
-            <div className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-[#fed856]">
-              <div className="bg-[#473f3f] h-48 flex items-center justify-center">
-                <span className="text-[#fed856]">Imagen de categoría</span>
+            {productos.map((producto) => (
+              <div key={producto.id} className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-[#fed856]">
+                <div className="bg-[#473f3f] h-48 flex items-center justify-center">
+                  <span className="text-[#fed856]">Imagen de producto</span>
+                </div>
+                <div className="p-5">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="text-lg font-semibold text-[#fed856]">{producto.nombre}</h3>
+                      <p className="text-sm text-[#f8f1d8]">{producto.categoria}</p>
+                    </div>
+                    <span className="text-lg font-bold text-[#fed856]">${producto.precio}</span>
+                  </div>
+                  <p className="mt-2 text-[#f8f1d8] text-sm">{producto.descripcion}</p>
+                  <div className="mt-4 flex justify-between items-center">
+                    <Link href={`/productos/${producto.id}`} className="text-[#fed856] hover:text-white text-sm font-medium">
+                      Ver detalles
+                    </Link>
+                    <button className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md text-sm hover:bg-[#e5c24c] transition-colors border border-[#fed856]">
+                      Añadir al carrito
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div className="p-4">
-                <h3 className="text-xl font-semibold text-[#fed856] mb-2">Perfumes para Mujer</h3>
-                <p className="text-[#f8f1d8] mb-4">Fragancias elegantes y delicadas para cualquier ocasión.</p>
-                <Link href="/categoria/mujer" className="text-[#fed856] hover:text-white font-medium hover:underline">
-                  Ver colección &rarr;
-                </Link>
-              </div>
-            </div>
-            
-            {/* Categoría 2 */}
-            <div className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-[#fed856]">
-              <div className="bg-[#473f3f] h-48 flex items-center justify-center">
-                <span className="text-[#fed856]">Imagen de categoría</span>
-              </div>
-              <div className="p-4">
-                <h3 className="text-xl font-semibold text-[#fed856] mb-2">Perfumes para Hombre</h3>
-                <p className="text-[#f8f1d8] mb-4">Aromas intensos y duraderos que reflejan personalidad.</p>
-                <Link href="/categoria/hombre" className="text-[#fed856] hover:text-white font-medium hover:underline">
-                  Ver colección &rarr;
-                </Link>
-              </div>
-            </div>
-            
-            {/* Categoría 3 */}
-            <div className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-[#fed856]">
-              <div className="bg-[#473f3f] h-48 flex items-center justify-center">
-                <span className="text-[#fed856]">Imagen de categoría</span>
-              </div>
-              <div className="p-4">
-                <h3 className="text-xl font-semibold text-[#fed856] mb-2">Perfumes Unisex</h3>
-                <p className="text-[#f8f1d8] mb-4">Fragancias versátiles perfectas para todos los gustos.</p>
-                <Link href="/categoria/unisex" className="text-[#fed856] hover:text-white font-medium hover:underline">
-                  Ver colección &rarr;
-                </Link>
-              </div>
-            </div>
-            
-            {/* Categoría 4 */}
-            <div className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-[#fed856]">
-              <div className="bg-[#473f3f] h-48 flex items-center justify-center">
-                <span className="text-[#fed856]">Imagen de categoría</span>
-              </div>
-              <div className="p-4">
-                <h3 className="text-xl font-semibold text-[#fed856] mb-2">Edición Limitada</h3>
-                <p className="text-[#f8f1d8] mb-4">Colecciones exclusivas por tiempo limitado.</p>
-                <Link href="/categoria/limitada" className="text-[#fed856] hover:text-white font-medium hover:underline">
-                  Ver colección &rarr;
-                </Link>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -143,10 +143,7 @@ export default function Home() {
             <div>
               <h3 className="text-lg font-semibold mb-4 text-[#fed856]">Enlaces rápidos</h3>
               <ul className="space-y-2">
-                <li><Link href="/productos" className="text-[#f8f1d8] hover:text-[#fed856] transition-colors">Productos</Link></li>
-                <li><Link href="/nosotros" className="text-[#f8f1d8] hover:text-[#fed856] transition-colors">Sobre nosotros</Link></li>
                 <li><Link href="/contacto" className="text-[#f8f1d8] hover:text-[#fed856] transition-colors">Contacto</Link></li>
-                <li><Link href="/politica-privacidad" className="text-[#f8f1d8] hover:text-[#fed856] transition-colors">Política de privacidad</Link></li>
               </ul>
             </div>
             <div>
