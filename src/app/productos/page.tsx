@@ -76,12 +76,12 @@ export default function ProductosPage() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
-              <Link href="/" className="font-bold text-xl text-[#fed856]">Escencias Robjan&apos;s</Link>
+              <Link href="/" className="font-bold text-xl text-[#fed856] font-['Raleway']">Escencias Robjan&apos;s</Link>
             </div>
             <div className="flex items-center space-x-4">
-              <Link href="/contacto" className="button button-small bg-[#fed856] text-[#312b2b] hover:bg-[#e5c24c] hover:text-[#312b2b] mr-2">
+              <a href="#contacto" className="button button-small bg-[#fed856] text-[#312b2b] hover:bg-[#e5c24c] hover:text-[#312b2b] mr-2 font-['Raleway']">
                 Contacto
-              </Link>
+              </a>
               <button className="text-[#fed856] hover:text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -102,10 +102,10 @@ export default function ProductosPage() {
         <div className="bg-[#312b2b] py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <h1 className="text-3xl font-extrabold text-[#fed856] sm:text-4xl">
+              <h1 className="text-3xl font-extrabold text-[#fed856] sm:text-4xl font-['Raleway']">
                 Nuestros Perfumes
               </h1>
-              <p className="mt-4 text-lg text-[#f8f1d8] font-light">
+              <p className="mt-4 text-lg text-[#f8f1d8] font-light font-['Raleway']">
                 Explora nuestra colección de fragancias exclusivas
               </p>
             </div>
@@ -117,22 +117,22 @@ export default function ProductosPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-wrap items-center justify-between">
               <div className="flex flex-wrap items-center space-x-4">
-                <span className="text-[#fed856]">Filtrar por:</span>
-                <select className="bg-[#312b2b] border border-[#fed856] text-[#f8f1d8] rounded-md py-2 px-3 text-sm">
+                <span className="text-[#fed856] font-['Raleway']">Filtrar por:</span>
+                <select className="bg-[#312b2b] border border-[#fed856] text-[#f8f1d8] rounded-md py-2 px-3 text-sm font-['Raleway']">
                   <option>Todos</option>
                   <option>Mujer</option>
                   <option>Hombre</option>
                   <option>Unisex</option>
                 </select>
-                <select className="bg-[#312b2b] border border-[#fed856] text-[#f8f1d8] rounded-md py-2 px-3 text-sm">
+                <select className="bg-[#312b2b] border border-[#fed856] text-[#f8f1d8] rounded-md py-2 px-3 text-sm font-['Raleway']">
                   <option>Precio</option>
                   <option>Menor a mayor</option>
                   <option>Mayor a menor</option>
                 </select>
               </div>
               <div className="mt-4 sm:mt-0">
-                <span className="text-[#fed856] mr-2">Mostrar:</span>
-                <select className="bg-[#312b2b] border border-[#fed856] text-[#f8f1d8] rounded-md py-2 px-3 text-sm">
+                <span className="text-[#fed856] mr-2 font-['Raleway']">Mostrar:</span>
+                <select className="bg-[#312b2b] border border-[#fed856] text-[#f8f1d8] rounded-md py-2 px-3 text-sm font-['Raleway']">
                   <option>12</option>
                   <option>24</option>
                   <option>36</option>
@@ -153,17 +153,17 @@ export default function ProductosPage() {
                 <div className="p-5">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="text-lg font-semibold text-[#fed856]">{producto.nombre}</h3>
-                      <p className="text-sm text-[#f8f1d8]">{producto.categoria}</p>
+                      <h3 className="text-lg font-semibold text-[#fed856] font-['Raleway']">{producto.nombre}</h3>
+                      <p className="text-sm text-[#f8f1d8] font-['Raleway']">{producto.categoria}</p>
                     </div>
-                    <span className="text-lg font-bold text-[#fed856]">${producto.precio}</span>
+                    <span className="text-lg font-bold text-[#fed856] font-['Raleway']">${producto.precio}</span>
                   </div>
-                  <p className="mt-2 text-[#f8f1d8] text-sm">{producto.descripcion}</p>
+                  <p className="mt-2 text-[#f8f1d8] text-sm font-['Raleway']">{producto.descripcion}</p>
                   <div className="mt-4 flex justify-between items-center">
-                    <Link href={`/productos/${producto.id}`} className="text-[#fed856] hover:text-white text-sm font-medium">
+                    <Link href={`/productos/${producto.id}`} className="text-[#fed856] hover:text-white text-sm font-medium font-['Raleway']">
                       Ver detalles
                     </Link>
-                    <button className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md text-sm hover:bg-[#e5c24c] transition-colors border border-[#fed856]">
+                    <button className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md text-sm hover:bg-[#e5c24c] transition-colors border border-[#fed856] font-['Raleway']">
                       Añadir al carrito
                     </button>
                   </div>
@@ -175,19 +175,19 @@ export default function ProductosPage() {
           {/* Paginación */}
           <div className="mt-12 flex justify-center">
             <nav className="flex items-center">
-              <button className="px-3 py-2 border border-[#fed856] bg-[#312b2b] text-[#fed856] rounded-l-md hover:bg-[#473f3f]">
+              <button className="px-3 py-2 border border-[#fed856] bg-[#312b2b] text-[#fed856] rounded-l-md hover:bg-[#473f3f] font-['Raleway']">
                 Anterior
               </button>
-              <button className="px-3 py-2 border-t border-b border-[#fed856] bg-[#fed856] text-[#312b2b]">
+              <button className="px-3 py-2 border-t border-b border-[#fed856] bg-[#fed856] text-[#312b2b] font-['Raleway']">
                 1
               </button>
-              <button className="px-3 py-2 border-t border-b border-[#fed856] bg-[#312b2b] text-[#fed856] hover:bg-[#473f3f]">
+              <button className="px-3 py-2 border-t border-b border-[#fed856] bg-[#312b2b] text-[#fed856] hover:bg-[#473f3f] font-['Raleway']">
                 2
               </button>
-              <button className="px-3 py-2 border-t border-b border-[#fed856] bg-[#312b2b] text-[#fed856] hover:bg-[#473f3f]">
+              <button className="px-3 py-2 border-t border-b border-[#fed856] bg-[#312b2b] text-[#fed856] hover:bg-[#473f3f] font-['Raleway']">
                 3
               </button>
-              <button className="px-3 py-2 border border-[#fed856] bg-[#312b2b] text-[#fed856] rounded-r-md hover:bg-[#473f3f]">
+              <button className="px-3 py-2 border border-[#fed856] bg-[#312b2b] text-[#fed856] rounded-r-md hover:bg-[#473f3f] font-['Raleway']">
                 Siguiente
               </button>
             </nav>
@@ -196,29 +196,29 @@ export default function ProductosPage() {
       </main>
 
       {/* Sección de Contacto con Mapa */}
-      <section className="py-16 bg-[#312b2b]">
+      <section id="contacto" className="py-16 bg-[#312b2b]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-[#fed856] mb-12">Encuéntranos</h2>
+          <h2 className="text-3xl font-bold text-center text-[#fed856] mb-12 font-['Raleway']">Encuéntranos</h2>
           
           <div className="md:flex md:space-x-8">
             <div className="md:w-1/2 mb-8 md:mb-0">
               <div className="bg-[#473f3f] p-6 rounded-lg border border-[#fed856]">
-                <h3 className="text-xl font-semibold text-[#fed856] mb-4">Información de Contacto</h3>
+                <h3 className="text-xl font-semibold text-[#fed856] mb-4 font-['Raleway']">Información de Contacto</h3>
                 <ul className="space-y-4 text-[#f8f1d8]">
-                  <li className="flex items-center">
+                  <li className="flex items-center font-['Raleway']">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#fed856]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                     <span>Calle Principal #123, Ciudad</span>
                   </li>
-                  <li className="flex items-center">
+                  <li className="flex items-center font-['Raleway']">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#fed856]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                     <span>info@escenciasrobjans.com</span>
                   </li>
-                  <li className="flex items-center">
+                  <li className="flex items-center font-['Raleway']">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#fed856]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
@@ -226,9 +226,9 @@ export default function ProductosPage() {
                   </li>
                 </ul>
                 <div className="mt-6">
-                  <h4 className="text-[#fed856] font-medium mb-3">Horarios de Atención</h4>
-                  <p className="text-[#f8f1d8] mb-1">Lunes a Viernes: 9:00 AM - 7:00 PM</p>
-                  <p className="text-[#f8f1d8]">Sábados: 10:00 AM - 4:00 PM</p>
+                  <h4 className="text-[#fed856] font-medium mb-3 font-['Raleway']">Horarios de Atención</h4>
+                  <p className="text-[#f8f1d8] mb-1 font-['Raleway']">Lunes a Viernes: 9:00 AM - 7:00 PM</p>
+                  <p className="text-[#f8f1d8] font-['Raleway']">Sábados: 10:00 AM - 4:00 PM</p>
                 </div>
               </div>
             </div>
@@ -254,19 +254,19 @@ export default function ProductosPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-[#fed856]">Escencias Robjan&apos;s</h3>
-              <p className="text-[#f8f1d8]">
+              <h3 className="text-lg font-semibold mb-4 text-[#fed856] font-['Raleway']">Escencias Robjan&apos;s</h3>
+              <p className="text-[#f8f1d8] font-['Raleway']">
                 Tu tienda de confianza para encontrar las mejores fragancias a precios accesibles.
               </p>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-[#fed856]">Enlaces rápidos</h3>
+              <h3 className="text-lg font-semibold mb-4 text-[#fed856] font-['Raleway']">Enlaces rápidos</h3>
               <ul className="space-y-2">
-                <li><Link href="/contacto" className="text-[#f8f1d8] hover:text-[#fed856] transition-colors">Contacto</Link></li>
+                <li><a href="#contacto" className="text-[#f8f1d8] hover:text-[#fed856] transition-colors font-['Raleway']">Contacto</a></li>
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-[#fed856]">Síguenos</h3>
+              <h3 className="text-lg font-semibold mb-4 text-[#fed856] font-['Raleway']">Síguenos</h3>
               <div className="flex space-x-4">
                 <a href="#" className="text-[#f8f1d8] hover:text-[#fed856] transition-colors">
                   <span className="sr-only">Facebook</span>
@@ -284,7 +284,7 @@ export default function ProductosPage() {
             </div>
           </div>
           <div className="mt-10 pt-8 border-t border-[#473f3f] text-center">
-            <p className="text-[#f8f1d8]">&copy; {new Date().getFullYear()} Escencias Robjan&apos;s. Todos los derechos reservados.</p>
+            <p className="text-[#f8f1d8] font-['Raleway']">&copy; {new Date().getFullYear()} Escencias Robjan&apos;s. Todos los derechos reservados.</p>
           </div>
         </div>
       </footer>
