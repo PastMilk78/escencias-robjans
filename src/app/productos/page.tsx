@@ -1,74 +1,117 @@
-import Link from "next/link";
+"use client";
 
-// Datos de ejemplo para los productos
-const productos = [
+import Link from "next/link";
+import { useState, useEffect } from "react";
+
+// Tipo de datos para productos
+type Nota = {
+  nombre: string;
+  intensidad: number;
+  color: string;
+};
+
+type Producto = {
+  id: number;
+  nombre: string;
+  categoria: string;
+  precio: number;
+  stock: number;
+  descripcion: string;
+  imagen: string;
+  inspirado_en: string;
+  notas: Nota[];
+};
+
+// Datos de ejemplo para los productos (se usarán si no hay datos en localStorage)
+const productosIniciales = [
   {
     id: 1,
     nombre: "Aroma Celestial",
     categoria: "Mujer",
     precio: 69.99,
+    stock: 15,
     descripcion: "Una fragancia floral con notas de jazmín y rosa.",
-    imagen: "/placeholder.jpg"
+    imagen: "/placeholder.jpg",
+    inspirado_en: "J'adore (Dior)",
+    notas: [
+      { nombre: "Jazmín", intensidad: 9, color: "#FFFFFF" },
+      { nombre: "Rosa", intensidad: 8, color: "#FF007F" },
+      { nombre: "Vainilla", intensidad: 6, color: "#F3E5AB" }
+    ]
   },
   {
     id: 2,
     nombre: "Bosque Místico",
     categoria: "Hombre",
     precio: 74.99,
+    stock: 20,
     descripcion: "Aroma amaderado con toques de sándalo y cedro.",
-    imagen: "/placeholder.jpg"
+    imagen: "/placeholder.jpg",
+    inspirado_en: "Sauvage (Dior)",
+    notas: [
+      { nombre: "Sándalo", intensidad: 8, color: "#8B4513" },
+      { nombre: "Cedro", intensidad: 7, color: "#D2691E" },
+      { nombre: "Bergamota", intensidad: 6, color: "#FFA500" }
+    ]
   },
   {
     id: 3,
     nombre: "Brisa Marina",
     categoria: "Unisex",
     precio: 79.99,
+    stock: 10,
     descripcion: "Fragancia fresca con notas de cítricos y sal marina.",
-    imagen: "/placeholder.jpg"
-  },
-  {
-    id: 4,
-    nombre: "Pasión Nocturna",
-    categoria: "Mujer",
-    precio: 84.99,
-    descripcion: "Aroma sensual con vainilla y ámbar.",
-    imagen: "/placeholder.jpg"
-  },
-  {
-    id: 5,
-    nombre: "Elegancia Urbana",
-    categoria: "Hombre",
-    precio: 89.99,
-    descripcion: "Fragancia sofisticada con notas especiadas y cuero.",
-    imagen: "/placeholder.jpg"
-  },
-  {
-    id: 6,
-    nombre: "Aventura Tropical",
-    categoria: "Unisex",
-    precio: 69.99,
-    descripcion: "Aroma exótico con notas de frutas tropicales.",
-    imagen: "/placeholder.jpg"
-  },
-  {
-    id: 7,
-    nombre: "Seducción Dorada",
-    categoria: "Mujer",
-    precio: 99.99,
-    descripcion: "Fragancia intensa con notas de ámbar y flores exóticas.",
-    imagen: "/placeholder.jpg"
-  },
-  {
-    id: 8,
-    nombre: "Imperio Azul",
-    categoria: "Hombre",
-    precio: 94.99,
-    descripcion: "Aroma fresco y potente con toques de lavanda y bergamota.",
-    imagen: "/placeholder.jpg"
+    imagen: "/placeholder.jpg",
+    inspirado_en: "Light Blue (Dolce & Gabbana)",
+    notas: [
+      { nombre: "Limón", intensidad: 9, color: "#FFFF00" },
+      { nombre: "Sal Marina", intensidad: 7, color: "#E0FFFF" },
+      { nombre: "Manzana", intensidad: 5, color: "#4CC417" }
+    ]
   }
 ];
 
 export default function ProductosPage() {
+  const [productos, setProductos] = useState<Producto[]>([]);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todos");
+  const [ordenPrecio, setOrdenPrecio] = useState("ninguno");
+  
+  // Cargar productos desde localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const productosGuardados = localStorage.getItem('productos');
+      if (productosGuardados) {
+        setProductos(JSON.parse(productosGuardados));
+      } else {
+        setProductos(productosIniciales);
+      }
+    }
+  }, []);
+  
+  // Filtrar productos por categoría
+  const productosFiltrados = productos.filter(producto => {
+    if (categoriaSeleccionada === "Todos") return true;
+    return producto.categoria === categoriaSeleccionada;
+  });
+  
+  // Ordenar productos por precio
+  const productosOrdenados = [...productosFiltrados].sort((a, b) => {
+    if (ordenPrecio === "menor") {
+      return a.precio - b.precio;
+    } else if (ordenPrecio === "mayor") {
+      return b.precio - a.precio;
+    }
+    return 0;
+  });
+  
+  const manejarCambioCategoria = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCategoriaSeleccionada(e.target.value);
+  };
+  
+  const manejarCambioOrden = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setOrdenPrecio(e.target.value);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
       {/* Barra de navegación */}
@@ -124,24 +167,24 @@ export default function ProductosPage() {
             <div className="flex flex-wrap items-center justify-between">
               <div className="flex flex-wrap items-center space-x-4">
                 <span className="text-[#fed856] font-raleway">Filtrar por:</span>
-                <select className="bg-[#312b2b] border border-[#fed856] text-[#f8f1d8] rounded-md py-2 px-3 text-sm font-raleway">
-                  <option>Todos</option>
-                  <option>Mujer</option>
-                  <option>Hombre</option>
-                  <option>Unisex</option>
+                <select 
+                  className="bg-[#312b2b] border border-[#fed856] text-[#f8f1d8] rounded-md py-2 px-3 text-sm font-raleway"
+                  value={categoriaSeleccionada}
+                  onChange={manejarCambioCategoria}
+                >
+                  <option value="Todos">Todos</option>
+                  <option value="Mujer">Mujer</option>
+                  <option value="Hombre">Hombre</option>
+                  <option value="Unisex">Unisex</option>
                 </select>
-                <select className="bg-[#312b2b] border border-[#fed856] text-[#f8f1d8] rounded-md py-2 px-3 text-sm font-raleway">
-                  <option>Precio</option>
-                  <option>Menor a mayor</option>
-                  <option>Mayor a menor</option>
-                </select>
-              </div>
-              <div className="mt-4 sm:mt-0">
-                <span className="text-[#fed856] mr-2 font-raleway">Mostrar:</span>
-                <select className="bg-[#312b2b] border border-[#fed856] text-[#f8f1d8] rounded-md py-2 px-3 text-sm font-raleway">
-                  <option>12</option>
-                  <option>24</option>
-                  <option>36</option>
+                <select 
+                  className="bg-[#312b2b] border border-[#fed856] text-[#f8f1d8] rounded-md py-2 px-3 text-sm font-raleway"
+                  value={ordenPrecio}
+                  onChange={manejarCambioOrden}
+                >
+                  <option value="ninguno">Precio</option>
+                  <option value="menor">Menor a mayor</option>
+                  <option value="mayor">Mayor a menor</option>
                 </select>
               </div>
             </div>
@@ -150,54 +193,46 @@ export default function ProductosPage() {
 
         {/* Lista de productos */}
         <div className="bg-[#f8f1d8] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {productos.map((producto) => (
-              <div key={producto.id} className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-[#fed856]">
-                <div className="h-64 bg-[#473f3f] flex items-center justify-center">
-                  <span className="text-[#fed856]">Imagen de producto</span>
-                </div>
-                <div className="p-5">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-lg font-semibold text-[#fed856] font-raleway">{producto.nombre}</h3>
-                      <p className="text-sm text-[#f8f1d8] font-raleway">{producto.categoria}</p>
+          {productosOrdenados.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {productosOrdenados.map((producto) => (
+                <div key={producto.id} className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-[#fed856]">
+                  <div className="h-64 bg-[#473f3f] flex items-center justify-center overflow-hidden">
+                    {producto.imagen.startsWith("data:") ? (
+                      <img src={producto.imagen} alt={producto.nombre} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-[#fed856]">Imagen de producto</span>
+                    )}
+                  </div>
+                  <div className="p-5">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-lg font-semibold text-[#fed856] font-raleway">{producto.nombre}</h3>
+                        <p className="text-sm text-[#f8f1d8] font-raleway">{producto.categoria}</p>
+                      </div>
+                      <span className="text-lg font-bold text-[#fed856] font-raleway">${producto.precio.toFixed(2)}</span>
                     </div>
-                    <span className="text-lg font-bold text-[#fed856] font-raleway">${producto.precio}</span>
-                  </div>
-                  <p className="mt-2 text-[#f8f1d8] text-sm font-raleway">{producto.descripcion}</p>
-                  <div className="mt-4 flex justify-between items-center">
-                    <Link href={`/productos/${producto.id}`} className="text-[#fed856] hover:text-white text-sm font-medium font-raleway">
-                      Ver detalles
-                    </Link>
-                    <button className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md text-sm hover:bg-[#e5c24c] transition-colors border border-[#fed856] font-raleway">
-                      Añadir al carrito
-                    </button>
+                    <p className="mt-2 text-[#f8f1d8] text-sm font-raleway">{producto.descripcion}</p>
+                    <p className="mt-1 text-[#f8f1d8] text-sm font-raleway">
+                      <span className="text-[#fed856]">Inspirado en:</span> {producto.inspirado_en}
+                    </p>
+                    <div className="mt-4 flex justify-between items-center">
+                      <Link href={`/admin/productos/detalle?id=${producto.id}`} className="text-[#fed856] hover:text-white text-sm font-medium font-raleway">
+                        Ver detalles
+                      </Link>
+                      <button className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md text-sm hover:bg-[#e5c24c] transition-colors border border-[#fed856] font-raleway">
+                        Añadir al carrito
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Paginación */}
-          <div className="mt-12 flex justify-center">
-            <nav className="flex items-center">
-              <button className="px-3 py-2 border border-[#fed856] bg-[#312b2b] text-[#fed856] rounded-l-md hover:bg-[#473f3f] font-raleway">
-                Anterior
-              </button>
-              <button className="px-3 py-2 border-t border-b border-[#fed856] bg-[#fed856] text-[#312b2b] font-raleway">
-                1
-              </button>
-              <button className="px-3 py-2 border-t border-b border-[#fed856] bg-[#312b2b] text-[#fed856] hover:bg-[#473f3f] font-raleway">
-                2
-              </button>
-              <button className="px-3 py-2 border-t border-b border-[#fed856] bg-[#312b2b] text-[#fed856] hover:bg-[#473f3f] font-raleway">
-                3
-              </button>
-              <button className="px-3 py-2 border border-[#fed856] bg-[#312b2b] text-[#fed856] rounded-r-md hover:bg-[#473f3f] font-raleway">
-                Siguiente
-              </button>
-            </nav>
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-lg text-[#312b2b] font-raleway">No hay productos disponibles en este momento.</p>
+            </div>
+          )}
         </div>
       </main>
 

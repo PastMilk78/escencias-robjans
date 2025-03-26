@@ -23,55 +23,6 @@ type Producto = {
   notas: Nota[];
 };
 
-// Datos de ejemplo
-const productosEjemplo: Producto[] = [
-  {
-    id: 1,
-    nombre: "Aroma Celestial",
-    categoria: "Mujer",
-    precio: 69.99,
-    stock: 15,
-    descripcion: "Una fragancia floral con notas de jazmín y rosa.",
-    imagen: "/placeholder.jpg",
-    inspirado_en: "J'adore (Dior)",
-    notas: [
-      { nombre: "Jazmín", intensidad: 9, color: "#FFFFFF" },
-      { nombre: "Rosa", intensidad: 8, color: "#FF007F" },
-      { nombre: "Vainilla", intensidad: 6, color: "#F3E5AB" }
-    ]
-  },
-  {
-    id: 2,
-    nombre: "Bosque Místico",
-    categoria: "Hombre",
-    precio: 74.99,
-    stock: 20,
-    descripcion: "Aroma amaderado con toques de sándalo y cedro.",
-    imagen: "/placeholder.jpg",
-    inspirado_en: "Sauvage (Dior)",
-    notas: [
-      { nombre: "Sándalo", intensidad: 8, color: "#8B4513" },
-      { nombre: "Cedro", intensidad: 7, color: "#D2691E" },
-      { nombre: "Bergamota", intensidad: 6, color: "#FFA500" }
-    ]
-  },
-  {
-    id: 3,
-    nombre: "Brisa Marina",
-    categoria: "Unisex",
-    precio: 79.99,
-    stock: 10,
-    descripcion: "Fragancia fresca con notas de cítricos y sal marina.",
-    imagen: "/placeholder.jpg",
-    inspirado_en: "Light Blue (Dolce & Gabbana)",
-    notas: [
-      { nombre: "Limón", intensidad: 9, color: "#FFFF00" },
-      { nombre: "Sal Marina", intensidad: 7, color: "#E0FFFF" },
-      { nombre: "Manzana", intensidad: 5, color: "#4CC417" }
-    ]
-  }
-];
-
 // Componente para renderizar el gráfico de notas
 const GraficoNotas = ({ notas }: { notas: Nota[] }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -182,11 +133,16 @@ export default function DetalleProducto() {
   const [producto, setProducto] = useState<Producto | null>(null);
   
   useEffect(() => {
-    if (idParam) {
+    if (idParam && typeof window !== 'undefined') {
       const id = parseInt(idParam);
-      const productoEncontrado = productosEjemplo.find(p => p.id === id);
-      if (productoEncontrado) {
-        setProducto(productoEncontrado);
+      const productosGuardados = localStorage.getItem('productos');
+      
+      if (productosGuardados) {
+        const productos = JSON.parse(productosGuardados);
+        const productoEncontrado = productos.find((p: Producto) => p.id === id);
+        if (productoEncontrado) {
+          setProducto(productoEncontrado);
+        }
       }
     }
   }, [idParam]);
@@ -251,9 +207,17 @@ export default function DetalleProducto() {
         <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-[#fed856]">
           <div className="md:flex">
             <div className="md:w-1/3 bg-[#312b2b] p-8 flex items-center justify-center">
-              <div className="bg-[#473f3f] h-64 w-full flex items-center justify-center rounded-lg">
-                <span className="text-[#fed856] text-lg font-raleway">Imagen del producto</span>
-              </div>
+              {producto.imagen.startsWith("data:") ? (
+                <img 
+                  src={producto.imagen} 
+                  alt={producto.nombre} 
+                  className="max-h-64 max-w-full object-contain rounded-lg"
+                />
+              ) : (
+                <div className="bg-[#473f3f] h-64 w-full flex items-center justify-center rounded-lg">
+                  <span className="text-[#fed856] text-lg font-raleway">Imagen del producto</span>
+                </div>
+              )}
             </div>
             <div className="md:w-2/3 p-8">
               <div className="mb-6">

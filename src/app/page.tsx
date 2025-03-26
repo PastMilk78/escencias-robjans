@@ -84,9 +84,9 @@ export default function Home() {
                 Perfumes de alta calidad a precios accesibles.
               </p>
               <div className="flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
-                <button className="button bg-[#fed856] text-[#312b2b] border border-[#fed856] hover:bg-[#e5c24c] hover:text-[#312b2b] font-raleway">
+                <Link href="/productos" className="button bg-[#fed856] text-[#312b2b] border border-[#fed856] hover:bg-[#e5c24c] hover:text-[#312b2b] font-raleway">
                   Ver Catálogo
-                </button>
+                </Link>
               </div>
             </div>
             <div className="md:w-1/2">
@@ -101,41 +101,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Inventario de productos */}
-      <section className="py-16 bg-[#f8f1d8]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-[#312b2b] mb-12 font-raleway">Nuestros Perfumes</h2>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {productos.map((producto) => (
-              <div key={producto.id} className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-[#fed856]">
-                <div className="bg-[#473f3f] h-48 flex items-center justify-center">
-                  <span className="text-[#fed856]">Imagen de producto</span>
-                </div>
-                <div className="p-5">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-lg font-semibold text-[#fed856] font-raleway">{producto.nombre}</h3>
-                      <p className="text-sm text-[#f8f1d8] font-raleway">{producto.categoria}</p>
-                    </div>
-                    <span className="text-lg font-bold text-[#fed856] font-raleway">${producto.precio}</span>
-                  </div>
-                  <p className="mt-2 text-[#f8f1d8] text-sm font-raleway">{producto.descripcion}</p>
-                  <div className="mt-4 flex justify-between items-center">
-                    <Link href={`/productos/${producto.id}`} className="text-[#fed856] hover:text-white text-sm font-medium font-raleway">
-                      Ver detalles
-                    </Link>
-                    <button className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md text-sm hover:bg-[#e5c24c] transition-colors border border-[#fed856] font-raleway">
-                      Añadir al carrito
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>

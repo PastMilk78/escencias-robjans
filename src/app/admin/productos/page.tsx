@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // Tipos
@@ -72,9 +72,21 @@ const productosIniciales: Producto[] = [
 ];
 
 export default function ProductosAdmin() {
-  const [productos, setProductos] = useState<Producto[]>(productosIniciales);
+  const [productos, setProductos] = useState<Producto[]>([]);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [productoEditando, setProductoEditando] = useState<Producto | null>(null);
+  const [imagenPreview, setImagenPreview] = useState<string | null>(null);
+  
+  // Cargar productos desde localStorage o usar los iniciales
+  useEffect(() => {
+    const productosGuardados = localStorage.getItem('productos');
+    if (productosGuardados) {
+      setProductos(JSON.parse(productosGuardados));
+    } else {
+      setProductos(productosIniciales);
+      localStorage.setItem('productos', JSON.stringify(productosIniciales));
+    }
+  }, []);
   
   // Producto vacío para el formulario de creación
   const productoNuevo: Producto = {
@@ -97,12 +109,14 @@ export default function ProductosAdmin() {
   const abrirFormularioCrear = () => {
     setProductoEditando(null);
     setFormulario(productoNuevo);
+    setImagenPreview(null);
     setMostrarFormulario(true);
   };
   
   const abrirFormularioEditar = (producto: Producto) => {
     setProductoEditando(producto);
     setFormulario({...producto});
+    setImagenPreview(producto.imagen);
     setMostrarFormulario(true);
   };
   
@@ -110,6 +124,7 @@ export default function ProductosAdmin() {
     setMostrarFormulario(false);
     setProductoEditando(null);
     setFormulario(productoNuevo);
+    setImagenPreview(null);
   };
   
   const manejarCambioFormulario = (
@@ -128,6 +143,22 @@ export default function ProductosAdmin() {
         ...formulario,
         [name]: value
       });
+    }
+  };
+
+  const manejarCambioImagen = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const resultado = reader.result as string;
+        setImagenPreview(resultado);
+        setFormulario({
+          ...formulario,
+          imagen: resultado
+        });
+      };
+      reader.readAsDataURL(file);
     }
   };
   
@@ -162,22 +193,29 @@ export default function ProductosAdmin() {
       return;
     }
     
+    let nuevosProductos: Producto[];
+    
     if (productoEditando) {
       // Actualizar producto existente
-      setProductos(
-        productos.map(p => p.id === formulario.id ? formulario : p)
-      );
+      nuevosProductos = productos.map(p => p.id === formulario.id ? formulario : p);
     } else {
       // Agregar nuevo producto
-      setProductos([...productos, formulario]);
+      nuevosProductos = [...productos, formulario];
     }
+    
+    setProductos(nuevosProductos);
+    
+    // Guardar en localStorage
+    localStorage.setItem('productos', JSON.stringify(nuevosProductos));
     
     cerrarFormulario();
   };
   
   const eliminarProducto = (id: number) => {
     if (confirm("¿Estás seguro de eliminar este producto?")) {
-      setProductos(productos.filter(p => p.id !== id));
+      const nuevosProductos = productos.filter(p => p.id !== id);
+      setProductos(nuevosProductos);
+      localStorage.setItem('productos', JSON.stringify(nuevosProductos));
     }
   };
   
@@ -254,8 +292,14 @@ export default function ProductosAdmin() {
                 <tr key={producto.id} className="hover:bg-[#f8f1d8]">
                   <td className="px-6 py-4 whitespace-nowrap font-raleway">
                     <div className="flex items-center">
-                      <div className="h-10 w-10 flex-shrink-0 bg-[#312b2b] rounded-full overflow-hidden">
-                        <span className="text-[#fed856] flex items-center justify-center h-full text-xs">Foto</span>
+                      <div className="h-10 w-10 flex-shrink-0 rounded-full overflow-hidden">
+                        {producto.imagen.startsWith("data:") ? (
+                          <img src={producto.imagen} alt={producto.nombre} className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="bg-[#312b2b] h-full w-full flex items-center justify-center">
+                            <span className="text-[#fed856] text-xs">Foto</span>
+                          </div>
+                        )}
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-[#312b2b]">
@@ -394,6 +438,27 @@ export default function ProductosAdmin() {
                     onChange={manejarCambioFormulario}
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
+                </div>
+                
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1 font-raleway">
+                    Imagen del producto
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={manejarCambioImagen}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
+                  {imagenPreview && (
+                    <div className="mt-2 w-32 h-32 overflow-hidden border border-gray-300 rounded-md">
+                      <img 
+                        src={imagenPreview} 
+                        alt="Vista previa" 
+                        className="w-full h-full object-cover" 
+                      />
+                    </div>
+                  )}
                 </div>
                 
                 {/* Sección de notas */}
