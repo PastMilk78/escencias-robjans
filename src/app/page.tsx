@@ -46,10 +46,10 @@ export default function Home() {
             <div className="flex items-center">
               <span className="font-bold text-xl text-[#fed856]">Escencias Robjan&apos;s</span>
             </div>
-            <div className="hidden md:flex space-x-8">
-              <Link href="/contacto" className="text-[#fed856] hover:text-white">Contacto</Link>
-            </div>
             <div className="flex items-center space-x-4">
+              <Link href="/contacto" className="button button-small bg-[#fed856] text-[#312b2b] hover:bg-[#e5c24c] hover:text-[#312b2b] mr-2">
+                Contacto
+              </Link>
               <button className="text-[#fed856] hover:text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -73,12 +73,12 @@ export default function Home() {
               <h1 className="text-4xl md:text-5xl font-bold text-[#fed856] mb-4">
                 Descubre tu fragancia ideal
               </h1>
-              <p className="text-lg md:text-xl text-[#f8f1d8] mb-8">
+              <p className="text-lg md:text-xl text-[#f8f1d8] mb-8 font-light">
                 Exclusivas esencias que destacan tu personalidad y estilo. 
                 Perfumes de alta calidad a precios accesibles.
               </p>
               <div className="flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
-                <button className="button bg-[#fed856] text-[#312b2b] border border-[#fed856]">
+                <button className="button bg-[#fed856] text-[#312b2b] border border-[#fed856] hover:bg-[#e5c24c] hover:text-[#312b2b]">
                   Ver Catálogo
                 </button>
               </div>
@@ -130,6 +130,60 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Sección de Contacto con Mapa */}
+      <section className="py-16 bg-[#312b2b]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center text-[#fed856] mb-12">Encuéntranos</h2>
+          
+          <div className="md:flex md:space-x-8">
+            <div className="md:w-1/2 mb-8 md:mb-0">
+              <div className="bg-[#473f3f] p-6 rounded-lg border border-[#fed856]">
+                <h3 className="text-xl font-semibold text-[#fed856] mb-4">Información de Contacto</h3>
+                <ul className="space-y-4 text-[#f8f1d8]">
+                  <li className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#fed856]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>Calle Principal #123, Ciudad</span>
+                  </li>
+                  <li className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#fed856]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span>info@escenciasrobjans.com</span>
+                  </li>
+                  <li className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#fed856]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    <span>+123 456 7890</span>
+                  </li>
+                </ul>
+                <div className="mt-6">
+                  <h4 className="text-[#fed856] font-medium mb-3">Horarios de Atención</h4>
+                  <p className="text-[#f8f1d8] mb-1">Lunes a Viernes: 9:00 AM - 7:00 PM</p>
+                  <p className="text-[#f8f1d8]">Sábados: 10:00 AM - 4:00 PM</p>
+                </div>
+              </div>
+            </div>
+            <div className="md:w-1/2">
+              <div className="rounded-lg overflow-hidden h-80 border border-[#fed856]">
+                <iframe 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.661460824311!2d-99.16964548517653!3d19.427023545827606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1ff35f5bd1563%3A0x6c366f0e2de02ff7!2sZocalo%2C%20Centro%20Historico%2C%20Centro%2C%2006000%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX%2C%20M%C3%A9xico!5e0!3m2!1ses-419!2sus!4v1625847915946!5m2!1ses-419!2sus" 
+                  width="100%" 
+                  height="100%" 
+                  style={{ border: 0 }} 
+                  allowFullScreen 
+                  loading="lazy"
+                  title="Ubicación de Escencias Robjan's"
+                ></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="bg-[#312b2b] text-white py-12 mt-auto border-t-2 border-[#fed856]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -147,13 +201,8 @@ export default function Home() {
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-[#fed856]">Contacto</h3>
-              <ul className="space-y-2 text-[#f8f1d8]">
-                <li>Calle Principal #123</li>
-                <li>info@escenciasrobjans.com</li>
-                <li>+123 456 7890</li>
-              </ul>
-              <div className="flex space-x-4 mt-4">
+              <h3 className="text-lg font-semibold mb-4 text-[#fed856]">Síguenos</h3>
+              <div className="flex space-x-4">
                 <a href="#" className="text-[#f8f1d8] hover:text-[#fed856] transition-colors">
                   <span className="sr-only">Facebook</span>
                   <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
