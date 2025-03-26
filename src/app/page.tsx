@@ -44,7 +44,13 @@ export default function Home() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
-              <span className="font-bold text-xl text-[#fed856] font-raleway">Escencias Robjan&apos;s</span>
+              <div className="h-12 w-36">
+                <img 
+                  src="/images/logo-escencias.jpg" 
+                  alt="Escencias Robjan's" 
+                  className="h-full object-contain"
+                />
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <a href="#contacto" className="button button-small bg-[#fed856] text-[#312b2b] hover:bg-[#e5c24c] hover:text-[#312b2b] mr-2 font-raleway">
@@ -85,9 +91,13 @@ export default function Home() {
             </div>
             <div className="md:w-1/2">
               <div className="relative h-64 md:h-auto">
-                {/* Aquí iría la imagen de hero, por ahora dejamos un placeholder */}
-                <div className="bg-[#473f3f] rounded-lg h-64 md:h-96 flex items-center justify-center border border-[#fed856]">
-                  <span className="text-[#fed856]">Imagen de perfume destacado</span>
+                {/* Imagen del perfume */}
+                <div className="bg-[#312b2b] rounded-lg h-64 md:h-96 flex items-center justify-center overflow-hidden border border-[#fed856]">
+                  <img 
+                    src="/images/perfume-destacado.jpg" 
+                    alt="Perfume Escencias Robjan's" 
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
             </div>
