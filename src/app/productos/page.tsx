@@ -193,11 +193,11 @@ export default function ProductosPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {productosOrdenados.map((producto) => (
                   <div key={producto._id} className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-[#fed856]">
-                    <div className="h-64 bg-[#473f3f] flex items-center justify-center overflow-hidden">
-                      <img 
-                        src="https://i.postimg.cc/75pdMT0w/perfume-destacado.jpg" 
-                        alt={producto.nombre} 
-                        className="w-full h-full object-cover rounded-lg"
+                    <div className="h-48 bg-[#473f3f] flex items-center justify-center overflow-hidden">
+                      <img
+                        src="https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg"
+                        alt={producto.nombre}
+                        className="w-full h-full object-cover"
                       />
                     </div>
                     <div className="p-5">
