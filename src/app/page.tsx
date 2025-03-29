@@ -92,7 +92,7 @@ export default async function Home() {
               <div className="md:w-1/2 flex justify-center">
                 <div className="relative w-full max-w-md h-80 overflow-hidden rounded-lg shadow-xl">
                   <img 
-                    src="/images/perfume-destacado.jpg" 
+                    src="https://i.postimg.cc/75pdMT0w/perfume-destacado.jpg" 
                     alt="Perfume destacado" 
                     className="w-full h-full object-cover"
                   />
