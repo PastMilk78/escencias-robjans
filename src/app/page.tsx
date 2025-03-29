@@ -111,39 +111,41 @@ export default async function Home() {
               Productos Destacados
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {productosDestacados.map((producto: Producto) => (
-                <div key={producto._id} className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-[#fed856]">
-                  <div className="h-48 bg-[#473f3f] flex items-center justify-center overflow-hidden">
-                    {producto.imagen && producto.imagen.startsWith("data:") ? (
-                      <img src={producto.imagen} alt={producto.nombre} className="w-full h-full object-cover" />
-                    ) : (
+              {productosDestacados.length > 0 ? (
+                productosDestacados.map((producto: Producto) => (
+                  <div key={producto._id} className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-[#fed856]">
+                    <div className="h-48 bg-[#473f3f] flex items-center justify-center overflow-hidden">
                       <img 
                         src="/images/perfume-destacado.jpg" 
                         alt={producto.nombre} 
                         className="w-full h-full object-cover"
                       />
-                    )}
-                  </div>
-                  <div className="p-5">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-lg font-semibold text-[#fed856] font-raleway">{producto.nombre}</h3>
-                        <p className="text-sm text-[#f8f1d8] font-raleway">{producto.categoria}</p>
+                    </div>
+                    <div className="p-5">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="text-lg font-semibold text-[#fed856] font-raleway">{producto.nombre}</h3>
+                          <p className="text-sm text-[#f8f1d8] font-raleway">{producto.categoria}</p>
+                        </div>
+                        <span className="text-lg font-bold text-[#fed856] font-raleway">${producto.precio?.toFixed(2)}</span>
                       </div>
-                      <span className="text-lg font-bold text-[#fed856] font-raleway">${producto.precio?.toFixed(2)}</span>
-                    </div>
-                    <p className="mt-2 text-[#f8f1d8] text-sm font-raleway">{producto.descripcion}</p>
-                    <div className="mt-4 flex justify-end">
-                      <Link
-                        href={`/productos`}
-                        className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md text-sm hover:bg-[#e5c24c] transition-colors border border-[#fed856] font-raleway"
-                      >
-                        Ver detalles
-                      </Link>
+                      <p className="mt-2 text-[#f8f1d8] text-sm font-raleway">{producto.descripcion}</p>
+                      <div className="mt-4 flex justify-end">
+                        <Link
+                          href={`/productos`}
+                          className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md text-sm hover:bg-[#e5c24c] transition-colors border border-[#fed856] font-raleway"
+                        >
+                          Ver detalles
+                        </Link>
+                      </div>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div className="col-span-4 text-center py-8">
+                  <p className="text-[#312b2b] font-raleway">No hay productos destacados disponibles.</p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </section>

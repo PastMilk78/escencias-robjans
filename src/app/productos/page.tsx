@@ -193,15 +193,11 @@ export default function ProductosPage() {
                 {productosOrdenados.map((producto) => (
                   <div key={producto._id} className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-[#fed856]">
                     <div className="h-64 bg-[#473f3f] flex items-center justify-center overflow-hidden">
-                      {producto.imagen && producto.imagen.startsWith("data:") ? (
-                        <img src={producto.imagen} alt={producto.nombre} className="w-full h-full object-cover" />
-                      ) : (
-                        <img 
-                          src="/images/perfume-destacado.jpg" 
-                          alt={producto.nombre} 
-                          className="w-full h-full object-cover"
-                        />
-                      )}
+                      <img 
+                        src="/images/perfume-destacado.jpg" 
+                        alt={producto.nombre} 
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div className="p-5">
                       <div className="flex justify-between items-start">
