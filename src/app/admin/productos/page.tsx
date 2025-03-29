@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -23,7 +23,8 @@ type Producto = {
   notas: Nota[];
 };
 
-export default function ProductosAdminPage() {
+// Componente principal
+function ProductosAdminContent() {
   const searchParams = useSearchParams();
   const idEditar = searchParams.get('edit');
   
@@ -710,5 +711,18 @@ export default function ProductosAdminPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+// Componente envoltorio con Suspense
+export default function ProductosAdminPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8f1d8]">
+        <p className="text-[#312b2b] text-xl font-raleway">Cargando...</p>
+      </div>
+    }>
+      <ProductosAdminContent />
+    </Suspense>
   );
 } 
