@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 // Datos de ejemplo para los productos

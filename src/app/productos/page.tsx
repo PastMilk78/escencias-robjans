@@ -42,9 +42,9 @@ export default function ProductosPage() {
       
       const datos = await respuesta.json();
       setProductos(datos.productos);
-    } catch (err: any) {
+    } catch (err: Error | unknown) {
       console.error('Error al obtener productos:', err);
-      setError(err.message || 'Error al cargar productos');
+      setError(err instanceof Error ? err.message : 'Error al cargar productos');
     } finally {
       setCargando(false);
     }
