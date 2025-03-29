@@ -151,9 +151,9 @@ export default function DetalleProducto() {
       
       const datos = await respuesta.json();
       setProducto(datos.producto);
-    } catch (err: any) {
+    } catch (err: Error | unknown) {
       console.error('Error al obtener producto:', err);
-      setError(err.message || 'Error al cargar el producto');
+      setError(err instanceof Error ? err.message : 'Error al cargar el producto');
     } finally {
       setCargando(false);
     }
@@ -220,11 +220,11 @@ export default function DetalleProducto() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-8">
-              <Link href="/" className="h-12 w-36">
+              <Link href="/" className="h-24 w-auto">
                 <img 
                   src="/images/logo-escencias.jpg" 
                   alt="Escencias Robjan's" 
-                  className="h-full object-contain"
+                  className="h-full object-contain rounded-xl"
                 />
               </Link>
               <span className="text-xl text-[#fed856] font-raleway">

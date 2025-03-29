@@ -86,11 +86,11 @@ export default function ProductosPage() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
-              <Link href="/" className="h-12 w-36">
+              <Link href="/" className="h-24 w-auto">
                 <img 
                   src="/images/logo-escencias.jpg" 
                   alt="Escencias Robjan's" 
-                  className="h-full object-contain"
+                  className="h-full object-contain rounded-xl"
                 />
               </Link>
             </div>

@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
-// Tipos
+// Tipo de datos para notas y productos
 type Nota = {
   nombre: string;
   intensidad: number;
@@ -23,32 +23,32 @@ type Producto = {
   notas: Nota[];
 };
 
-export default function ProductosAdmin() {
-  const router = useRouter();
-  const [productos, setProductos] = useState<Producto[]>([]);
-  const [cargando, setCargando] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [productoEditando, setProductoEditando] = useState<Producto | null>(null);
-  const [imagenPreview, setImagenPreview] = useState<string | null>(null);
+export default function ProductosAdminPage() {
+  const searchParams = useSearchParams();
+  const idEditar = searchParams.get('edit');
   
-  // Producto vacío para el formulario de creación
-  const productoNuevo: Omit<Producto, '_id'> = {
+  // Estados
+  const [productos, setProductos] = useState<Producto[]>([]);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Estados para el formulario
+  const [formulario, setFormulario] = useState<Omit<Producto, '_id'>>({
     nombre: "",
-    categoria: "Unisex",
+    categoria: "Mujer",
     precio: 0,
     stock: 0,
     descripcion: "",
-    imagen: "/placeholder.jpg",
+    imagen: "",
     inspirado_en: "",
     notas: []
-  };
+  });
   
-  // Estado para el formulario
-  const [formulario, setFormulario] = useState<any>(productoNuevo);
+  const [productoEditando, setProductoEditando] = useState<string | null>(null);
   const [nuevaNota, setNuevaNota] = useState<Nota>({ nombre: "", intensidad: 5, color: "#CCCCCC" });
   
-  // Cargar productos desde la API
+  // Cargar productos desde API
   const cargarProductos = async () => {
     setCargando(true);
     setError(null);
@@ -61,9 +61,9 @@ export default function ProductosAdmin() {
       
       const datos = await respuesta.json();
       setProductos(datos.productos);
-    } catch (err: any) {
+    } catch (err: Error | unknown) {
       console.error('Error al obtener productos:', err);
-      setError(err.message || 'Error al cargar productos');
+      setError(err instanceof Error ? err.message : 'Error al cargar productos');
     } finally {
       setCargando(false);
     }
@@ -74,38 +74,106 @@ export default function ProductosAdmin() {
     cargarProductos();
   }, []);
   
-  // Manejadores de eventos
-  const abrirFormularioCrear = () => {
-    setProductoEditando(null);
-    setFormulario(productoNuevo);
-    setImagenPreview(null);
-    setMostrarFormulario(true);
-  };
+  // Cargar producto para editar si se especifica en la URL
+  useEffect(() => {
+    if (idEditar) {
+      const cargarProductoParaEditar = async () => {
+        try {
+          const respuesta = await fetch(`/api/productos/${idEditar}`);
+          if (!respuesta.ok) {
+            throw new Error('Error al cargar el producto para editar');
+          }
+          
+          const datos = await respuesta.json();
+          
+          setFormulario({
+            nombre: datos.producto.nombre,
+            categoria: datos.producto.categoria,
+            precio: datos.producto.precio,
+            stock: datos.producto.stock,
+            descripcion: datos.producto.descripcion,
+            imagen: datos.producto.imagen,
+            inspirado_en: datos.producto.inspirado_en,
+            notas: datos.producto.notas
+          });
+          
+          setProductoEditando(idEditar);
+          setMostrarModal(true);
+        } catch (err: Error | unknown) {
+          console.error('Error al cargar producto para editar:', err);
+          alert(err instanceof Error ? err.message : 'Error al cargar el producto para editar');
+        }
+      };
+      
+      cargarProductoParaEditar();
+    }
+  }, [idEditar]);
   
-  const abrirFormularioEditar = (producto: Producto) => {
-    setProductoEditando(producto);
-    setFormulario({...producto});
-    setImagenPreview(producto.imagen);
-    setMostrarFormulario(true);
-  };
-  
-  const cerrarFormulario = () => {
-    setMostrarFormulario(false);
-    setProductoEditando(null);
-    setFormulario(productoNuevo);
-    setImagenPreview(null);
-  };
-  
-  const manejarCambioFormulario = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
+  // Guardar producto (crear o actualizar)
+  const guardarProducto = async (e: React.FormEvent) => {
+    e.preventDefault();
     
-    // Convertir números si es necesario
-    if (name === "precio" || name === "stock") {
+    try {
+      const url = productoEditando 
+        ? `/api/productos/${productoEditando}` 
+        : '/api/productos';
+      
+      const metodo = productoEditando ? 'PUT' : 'POST';
+      
+      const respuesta = await fetch(url, {
+        method: metodo,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formulario)
+      });
+      
+      if (!respuesta.ok) {
+        const error = await respuesta.json();
+        throw new Error(error.error || 'Error al guardar el producto');
+      }
+      
+      // Recargar productos y cerrar modal
+      await cargarProductos();
+      cerrarModal();
+      
+    } catch (err: Error | unknown) {
+      console.error('Error al guardar producto:', err);
+      alert(err instanceof Error ? err.message : 'Error al guardar el producto');
+    }
+  };
+  
+  // Eliminar producto
+  const eliminarProducto = async (id: string) => {
+    if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
+    
+    try {
+      const respuesta = await fetch(`/api/productos/${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (!respuesta.ok) {
+        const error = await respuesta.json();
+        throw new Error(error.error || 'Error al eliminar el producto');
+      }
+      
+      await cargarProductos();
+      
+    } catch (err: Error | unknown) {
+      console.error('Error al eliminar producto:', err);
+      alert(err instanceof Error ? err.message : 'Error al eliminar el producto');
+    }
+  };
+  
+  // Manejar cambio en el formulario
+  const manejarCambioFormulario = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    
+    // Convertir a número si es precio o stock
+    if (type === 'number') {
       setFormulario({
         ...formulario,
-        [name]: parseFloat(value) || 0
+        [name]: parseFloat(value)
       });
     } else {
       setFormulario({
@@ -114,31 +182,42 @@ export default function ProductosAdmin() {
       });
     }
   };
-
-  const manejarCambioImagen = (e: React.ChangeEvent<HTMLInputElement>) => {
+  
+  // Manejar carga de imágenes
+  const manejarCargaImagen = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const resultado = reader.result as string;
-        setImagenPreview(resultado);
-        setFormulario({
-          ...formulario,
-          imagen: resultado
-        });
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormulario({
+        ...formulario,
+        imagen: reader.result as string
+      });
+    };
+    
+    reader.readAsDataURL(file);
+  };
+  
+  // Manejar cambio en la nota
+  const manejarCambioNota = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type } = e.target;
+    
+    // Convertir a número si es intensidad
+    if (name === 'intensidad') {
+      setNuevaNota({
+        ...nuevaNota,
+        intensidad: parseInt(value, 10)
+      });
+    } else {
+      setNuevaNota({
+        ...nuevaNota,
+        [name]: value
+      });
     }
   };
   
-  const manejarCambioNota = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNuevaNota({
-      ...nuevaNota,
-      [name]: name === "intensidad" ? parseInt(value) || 1 : value
-    });
-  };
-  
+  // Agregar nota al formulario
   const agregarNota = () => {
     if (nuevaNota.nombre.trim()) {
       setFormulario({
@@ -149,6 +228,7 @@ export default function ProductosAdmin() {
     }
   };
   
+  // Eliminar nota del formulario
   const eliminarNota = (index: number) => {
     setFormulario({
       ...formulario,
@@ -156,70 +236,28 @@ export default function ProductosAdmin() {
     });
   };
   
-  const guardarProducto = async () => {
-    if (formulario.nombre.trim() === "") {
-      alert("El nombre del producto es obligatorio");
-      return;
-    }
-    
-    try {
-      let respuesta;
-      
-      if (productoEditando) {
-        // Actualizar producto existente
-        respuesta = await fetch(`/api/productos/${productoEditando._id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formulario)
-        });
-      } else {
-        // Agregar nuevo producto
-        respuesta = await fetch('/api/productos', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formulario)
-        });
-      }
-      
-      if (!respuesta.ok) {
-        throw new Error('Error al guardar el producto');
-      }
-      
-      // Recargar productos
-      await cargarProductos();
-      cerrarFormulario();
-      
-    } catch (err: any) {
-      console.error('Error al guardar producto:', err);
-      alert(err.message || 'Error al guardar el producto');
-    }
+  // Abrir modal para crear nuevo producto
+  const abrirModalCrear = () => {
+    setFormulario({
+      nombre: "",
+      categoria: "Mujer",
+      precio: 0,
+      stock: 0,
+      descripcion: "",
+      imagen: "",
+      inspirado_en: "",
+      notas: []
+    });
+    setProductoEditando(null);
+    setMostrarModal(true);
   };
   
-  const eliminarProducto = async (id: string) => {
-    if (confirm("¿Estás seguro de eliminar este producto?")) {
-      try {
-        const respuesta = await fetch(`/api/productos/${id}`, {
-          method: 'DELETE'
-        });
-        
-        if (!respuesta.ok) {
-          throw new Error('Error al eliminar el producto');
-        }
-        
-        // Recargar productos
-        await cargarProductos();
-        
-      } catch (err: any) {
-        console.error('Error al eliminar producto:', err);
-        alert(err.message || 'Error al eliminar el producto');
-      }
-    }
+  // Cerrar modal
+  const cerrarModal = () => {
+    setMostrarModal(false);
+    setProductoEditando(null);
   };
-  
+
   return (
     <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
       {/* Barra de navegación */}
@@ -227,11 +265,11 @@ export default function ProductosAdmin() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-8">
-              <Link href="/" className="h-12 w-36">
+              <Link href="/" className="h-24 w-auto">
                 <img 
                   src="/images/logo-escencias.jpg" 
                   alt="Escencias Robjan's" 
-                  className="h-full object-contain"
+                  className="h-full object-contain rounded-xl"
                 />
               </Link>
               <span className="text-xl text-[#fed856] font-raleway">
@@ -251,25 +289,26 @@ export default function ProductosAdmin() {
       </header>
 
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex justify-between items-center mb-8">
+        <div className="mb-8 flex items-center justify-between">
           <h1 className="text-3xl font-bold text-[#312b2b] font-raleway">
             Gestión de Productos
           </h1>
           <button
-            onClick={abrirFormularioCrear}
+            onClick={abrirModalCrear}
             className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md hover:bg-[#e5c24c] transition-colors font-raleway"
           >
             Nuevo Producto
           </button>
         </div>
         
-        {/* Estado de carga o error */}
+        {/* Estado de carga */}
         {cargando && (
-          <div className="text-center py-8">
-            <p className="text-lg text-[#312b2b] font-raleway">Cargando productos...</p>
+          <div className="bg-white shadow-lg rounded-lg p-6 text-center">
+            <p className="text-[#312b2b] text-lg font-raleway">Cargando productos...</p>
           </div>
         )}
         
+        {/* Mensaje de error */}
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
             <p className="font-raleway">{error}</p>
@@ -284,337 +323,378 @@ export default function ProductosAdmin() {
         
         {/* Tabla de productos */}
         {!cargando && !error && (
-          <div className="overflow-x-auto bg-white shadow-md rounded-lg border border-[#fed856]">
+          <div className="bg-white shadow-lg rounded-lg overflow-hidden">
             {productos.length > 0 ? (
-              <table className="min-w-full divide-y divide-[#fed856]">
-                <thead className="bg-[#312b2b]">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
-                      Producto
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
-                      Categoría
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
-                      Precio
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
-                      Stock
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
-                      Inspirado en
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
-                      Acciones
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-[#fed856]">
-                  {productos.map((producto) => (
-                    <tr key={producto._id} className="hover:bg-[#f8f1d8]">
-                      <td className="px-6 py-4 whitespace-nowrap font-raleway">
-                        <div className="flex items-center">
-                          <div className="h-10 w-10 flex-shrink-0 rounded-full overflow-hidden">
-                            {producto.imagen.startsWith("data:") ? (
-                              <img src={producto.imagen} alt={producto.nombre} className="h-full w-full object-cover" />
-                            ) : (
-                              <div className="bg-[#312b2b] h-full w-full flex items-center justify-center">
-                                <span className="text-[#fed856] text-xs">Foto</span>
-                              </div>
-                            )}
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-[#312b2b]">
-                              {producto.nombre}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#312b2b] font-raleway">
-                        {producto.categoria}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#312b2b] font-raleway">
-                        ${producto.precio.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#312b2b] font-raleway">
-                        {producto.stock}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#312b2b] font-raleway">
-                        {producto.inspirado_en}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium font-raleway">
-                        <button
-                          onClick={() => abrirFormularioEditar(producto)}
-                          className="text-[#312b2b] hover:text-[#fed856] mr-4"
-                        >
-                          Editar
-                        </button>
-                        <Link
-                          href={`/admin/productos/detalle?id=${producto._id}`}
-                          className="text-[#312b2b] hover:text-[#fed856] mr-4"
-                        >
-                          Ver Detalle
-                        </Link>
-                        <button
-                          onClick={() => eliminarProducto(producto._id)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          Eliminar
-                        </button>
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-[#312b2b]">
+                    <tr>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
+                        Nombre
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
+                        Categoría
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
+                        Precio
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
+                        Stock
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
+                        Inspirado en
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-[#fed856] uppercase tracking-wider font-raleway">
+                        Acciones
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {productos.map((producto) => (
+                      <tr key={producto._id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-raleway">
+                          {producto.nombre}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-raleway">
+                          {producto.categoria}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-raleway">
+                          ${producto.precio.toFixed(2)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-raleway">
+                          {producto.stock}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-raleway">
+                          {producto.inspirado_en}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <Link
+                            href={`/admin/productos/detalle?id=${producto._id}`}
+                            className="text-indigo-600 hover:text-indigo-900 mr-4 font-raleway"
+                          >
+                            Ver
+                          </Link>
+                          <Link
+                            href={`/admin/productos?edit=${producto._id}`}
+                            className="text-[#fed856] hover:text-[#e5c24c] mr-4 font-raleway"
+                          >
+                            Editar
+                          </Link>
+                          <button
+                            onClick={() => eliminarProducto(producto._id)}
+                            className="text-red-600 hover:text-red-900 font-raleway"
+                          >
+                            Eliminar
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             ) : (
-              <div className="text-center py-8">
-                <p className="text-[#312b2b] font-raleway">No hay productos disponibles. ¡Crea el primero!</p>
+              <div className="p-8 text-center">
+                <p className="text-[#312b2b] font-raleway">No hay productos registrados. ¡Crea el primero!</p>
               </div>
             )}
           </div>
         )}
         
-        {/* Formulario modal */}
-        {mostrarFormulario && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-              <h2 className="text-2xl font-bold mb-6 text-[#312b2b] font-raleway">
-                {productoEditando ? "Editar Producto" : "Nuevo Producto"}
-              </h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 font-raleway">
-                    Nombre*
-                  </label>
-                  <input
-                    type="text"
-                    name="nombre"
-                    value={formulario.nombre}
-                    onChange={manejarCambioFormulario}
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 font-raleway">
-                    Categoría
-                  </label>
-                  <select
-                    name="categoria"
-                    value={formulario.categoria}
-                    onChange={manejarCambioFormulario}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+        {/* Modal de formulario */}
+        {mostrarModal && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-[#312b2b] font-raleway">
+                    {productoEditando ? 'Editar Producto' : 'Nuevo Producto'}
+                  </h2>
+                  <button 
+                    onClick={cerrarModal}
+                    className="text-gray-500 hover:text-gray-700"
                   >
-                    <option value="Mujer">Mujer</option>
-                    <option value="Hombre">Hombre</option>
-                    <option value="Unisex">Unisex</option>
-                  </select>
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
                 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 font-raleway">
-                    Precio ($)
-                  </label>
-                  <input
-                    type="number"
-                    name="precio"
-                    value={formulario.precio}
-                    onChange={manejarCambioFormulario}
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                    min="0"
-                    step="0.01"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 font-raleway">
-                    Stock
-                  </label>
-                  <input
-                    type="number"
-                    name="stock"
-                    value={formulario.stock}
-                    onChange={manejarCambioFormulario}
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                    min="0"
-                  />
-                </div>
-                
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1 font-raleway">
-                    Descripción
-                  </label>
-                  <textarea
-                    name="descripcion"
-                    value={formulario.descripcion}
-                    onChange={manejarCambioFormulario}
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                    rows={3}
-                  />
-                </div>
-                
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1 font-raleway">
-                    Inspirado en
-                  </label>
-                  <input
-                    type="text"
-                    name="inspirado_en"
-                    value={formulario.inspirado_en}
-                    onChange={manejarCambioFormulario}
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-                
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1 font-raleway">
-                    Imagen del producto
-                  </label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={manejarCambioImagen}
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                  />
-                  {imagenPreview && (
-                    <div className="mt-2 w-32 h-32 overflow-hidden border border-gray-300 rounded-md">
-                      <img 
-                        src={imagenPreview} 
-                        alt="Vista previa" 
-                        className="w-full h-full object-cover" 
+                <form onSubmit={guardarProducto}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                      <label className="block text-gray-700 text-sm font-bold mb-2 font-raleway" htmlFor="nombre">
+                        Nombre
+                      </label>
+                      <input
+                        type="text"
+                        id="nombre"
+                        name="nombre"
+                        value={formulario.nombre}
+                        onChange={manejarCambioFormulario}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                        required
                       />
                     </div>
-                  )}
-                </div>
-                
-                {/* Sección de notas */}
-                <div className="md:col-span-2 mt-4">
-                  <h3 className="text-lg font-medium mb-2 text-[#312b2b] font-raleway">
-                    Notas del Perfume
-                  </h3>
-                  
-                  <div className="mb-6 p-4 bg-gray-50 rounded-md border border-gray-200">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 font-raleway">
-                          Nombre
-                        </label>
+                    <div>
+                      <label className="block text-gray-700 text-sm font-bold mb-2 font-raleway" htmlFor="categoria">
+                        Categoría
+                      </label>
+                      <select
+                        id="categoria"
+                        name="categoria"
+                        value={formulario.categoria}
+                        onChange={manejarCambioFormulario}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                      >
+                        <option value="Mujer" className="bg-[#473f3f] text-white">Mujer</option>
+                        <option value="Hombre" className="bg-[#473f3f] text-white">Hombre</option>
+                        <option value="Unisex" className="bg-[#473f3f] text-white">Unisex</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 text-sm font-bold mb-2 font-raleway" htmlFor="precio">
+                        Precio
+                      </label>
+                      <input
+                        type="number"
+                        id="precio"
+                        name="precio"
+                        value={formulario.precio}
+                        onChange={manejarCambioFormulario}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                        min="0"
+                        step="0.01"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 text-sm font-bold mb-2 font-raleway" htmlFor="stock">
+                        Stock
+                      </label>
+                      <input
+                        type="number"
+                        id="stock"
+                        name="stock"
+                        value={formulario.stock}
+                        onChange={manejarCambioFormulario}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                        min="0"
+                        step="1"
+                        required
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-gray-700 text-sm font-bold mb-2 font-raleway" htmlFor="descripcion">
+                        Descripción
+                      </label>
+                      <textarea
+                        id="descripcion"
+                        name="descripcion"
+                        value={formulario.descripcion}
+                        onChange={manejarCambioFormulario}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                        rows={3}
+                        required
+                      ></textarea>
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 text-sm font-bold mb-2 font-raleway" htmlFor="imagen">
+                        Imagen del producto
+                      </label>
+                      <div className="flex flex-col space-y-2">
+                        <input
+                          type="file"
+                          id="imagen-upload"
+                          accept="image/*"
+                          onChange={manejarCargaImagen}
+                          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway bg-[#473f3f] text-white"
+                        />
+                        <div className="text-gray-500 text-sm italic font-raleway">o</div>
                         <input
                           type="text"
-                          name="nombre"
-                          value={nuevaNota.nombre}
-                          onChange={manejarCambioNota}
-                          className="w-full p-2 border border-gray-300 rounded-md"
+                          id="imagen"
+                          name="imagen"
+                          value={formulario.imagen}
+                          onChange={manejarCambioFormulario}
+                          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                          placeholder="URL o data URL de la imagen"
                         />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 font-raleway">
-                          Intensidad (1-10)
-                        </label>
-                        <input
-                          type="number"
-                          name="intensidad"
-                          value={nuevaNota.intensidad}
-                          onChange={manejarCambioNota}
-                          className="w-full p-2 border border-gray-300 rounded-md"
-                          min="1"
-                          max="10"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 font-raleway">
-                          Color
-                        </label>
-                        <input
-                          type="color"
-                          name="color"
-                          value={nuevaNota.color}
-                          onChange={manejarCambioNota}
-                          className="w-full p-1 h-10 border border-gray-300 rounded-md"
-                        />
+                        {formulario.imagen && (
+                          <div className="mt-2 w-full flex justify-center">
+                            <div className="w-32 h-32 overflow-hidden rounded-md border border-gray-300">
+                              <img 
+                                src={formulario.imagen} 
+                                alt="Vista previa" 
+                                className="w-full h-full object-cover" 
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={agregarNota}
-                      className="mt-3 bg-[#312b2b] text-white px-4 py-2 rounded-md hover:bg-[#473f3f] transition-colors font-raleway"
-                    >
-                      Añadir Nota
-                    </button>
+                    <div>
+                      <label className="block text-gray-700 text-sm font-bold mb-2 font-raleway" htmlFor="inspirado_en">
+                        Inspirado en
+                      </label>
+                      <input
+                        type="text"
+                        id="inspirado_en"
+                        name="inspirado_en"
+                        value={formulario.inspirado_en}
+                        onChange={manejarCambioFormulario}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                        required
+                      />
+                    </div>
                   </div>
                   
-                  {/* Lista de notas */}
-                  {formulario.notas.length > 0 && (
-                    <div className="mt-4">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-raleway">
-                              Nota
-                            </th>
-                            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-raleway">
-                              Intensidad
-                            </th>
-                            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-raleway">
-                              Color
-                            </th>
-                            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-raleway">
-                              Acción
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                          {formulario.notas.map((nota: Nota, index: number) => (
-                            <tr key={index}>
-                              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 font-raleway">
-                                {nota.nombre}
-                              </td>
-                              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 font-raleway">
-                                {nota.intensidad}
-                              </td>
-                              <td className="px-4 py-2 whitespace-nowrap">
-                                <div className="flex items-center">
-                                  <div
-                                    className="h-6 w-6 rounded-full mr-2"
-                                    style={{ backgroundColor: nota.color }}
-                                  ></div>
-                                  <span className="text-sm text-gray-900 font-raleway">{nota.color}</span>
-                                </div>
-                              </td>
-                              <td className="px-4 py-2 whitespace-nowrap">
-                                <button
-                                  onClick={() => eliminarNota(index)}
-                                  className="text-red-600 hover:text-red-900 font-raleway"
-                                >
-                                  Eliminar
-                                </button>
-                              </td>
+                  {/* Sección de notas */}
+                  <div className="mb-6">
+                    <h3 className="text-lg font-bold text-[#312b2b] mb-4 font-raleway">
+                      Notas del Perfume
+                    </h3>
+                    
+                    {/* Lista de notas actuales */}
+                    {formulario.notas.length > 0 && (
+                      <div className="mb-4 overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200 mb-4">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-raleway">
+                                Nota
+                              </th>
+                              <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-raleway">
+                                Intensidad
+                              </th>
+                              <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-raleway">
+                                Color
+                              </th>
+                              <th scope="col" className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider font-raleway">
+                                Acción
+                              </th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody className="divide-y divide-gray-200">
+                            {formulario.notas.map((nota, index) => (
+                              <tr key={index}>
+                                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900 font-raleway">
+                                  {nota.nombre}
+                                </td>
+                                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500 font-raleway">
+                                  {nota.intensidad}/10
+                                </td>
+                                <td className="px-4 py-2 whitespace-nowrap">
+                                  <div className="flex items-center">
+                                    <div
+                                      className="h-5 w-5 rounded-full mr-2"
+                                      style={{ backgroundColor: nota.color }}
+                                    ></div>
+                                    <span className="text-sm text-gray-500 font-raleway">{nota.color}</span>
+                                  </div>
+                                </td>
+                                <td className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
+                                  <button
+                                    type="button"
+                                    onClick={() => eliminarNota(index)}
+                                    className="text-red-600 hover:text-red-900 font-raleway"
+                                  >
+                                    Eliminar
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                    
+                    {/* Formulario para agregar nueva nota */}
+                    <div className="bg-gray-50 p-4 rounded-md">
+                      <h4 className="text-sm font-bold text-gray-700 mb-3 font-raleway">Agregar nueva nota</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-gray-700 text-xs mb-1 font-raleway" htmlFor="notaNombre">
+                            Nombre
+                          </label>
+                          <input
+                            type="text"
+                            id="notaNombre"
+                            name="nombre"
+                            value={nuevaNota.nombre}
+                            onChange={manejarCambioNota}
+                            className="w-full border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-[#fed856] font-raleway"
+                            placeholder="Ej: Vainilla"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-gray-700 text-xs mb-1 font-raleway" htmlFor="notaIntensidad">
+                            Intensidad (1-10)
+                          </label>
+                          <input
+                            type="range"
+                            id="notaIntensidad"
+                            name="intensidad"
+                            value={nuevaNota.intensidad}
+                            onChange={manejarCambioNota}
+                            min="1"
+                            max="10"
+                            className="w-full"
+                          />
+                          <div className="text-center text-xs text-gray-500 font-raleway">
+                            {nuevaNota.intensidad}/10
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-gray-700 text-xs mb-1 font-raleway" htmlFor="notaColor">
+                            Color
+                          </label>
+                          <div className="flex items-center">
+                            <input
+                              type="color"
+                              id="notaColor"
+                              name="color"
+                              value={nuevaNota.color}
+                              onChange={manejarCambioNota}
+                              className="w-12 h-8 border border-gray-300 rounded"
+                            />
+                            <input
+                              type="text"
+                              name="color"
+                              value={nuevaNota.color}
+                              onChange={manejarCambioNota}
+                              className="ml-2 flex-1 border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-[#fed856] font-raleway"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-3 text-right">
+                        <button
+                          type="button"
+                          onClick={agregarNota}
+                          className="bg-[#312b2b] text-white px-3 py-1 rounded-md text-sm hover:bg-[#473f3f] transition-colors font-raleway"
+                        >
+                          Agregar Nota
+                        </button>
+                      </div>
                     </div>
-                  )}
-                </div>
-              </div>
-              
-              <div className="mt-8 flex justify-end space-x-4">
-                <button
-                  type="button"
-                  onClick={cerrarFormulario}
-                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors font-raleway"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  onClick={guardarProducto}
-                  className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md hover:bg-[#e5c24c] transition-colors font-raleway"
-                >
-                  Guardar
-                </button>
+                  </div>
+                  
+                  <div className="flex justify-end mt-8">
+                    <button
+                      type="button"
+                      onClick={cerrarModal}
+                      className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-4 hover:bg-gray-400 transition-colors font-raleway"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md hover:bg-[#e5c24c] transition-colors font-raleway"
+                    >
+                      {productoEditando ? 'Actualizar' : 'Crear'}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>

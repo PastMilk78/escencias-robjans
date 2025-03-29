@@ -46,13 +46,13 @@ export default function Home() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
-              <div className="h-12 w-36">
+              <Link href="/" className="h-24 w-auto">
                 <img 
                   src="/images/logo-escencias.jpg" 
                   alt="Escencias Robjan's" 
-                  className="h-full object-contain"
+                  className="h-full object-contain rounded-xl"
                 />
-              </div>
+              </Link>
             </div>
             <div className="flex items-center space-x-4">
               <a href="#contacto" className="button button-small bg-[#fed856] text-[#312b2b] hover:bg-[#e5c24c] hover:text-[#312b2b] mr-2 font-raleway">
