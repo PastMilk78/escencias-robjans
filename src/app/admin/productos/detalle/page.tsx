@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
@@ -127,7 +127,8 @@ const GraficoNotas = ({ notas }: { notas: Nota[] }) => {
   );
 };
 
-export default function DetalleProducto() {
+// Componente principal de detalle
+function DetalleProductoContent() {
   const searchParams = useSearchParams();
   const idParam = searchParams.get('id');
   const [producto, setProducto] = useState<Producto | null>(null);
@@ -222,7 +223,7 @@ export default function DetalleProducto() {
             <div className="flex items-center space-x-8">
               <Link href="/" className="h-24 w-auto">
                 <img 
-                  src="/images/logo-escencias.jpg" 
+                  src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
                   alt="Escencias Robjan&apos;s" 
                   className="h-full object-contain rounded-xl"
                 />
@@ -367,5 +368,18 @@ export default function DetalleProducto() {
         </div>
       </footer>
     </div>
+  );
+}
+
+// Componente envoltorio con Suspense
+export default function DetalleProducto() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8f1d8]">
+        <p className="text-[#312b2b] text-xl font-raleway">Cargando...</p>
+      </div>
+    }>
+      <DetalleProductoContent />
+    </Suspense>
   );
 } 
