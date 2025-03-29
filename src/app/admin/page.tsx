@@ -11,8 +11,8 @@ export default function AdminPage() {
               <Link href="/" className="h-12 w-36">
                 <img 
                   src="/images/logo-escencias.jpg" 
-                  alt="Escencias Robjan's" 
-                  className="h-full object-contain"
+                  alt="Escencias Robjan&apos;s" 
+                  className="h-full object-contain rounded-xl"
                 />
               </Link>
               <span className="text-xl text-[#fed856] font-raleway">Panel de Administración</span>

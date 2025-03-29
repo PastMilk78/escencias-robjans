@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { connectToDatabase } from "@/lib/mongodb";
-import mongoose from "mongoose";
-import ProductoModel from "@/models/Producto";
 
 // Tipo de datos para productos
 type Nota = {
@@ -97,7 +95,7 @@ export default function ProductosPage() {
               <Link href="/" className="h-24 w-auto">
                 <img 
                   src="/images/logo-escencias.jpg" 
-                  alt="Escencias Robjan's" 
+                  alt="Escencias Robjan&apos;s" 
                   className="h-full object-contain rounded-xl"
                 />
               </Link>
@@ -280,7 +278,7 @@ export default function ProductosPage() {
                   style={{ border: 0 }} 
                   allowFullScreen 
                   loading="lazy"
-                  title="Ubicación de Escencias Robjan's"
+                  title="Ubicación de Escencias Robjan&apos;s"
                 ></iframe>
               </div>
             </div>

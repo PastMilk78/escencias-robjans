@@ -223,7 +223,7 @@ export default function DetalleProducto() {
               <Link href="/" className="h-24 w-auto">
                 <img 
                   src="/images/logo-escencias.jpg" 
-                  alt="Escencias Robjan's" 
+                  alt="Escencias Robjan&apos;s" 
                   className="h-full object-contain rounded-xl"
                 />
               </Link>

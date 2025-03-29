@@ -9,8 +9,8 @@ const raleway = Raleway({
 });
 
 export const metadata: Metadata = {
-  title: "Escencias Robjan's | Tienda de Perfumes",
-  description: "Tienda online de perfumes exclusivos",
+  title: "Escencias Robjan&apos;s | Tienda de Perfumes",
+  description: "Encuentra fragancias exclusivas inspiradas en los mejores perfumes del mercado a precios accesibles.",
 };
 
 export default function RootLayout({

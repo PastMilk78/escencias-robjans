@@ -2,16 +2,33 @@ import Link from "next/link";
 import { connectToDatabase } from "@/lib/mongodb";
 import ProductoModel from "@/models/Producto";
 
+// Tipo para el producto serializado desde MongoDB
+type Producto = {
+  _id: string;
+  nombre: string;
+  categoria: string;
+  precio: number;
+  stock: number;
+  descripcion: string;
+  imagen: string;
+  inspirado_en?: string;
+  notas: {
+    nombre: string;
+    intensidad: number;
+    color: string;
+  }[];
+};
+
 // Función para obtener productos destacados
 async function getProductosDestacados() {
   try {
     await connectToDatabase();
     // Obtener 4 productos aleatorios
     const productos = await ProductoModel.aggregate([{ $sample: { size: 4 } }]);
-    return JSON.parse(JSON.stringify(productos)); // Serializar para Next.js
+    return JSON.parse(JSON.stringify(productos)) as Producto[]; // Serializar para Next.js
   } catch (error) {
     console.error("Error al obtener productos destacados:", error);
-    return [];
+    return [] as Producto[];
   }
 }
 
@@ -28,7 +45,7 @@ export default async function Home() {
               <Link href="/" className="h-24 w-auto">
                 <img 
                   src="/images/logo-escencias.jpg" 
-                  alt="Escencias Robjan's" 
+                  alt="Escencias Robjan&apos;s" 
                   className="h-full object-contain rounded-xl"
                 />
               </Link>
@@ -62,7 +79,7 @@ export default async function Home() {
             <div className="flex flex-col md:flex-row items-center">
               <div className="md:w-1/2 mb-8 md:mb-0">
                 <h1 className="text-4xl sm:text-5xl font-bold text-[#fed856] mb-4 font-raleway">
-                  Escencias Robjan's
+                  Escencias Robjan&apos;s
                 </h1>
                 <p className="text-xl text-[#f8f1d8] mb-8 font-raleway">
                   Descubre fragancias exclusivas inspiradas en los mejores perfumes del mercado a precios accesibles.
@@ -94,7 +111,7 @@ export default async function Home() {
               Productos Destacados
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {productosDestacados.map((producto) => (
+              {productosDestacados.map((producto: Producto) => (
                 <div key={producto._id} className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-[#fed856]">
                   <div className="h-48 bg-[#473f3f] flex items-center justify-center overflow-hidden">
                     {producto.imagen && producto.imagen.startsWith("data:") ? (
@@ -217,7 +234,7 @@ export default async function Home() {
                     style={{ border: 0 }} 
                     allowFullScreen 
                     loading="lazy"
-                    title="Ubicación de Escencias Robjan's"
+                    title="Ubicación de Escencias Robjan&apos;s"
                   ></iframe>
                 </div>
               </div>
