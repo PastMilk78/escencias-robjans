@@ -193,10 +193,10 @@ export default async function Home() {
                           ${producto.precio.toFixed(2)}
                         </span>
                         <Link
-                          href={`/productos/${producto._id}`}
+                          href={`/productos`}
                           className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md hover:bg-[#e5c24c] transition-colors font-raleway"
                         >
-                          Ver Detalles
+                          Ver Productos
                         </Link>
                       </div>
                     </div>

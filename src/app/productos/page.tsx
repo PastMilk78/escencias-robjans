@@ -23,6 +23,12 @@ type Producto = {
   notas: Nota[];
 };
 
+// Tipo para items del carrito
+type ItemCarrito = {
+  producto: Producto;
+  cantidad: number;
+};
+
 export default function ProductosPage() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [cargando, setCargando] = useState<boolean>(true);
@@ -31,6 +37,9 @@ export default function ProductosPage() {
   const [ordenSeleccionado, setOrdenSeleccionado] = useState("nombreAsc");
   const [productoSeleccionado, setProductoSeleccionado] = useState<Producto | null>(null);
   const [modalAbierto, setModalAbierto] = useState(false);
+  const [cantidadSeleccionada, setCantidadSeleccionada] = useState(1);
+  const [carrito, setCarrito] = useState<ItemCarrito[]>([]);
+  const [mensajeCarrito, setMensajeCarrito] = useState<string | null>(null);
   
   // Cargar productos desde MongoDB
   const cargarProductos = async () => {
@@ -122,12 +131,29 @@ export default function ProductosPage() {
   // Cargar productos al montar el componente
   useEffect(() => {
     cargarProductos();
+    
+    // Recuperar carrito del localStorage si existe
+    const carritoGuardado = localStorage.getItem('carrito');
+    if (carritoGuardado) {
+      try {
+        setCarrito(JSON.parse(carritoGuardado));
+      } catch (e) {
+        console.error('Error al cargar el carrito:', e);
+        localStorage.removeItem('carrito');
+      }
+    }
   }, []);
+  
+  // Guardar carrito en localStorage cuando cambie
+  useEffect(() => {
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+  }, [carrito]);
   
   // Función para abrir el modal con los detalles del producto
   const abrirDetallesProducto = (producto: Producto) => {
     setProductoSeleccionado(producto);
     setModalAbierto(true);
+    setCantidadSeleccionada(1);
     // Prevenir scroll del body cuando el modal está abierto
     document.body.style.overflow = 'hidden';
     
@@ -151,8 +177,43 @@ export default function ProductosPage() {
   const cerrarModal = () => {
     setModalAbierto(false);
     setProductoSeleccionado(null);
+    setCantidadSeleccionada(1);
     // Restaurar scroll del body
     document.body.style.overflow = 'auto';
+  };
+  
+  // Función para añadir al carrito
+  const añadirAlCarrito = (producto: Producto, cantidad: number) => {
+    // Verificar si el producto ya está en el carrito
+    const itemExistente = carrito.find(item => item.producto._id === producto._id);
+    
+    if (itemExistente) {
+      // Actualizar cantidad del item existente
+      setCarrito(carrito.map(item => 
+        item.producto._id === producto._id 
+          ? { ...item, cantidad: item.cantidad + cantidad } 
+          : item
+      ));
+    } else {
+      // Añadir nuevo item al carrito
+      setCarrito([...carrito, { producto, cantidad }]);
+    }
+    
+    // Mostrar mensaje de confirmación
+    setMensajeCarrito(`${producto.nombre} añadido al carrito`);
+    setTimeout(() => {
+      setMensajeCarrito(null);
+    }, 3000);
+    
+    // Si estamos en el modal, cerrarlo
+    if (modalAbierto) {
+      cerrarModal();
+    }
+  };
+  
+  // Manejar cambio en la cantidad seleccionada
+  const handleCantidadChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCantidadSeleccionada(parseInt(e.target.value));
   };
   
   // Filtrar productos por categoría
@@ -186,6 +247,9 @@ export default function ProductosPage() {
   
   const categorias = ['Todas', 'Mujer', 'Hombre', 'Unisex'];
   
+  // Calcular total de items en el carrito
+  const totalItemsCarrito = carrito.reduce((total, item) => total + item.cantidad, 0);
+  
   return (
     <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
       {/* Barra de navegación */}
@@ -210,11 +274,18 @@ export default function ProductosPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </button>
-              <button className="text-[#fed856] hover:text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-              </button>
+              <div className="relative">
+                <button className="text-[#fed856] hover:text-white flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  </svg>
+                  {totalItemsCarrito > 0 && (
+                    <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center absolute -top-2 -right-2">
+                      {totalItemsCarrito}
+                    </span>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </nav>
@@ -320,7 +391,10 @@ export default function ProductosPage() {
                         >
                           Ver detalles
                         </button>
-                        <button className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md text-sm hover:bg-[#e5c24c] transition-colors border border-[#fed856] font-raleway">
+                        <button 
+                          onClick={() => añadirAlCarrito(producto, 1)}
+                          className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md text-sm hover:bg-[#e5c24c] transition-colors border border-[#fed856] font-raleway"
+                        >
                           Añadir al carrito
                         </button>
                       </div>
@@ -503,6 +577,8 @@ export default function ProductosPage() {
                       <select
                         id="cantidad"
                         className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                        value={cantidadSeleccionada}
+                        onChange={handleCantidadChange}
                       >
                         {[...Array(10)].map((_, i) => (
                           <option key={i} value={i + 1}>{i + 1}</option>
@@ -510,6 +586,7 @@ export default function ProductosPage() {
                       </select>
                     </div>
                     <button
+                      onClick={() => añadirAlCarrito(productoSeleccionado, cantidadSeleccionada)}
                       className="w-full sm:w-auto bg-[#fed856] text-[#312b2b] px-6 py-3 rounded-md font-bold hover:bg-[#e5c24c] transition-colors font-raleway"
                     >
                       Añadir al Carrito
@@ -525,6 +602,13 @@ export default function ProductosPage() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+      
+      {/* Mensaje de confirmación de carrito */}
+      {mensajeCarrito && (
+        <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50 font-raleway">
+          {mensajeCarrito}
         </div>
       )}
     </div>

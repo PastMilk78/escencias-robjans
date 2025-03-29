@@ -22,6 +22,12 @@ type Producto = {
   notas: Nota[];
 };
 
+// Tipo para items del carrito
+type ItemCarrito = {
+  producto: Producto;
+  cantidad: number;
+};
+
 // Productos fijos de referencia por si falla la conexión
 const productosFijos = [
   {
@@ -89,6 +95,9 @@ export default function DetalleProductoPage() {
   const [producto, setProducto] = useState<Producto | null>(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [cantidadSeleccionada, setCantidadSeleccionada] = useState(1);
+  const [carrito, setCarrito] = useState<ItemCarrito[]>([]);
+  const [mensajeCarrito, setMensajeCarrito] = useState<string | null>(null);
   
   useEffect(() => {
     const obtenerProducto = async () => {
@@ -123,7 +132,70 @@ export default function DetalleProductoPage() {
     };
     
     obtenerProducto();
-  }, [id]);
+    
+    // Recuperar carrito del localStorage si existe
+    const carritoGuardado = localStorage.getItem('carrito');
+    if (carritoGuardado) {
+      try {
+        setCarrito(JSON.parse(carritoGuardado));
+      } catch (e) {
+        console.error('Error al cargar el carrito:', e);
+        localStorage.removeItem('carrito');
+      }
+    }
+    
+    // Agregar la animación para las barras
+    if (!cargando && producto) {
+      setTimeout(() => {
+        const barras = document.querySelectorAll('.barra-animada');
+        barras.forEach((barra: Element) => {
+          const elemento = barra as HTMLElement;
+          elemento.style.width = '0%';
+          setTimeout(() => {
+            elemento.style.transition = 'width 1.5s ease-out';
+            elemento.style.width = `${parseInt(elemento.style.width || '0') * 10}%`;
+          }, 100);
+        });
+      }, 300);
+    }
+  }, [id, cargando, producto]);
+  
+  // Guardar carrito en localStorage cuando cambie
+  useEffect(() => {
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+  }, [carrito]);
+  
+  // Manejar cambio en la cantidad seleccionada
+  const handleCantidadChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCantidadSeleccionada(parseInt(e.target.value));
+  };
+  
+  // Función para añadir al carrito
+  const añadirAlCarrito = (producto: Producto, cantidad: number) => {
+    // Verificar si el producto ya está en el carrito
+    const itemExistente = carrito.find(item => item.producto._id === producto._id);
+    
+    if (itemExistente) {
+      // Actualizar cantidad del item existente
+      setCarrito(carrito.map(item => 
+        item.producto._id === producto._id 
+          ? { ...item, cantidad: item.cantidad + cantidad } 
+          : item
+      ));
+    } else {
+      // Añadir nuevo item al carrito
+      setCarrito([...carrito, { producto, cantidad }]);
+    }
+    
+    // Mostrar mensaje de confirmación
+    setMensajeCarrito(`${producto.nombre} añadido al carrito`);
+    setTimeout(() => {
+      setMensajeCarrito(null);
+    }, 3000);
+  };
+  
+  // Calcular total de items en el carrito
+  const totalItemsCarrito = carrito.reduce((total, item) => total + item.cantidad, 0);
   
   if (cargando) {
     return (
@@ -144,6 +216,18 @@ export default function DetalleProductoPage() {
                 <Link href="/productos" className="text-[#fed856] hover:text-white font-raleway">
                   Volver al Catálogo
                 </Link>
+                <div className="relative">
+                  <button className="text-[#fed856] hover:text-white flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    {totalItemsCarrito > 0 && (
+                      <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center absolute -top-2 -right-2">
+                        {totalItemsCarrito}
+                      </span>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </nav>
@@ -179,6 +263,18 @@ export default function DetalleProductoPage() {
                 <Link href="/productos" className="text-[#fed856] hover:text-white font-raleway">
                   Volver al Catálogo
                 </Link>
+                <div className="relative">
+                  <button className="text-[#fed856] hover:text-white flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    {totalItemsCarrito > 0 && (
+                      <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center absolute -top-2 -right-2">
+                        {totalItemsCarrito}
+                      </span>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </nav>
@@ -220,6 +316,18 @@ export default function DetalleProductoPage() {
                 <Link href="/productos" className="text-[#fed856] hover:text-white font-raleway">
                   Volver al Catálogo
                 </Link>
+                <div className="relative">
+                  <button className="text-[#fed856] hover:text-white flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    {totalItemsCarrito > 0 && (
+                      <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center absolute -top-2 -right-2">
+                        {totalItemsCarrito}
+                      </span>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </nav>
@@ -260,6 +368,18 @@ export default function DetalleProductoPage() {
               <Link href="/productos" className="text-[#fed856] hover:text-white font-raleway">
                 Volver al Catálogo
               </Link>
+              <div className="relative">
+                <button className="text-[#fed856] hover:text-white flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  </svg>
+                  {totalItemsCarrito > 0 && (
+                    <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center absolute -top-2 -right-2">
+                      {totalItemsCarrito}
+                    </span>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </nav>
@@ -302,14 +422,24 @@ export default function DetalleProductoPage() {
                 
                 <div className="mb-8">
                   <h2 className="text-xl font-bold text-[#312b2b] mb-3 font-raleway">Notas de Fragancia</h2>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="space-y-6">
                     {producto.notas.map((nota, index) => (
-                      <div 
-                        key={index}
-                        className="flex items-center px-3 py-1 rounded-full text-white font-medium text-sm"
-                        style={{backgroundColor: nota.color || '#000'}}
-                      >
-                        <span className="font-raleway">{nota.nombre} ({nota.intensidad})</span>
+                      <div key={index} className="mb-4">
+                        <div className="flex justify-between mb-2">
+                          <span className="font-raleway text-lg font-medium">{nota.nombre}</span>
+                          <span className="font-raleway bg-[#312b2b] text-white px-2 py-1 rounded-full text-xs">{nota.intensidad}/10</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-8 relative overflow-hidden">
+                          <div 
+                            className="h-8 rounded-full barra-animada flex items-center justify-end pr-3" 
+                            style={{
+                              width: `${nota.intensidad * 10}%`,
+                              backgroundColor: nota.color || '#000'
+                            }}
+                          >
+                            <span className="text-white font-medium text-sm">{nota.nombre}</span>
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -321,6 +451,8 @@ export default function DetalleProductoPage() {
                     <select
                       id="cantidad"
                       className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                      value={cantidadSeleccionada}
+                      onChange={handleCantidadChange}
                     >
                       {[...Array(10)].map((_, i) => (
                         <option key={i} value={i + 1}>{i + 1}</option>
@@ -328,6 +460,7 @@ export default function DetalleProductoPage() {
                     </select>
                   </div>
                   <button
+                    onClick={() => añadirAlCarrito(producto, cantidadSeleccionada)}
                     className="w-full sm:w-auto bg-[#fed856] text-[#312b2b] px-6 py-3 rounded-md font-bold hover:bg-[#e5c24c] transition-colors font-raleway"
                   >
                     Añadir al Carrito
@@ -352,6 +485,13 @@ export default function DetalleProductoPage() {
           </p>
         </div>
       </footer>
+      
+      {/* Mensaje de confirmación de carrito */}
+      {mensajeCarrito && (
+        <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50 font-raleway">
+          {mensajeCarrito}
+        </div>
+      )}
     </div>
   );
 } 
