@@ -201,7 +201,7 @@ export default function ProductosAdminPage() {
   
   // Manejar cambio en la nota
   const manejarCambioNota = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
     
     // Convertir a número si es intensidad
     if (name === 'intensidad') {

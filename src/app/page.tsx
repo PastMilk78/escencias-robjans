@@ -2,42 +2,6 @@
 
 import Link from "next/link";
 
-// Datos de ejemplo para los productos
-const productos = [
-  {
-    id: 1,
-    nombre: "Aroma Celestial",
-    categoria: "Mujer",
-    precio: 69.99,
-    descripcion: "Una fragancia floral con notas de jazmín y rosa.",
-    imagen: "/placeholder.jpg"
-  },
-  {
-    id: 2,
-    nombre: "Bosque Místico",
-    categoria: "Hombre",
-    precio: 74.99,
-    descripcion: "Aroma amaderado con toques de sándalo y cedro.",
-    imagen: "/placeholder.jpg"
-  },
-  {
-    id: 3,
-    nombre: "Brisa Marina",
-    categoria: "Unisex",
-    precio: 79.99,
-    descripcion: "Fragancia fresca con notas de cítricos y sal marina.",
-    imagen: "/placeholder.jpg"
-  },
-  {
-    id: 4,
-    nombre: "Pasión Nocturna",
-    categoria: "Mujer",
-    precio: 84.99,
-    descripcion: "Aroma sensual con vainilla y ámbar.",
-    imagen: "/placeholder.jpg"
-  }
-];
-
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
