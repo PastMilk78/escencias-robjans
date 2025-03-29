@@ -14,15 +14,24 @@ export const connectToDatabase = async () => {
     throw new Error('MONGODB_URI no está definido en las variables de entorno');
   }
 
-  console.log('Intentando conectar a MongoDB con URI:', process.env.MONGODB_URI);
-  
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    // Verificar si la URI existe antes de conectar
+    const uri = process.env.MONGODB_URI;
+    console.log('Intentando conectar a MongoDB. URI existe:', !!uri);
+    
+    // Agregar opciones de conexión para mayor estabilidad
+    const options = {
+      serverSelectionTimeoutMS: 5000,
+      maxPoolSize: 10,
+      connectTimeoutMS: 10000
+    };
+    
+    await mongoose.connect(uri, options);
     isConnected = true;
     console.log('Conexión a MongoDB establecida correctamente');
   } catch (error) {
     console.error('Error al conectar con MongoDB:', error);
-    throw new Error('No se pudo conectar a la base de datos');
+    throw new Error(`Error de conexión a MongoDB: ${error instanceof Error ? error.message : 'Error desconocido'}`);
   }
 };
 

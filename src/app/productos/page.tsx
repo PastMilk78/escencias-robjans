@@ -36,12 +36,10 @@ export default function ProductosPage() {
     setError(null);
     
     try {
-      // Conectar a la base de datos
-      await connectToDatabase();
-      
       // Utilizar el modelo importado
       // Nota: Esto servirá en el servidor (SSR), pero para cliente necesitamos usar la API
       const data = await fetch('/api/productos');
+      
       if (!data.ok) {
         throw new Error('Error al cargar productos desde la API');
       }
@@ -51,6 +49,69 @@ export default function ProductosPage() {
     } catch (err: Error | unknown) {
       console.error('Error al obtener productos:', err);
       setError(err instanceof Error ? err.message : 'Error al cargar productos');
+      
+      // Cargar productos fijos cuando hay error
+      setProductos([
+        {
+          _id: "producto1",
+          nombre: "Aroma Intenso",
+          categoria: "Mujer",
+          precio: 299.99,
+          stock: 25,
+          descripcion: "Una fragancia intensa inspirada en los perfumes más exclusivos. Con notas predominantes de vainilla y frutos rojos.",
+          imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
+          inspirado_en: "One Million",
+          notas: [
+            { nombre: "Vainilla", intensidad: 8, color: "#F3E5AB" },
+            { nombre: "Frutos Rojos", intensidad: 7, color: "#C41E3A" }
+          ]
+        },
+        {
+          _id: "producto2",
+          nombre: "Esencia Fresca",
+          categoria: "Hombre",
+          precio: 249.99,
+          stock: 30,
+          descripcion: "Fragancia fresca y duradera con notas cítricas y amaderadas. Ideal para el uso diario.",
+          imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
+          inspirado_en: "Acqua di Gio",
+          notas: [
+            { nombre: "Cítrico", intensidad: 9, color: "#FFD700" },
+            { nombre: "Madera", intensidad: 6, color: "#8B4513" }
+          ]
+        },
+        {
+          _id: "producto3",
+          nombre: "Aroma Seductor",
+          categoria: "Mujer",
+          precio: 279.99,
+          stock: 20,
+          descripcion: "Una fragancia seductora con notas florales y especiadas. Perfecta para ocasiones especiales.",
+          imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
+          inspirado_en: "Coco Mademoiselle",
+          notas: [
+            { nombre: "Flores", intensidad: 7, color: "#FFC0CB" },
+            { nombre: "Especias", intensidad: 8, color: "#8B4513" }
+          ]
+        },
+        {
+          _id: "producto4",
+          nombre: "Perfume Elegante",
+          categoria: "Unisex",
+          precio: 349.99,
+          stock: 15,
+          descripcion: "Una mezcla elegante y sofisticada con notas amaderadas y almizcle. Perfecto para cualquier ocasión.",
+          imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
+          inspirado_en: "CK One",
+          notas: [
+            { nombre: "Almizcle", intensidad: 6, color: "#D3D3D3" },
+            { nombre: "Madera", intensidad: 7, color: "#8B4513" }
+          ]
+        }
+      ]);
+      
+      // Cambiar el mensaje de error para que sea más amigable
+      setError("No se pudo conectar a la base de datos. Mostrando productos de demostración.");
     } finally {
       setCargando(false);
     }
@@ -94,7 +155,7 @@ export default function ProductosPage() {
             <div className="flex items-center">
               <Link href="/" className="h-24 w-auto">
                 <img 
-                  src="/images/logo-escencias.jpg" 
+                  src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
                   alt="Escencias Robjan&apos;s" 
                   className="h-full object-contain rounded-xl"
                 />

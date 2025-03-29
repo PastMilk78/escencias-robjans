@@ -1,0 +1,357 @@
+"use client";
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+
+type Nota = {
+  nombre: string;
+  intensidad: number;
+  color: string;
+};
+
+type Producto = {
+  _id: string;
+  nombre: string;
+  categoria: string;
+  precio: number;
+  stock: number;
+  descripcion: string;
+  imagen: string;
+  inspirado_en: string;
+  notas: Nota[];
+};
+
+// Productos fijos de referencia por si falla la conexión
+const productosFijos = [
+  {
+    _id: "producto1",
+    nombre: "Aroma Intenso",
+    categoria: "Mujer",
+    precio: 299.99,
+    stock: 25,
+    descripcion: "Una fragancia intensa inspirada en los perfumes más exclusivos. Con notas predominantes de vainilla y frutos rojos.",
+    imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
+    inspirado_en: "One Million",
+    notas: [
+      { nombre: "Vainilla", intensidad: 8, color: "#F3E5AB" },
+      { nombre: "Frutos Rojos", intensidad: 7, color: "#C41E3A" }
+    ]
+  },
+  {
+    _id: "producto2",
+    nombre: "Esencia Fresca",
+    categoria: "Hombre",
+    precio: 249.99,
+    stock: 30,
+    descripcion: "Fragancia fresca y duradera con notas cítricas y amaderadas. Ideal para el uso diario.",
+    imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
+    inspirado_en: "Acqua di Gio",
+    notas: [
+      { nombre: "Cítrico", intensidad: 9, color: "#FFD700" },
+      { nombre: "Madera", intensidad: 6, color: "#8B4513" }
+    ]
+  },
+  {
+    _id: "producto3",
+    nombre: "Aroma Seductor",
+    categoria: "Mujer",
+    precio: 279.99,
+    stock: 20,
+    descripcion: "Una fragancia seductora con notas florales y especiadas. Perfecta para ocasiones especiales.",
+    imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
+    inspirado_en: "Coco Mademoiselle",
+    notas: [
+      { nombre: "Flores", intensidad: 7, color: "#FFC0CB" },
+      { nombre: "Especias", intensidad: 8, color: "#8B4513" }
+    ]
+  },
+  {
+    _id: "producto4",
+    nombre: "Perfume Elegante",
+    categoria: "Unisex",
+    precio: 349.99,
+    stock: 15,
+    descripcion: "Una mezcla elegante y sofisticada con notas amaderadas y almizcle. Perfecto para cualquier ocasión.",
+    imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
+    inspirado_en: "CK One",
+    notas: [
+      { nombre: "Almizcle", intensidad: 6, color: "#D3D3D3" },
+      { nombre: "Madera", intensidad: 7, color: "#8B4513" }
+    ]
+  }
+];
+
+export default function DetalleProductoPage() {
+  const params = useParams();
+  const id = params.id as string;
+  
+  const [producto, setProducto] = useState<Producto | null>(null);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const obtenerProducto = async () => {
+      setCargando(true);
+      setError(null);
+      
+      try {
+        // Primero intentamos obtener el producto de la API
+        const respuesta = await fetch(`/api/productos/${id}`);
+        
+        if (!respuesta.ok) {
+          throw new Error('No se pudo cargar el producto');
+        }
+        
+        const datos = await respuesta.json();
+        setProducto(datos.producto);
+      } catch (err) {
+        console.error('Error al obtener el producto:', err);
+        
+        // Si falla, buscamos el producto en los productos fijos
+        const productoFijo = productosFijos.find(p => p._id === id);
+        
+        if (productoFijo) {
+          setProducto(productoFijo);
+          setError("No se pudo conectar a la base de datos. Mostrando datos de demostración.");
+        } else {
+          setError("No se encontró el producto solicitado.");
+        }
+      } finally {
+        setCargando(false);
+      }
+    };
+    
+    obtenerProducto();
+  }, [id]);
+  
+  if (cargando) {
+    return (
+      <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
+        <header className="bg-[#312b2b] shadow-md">
+          <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center">
+                <Link href="/" className="h-24 w-auto">
+                  <img 
+                    src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
+                    alt="Escencias Robjan&apos;s" 
+                    className="h-full object-contain rounded-xl"
+                  />
+                </Link>
+              </div>
+              <div className="flex items-center space-x-4">
+                <Link href="/productos" className="text-[#fed856] hover:text-white font-raleway">
+                  Volver al Catálogo
+                </Link>
+              </div>
+            </div>
+          </nav>
+        </header>
+        
+        <main className="flex-grow">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="text-center">
+              <p className="text-lg text-[#312b2b] font-raleway">Cargando detalles del producto...</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+  
+  if (error && !producto) {
+    return (
+      <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
+        <header className="bg-[#312b2b] shadow-md">
+          <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center">
+                <Link href="/" className="h-24 w-auto">
+                  <img 
+                    src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
+                    alt="Escencias Robjan&apos;s" 
+                    className="h-full object-contain rounded-xl"
+                  />
+                </Link>
+              </div>
+              <div className="flex items-center space-x-4">
+                <Link href="/productos" className="text-[#fed856] hover:text-white font-raleway">
+                  Volver al Catálogo
+                </Link>
+              </div>
+            </div>
+          </nav>
+        </header>
+        
+        <main className="flex-grow">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+              <p className="font-raleway">{error}</p>
+              <Link 
+                href="/productos"
+                className="mt-4 inline-block bg-[#312b2b] text-white px-4 py-2 rounded-md hover:bg-[#473f3f] font-raleway"
+              >
+                Volver al Catálogo
+              </Link>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+  
+  if (!producto) {
+    return (
+      <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
+        <header className="bg-[#312b2b] shadow-md">
+          <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center">
+                <Link href="/" className="h-24 w-auto">
+                  <img 
+                    src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
+                    alt="Escencias Robjan&apos;s" 
+                    className="h-full object-contain rounded-xl"
+                  />
+                </Link>
+              </div>
+              <div className="flex items-center space-x-4">
+                <Link href="/productos" className="text-[#fed856] hover:text-white font-raleway">
+                  Volver al Catálogo
+                </Link>
+              </div>
+            </div>
+          </nav>
+        </header>
+        
+        <main className="flex-grow">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="text-center">
+              <p className="text-lg text-[#312b2b] font-raleway">No se encontró el producto solicitado.</p>
+              <Link 
+                href="/productos"
+                className="mt-4 inline-block bg-[#312b2b] text-white px-4 py-2 rounded-md hover:bg-[#473f3f] font-raleway"
+              >
+                Volver al Catálogo
+              </Link>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
+      <header className="bg-[#312b2b] shadow-md">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <Link href="/" className="h-24 w-auto">
+                <img 
+                  src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
+                  alt="Escencias Robjan&apos;s" 
+                  className="h-full object-contain rounded-xl"
+                />
+              </Link>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Link href="/productos" className="text-[#fed856] hover:text-white font-raleway">
+                Volver al Catálogo
+              </Link>
+            </div>
+          </div>
+        </nav>
+      </header>
+      
+      <main className="flex-grow">
+        {error && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+            <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-6">
+              <p className="font-raleway">{error}</p>
+            </div>
+          </div>
+        )}
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="md:flex">
+              <div className="md:w-1/3 bg-[#473f3f] flex items-center justify-center">
+                <img
+                  src={producto.imagen || "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg"}
+                  alt={producto.nombre}
+                  className="w-full h-auto max-h-[500px] object-cover"
+                />
+              </div>
+              <div className="md:w-2/3 p-8">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h1 className="text-3xl font-bold text-[#312b2b] font-raleway">{producto.nombre}</h1>
+                    <p className="text-gray-600 font-raleway">Categoría: {producto.categoria}</p>
+                  </div>
+                  <span className="text-2xl font-bold text-[#312b2b] font-raleway">${producto.precio.toFixed(2)}</span>
+                </div>
+                
+                <div className="mb-6">
+                  <p className="text-gray-700 font-raleway mb-4">{producto.descripcion}</p>
+                  <p className="text-gray-700 font-raleway">
+                    <span className="font-semibold">Inspirado en:</span> {producto.inspirado_en}
+                  </p>
+                </div>
+                
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold text-[#312b2b] mb-3 font-raleway">Notas de Fragancia</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {producto.notas.map((nota, index) => (
+                      <div 
+                        key={index}
+                        className="flex items-center px-3 py-1 rounded-full text-white font-medium text-sm"
+                        style={{backgroundColor: nota.color || '#000'}}
+                      >
+                        <span className="font-raleway">{nota.nombre} ({nota.intensidad})</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row items-center">
+                  <div className="mb-4 sm:mb-0 sm:mr-4">
+                    <label htmlFor="cantidad" className="block text-sm font-medium text-gray-700 mb-1 font-raleway">Cantidad</label>
+                    <select
+                      id="cantidad"
+                      className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                    >
+                      {[...Array(10)].map((_, i) => (
+                        <option key={i} value={i + 1}>{i + 1}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <button
+                    className="w-full sm:w-auto bg-[#fed856] text-[#312b2b] px-6 py-3 rounded-md font-bold hover:bg-[#e5c24c] transition-colors font-raleway"
+                  >
+                    Añadir al Carrito
+                  </button>
+                </div>
+                
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <p className="text-gray-600 font-raleway">
+                    <span className="font-semibold">Disponibilidad:</span> {producto.stock > 0 ? `${producto.stock} unidades en stock` : 'Agotado'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <footer className="bg-[#312b2b] text-white py-8 mt-auto border-t-2 border-[#fed856]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-[#f8f1d8] font-raleway">
+            &copy; {new Date().getFullYear()} Escencias Robjan&apos;s. Todos los derechos reservados.
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+} 
