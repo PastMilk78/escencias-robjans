@@ -2,17 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import Producto from '@/models/Producto';
 import mongoose from 'mongoose';
-
-type RouteSegmentProps = {
-  params: {
-    id: string;
-  };
-};
+import { RouteSegmentProps, ProductoParams } from '@/types/api';
 
 // GET para obtener un producto por ID
 export async function GET(
   request: NextRequest,
-  context: RouteSegmentProps
+  context: RouteSegmentProps<ProductoParams>
 ) {
   try {
     await connectToDatabase();
@@ -47,7 +42,7 @@ export async function GET(
 // PUT para actualizar un producto por ID
 export async function PUT(
   request: NextRequest,
-  context: RouteSegmentProps
+  context: RouteSegmentProps<ProductoParams>
 ) {
   try {
     const body = await request.json();
@@ -95,7 +90,7 @@ export async function PUT(
 // DELETE para eliminar un producto por ID
 export async function DELETE(
   request: NextRequest,
-  context: RouteSegmentProps
+  context: RouteSegmentProps<ProductoParams>
 ) {
   try {
     await connectToDatabase();
