@@ -15,14 +15,6 @@ export function middleware(request: NextRequest) {
     
     // Si no hay cookie o la cookie no es válida, redirigir al login
     if (!authCookie || authCookie.value !== 'true') {
-      // Verificar si es un intento de login
-      if (pathname === '/admin/login' && request.method === 'POST') {
-        const formData = request.formData();
-        
-        // Esta parte se procesará en la ruta api/admin/login
-        return NextResponse.next();
-      }
-      
       // Permitir acceso a la página de login
       if (pathname === '/admin/login') {
         return NextResponse.next();

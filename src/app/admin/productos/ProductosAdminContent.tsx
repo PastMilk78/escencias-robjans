@@ -547,6 +547,83 @@ export default function ProductosAdminContent() {
                         required
                       />
                     </div>
+                    
+                    {/* Nueva sección para notas */}
+                    <div className="md:col-span-2 mt-4">
+                      <h3 className="text-lg font-semibold mb-3 text-[#312b2b] font-raleway">Notas del Perfume</h3>
+                      <div className="mb-4 p-4 bg-gray-50 rounded-md">
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {formulario.notas.map((nota, index) => (
+                            <div 
+                              key={index}
+                              className="flex items-center bg-[#312b2b] text-white px-3 py-1 rounded-full"
+                              style={{backgroundColor: nota.color}}
+                            >
+                              <span className="mr-2 font-raleway">{nota.nombre} ({nota.intensidad})</span>
+                              <button 
+                                type="button" 
+                                onClick={() => eliminarNota(index)}
+                                className="text-white hover:text-red-300"
+                              >
+                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          <div>
+                            <label className="block text-gray-700 text-sm font-bold mb-1 font-raleway" htmlFor="nota-nombre">Nombre</label>
+                            <input
+                              type="text"
+                              id="nota-nombre"
+                              name="nombre"
+                              value={nuevaNota.nombre}
+                              onChange={manejarCambioNota}
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm font-raleway"
+                              placeholder="Ej: Vainilla, Frutos rojos"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-gray-700 text-sm font-bold mb-1 font-raleway" htmlFor="nota-intensidad">
+                              Intensidad (1-10)
+                            </label>
+                            <input
+                              type="range"
+                              id="nota-intensidad"
+                              name="intensidad"
+                              min="1"
+                              max="10"
+                              value={nuevaNota.intensidad}
+                              onChange={manejarCambioNota}
+                              className="w-full"
+                            />
+                            <div className="text-center text-sm">{nuevaNota.intensidad}</div>
+                          </div>
+                          <div>
+                            <label className="block text-gray-700 text-sm font-bold mb-1 font-raleway" htmlFor="nota-color">Color</label>
+                            <input
+                              type="color"
+                              id="nota-color"
+                              name="color"
+                              value={nuevaNota.color}
+                              onChange={manejarCambioNota}
+                              className="w-full h-9 border border-gray-300 rounded-md cursor-pointer"
+                            />
+                          </div>
+                        </div>
+                        
+                        <button
+                          type="button"
+                          onClick={agregarNota}
+                          className="mt-3 bg-[#312b2b] text-white px-3 py-1 rounded-md text-sm hover:bg-[#473f3f] transition-colors font-raleway"
+                        >
+                          Agregar Nota
+                        </button>
+                      </div>
+                    </div>
                   </div>
                   
                   {/* Botones del formulario */}
