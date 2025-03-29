@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import CartIcon from '@/app/components/CartIcon';
 
 type Nota = {
   nombre: string;
@@ -96,8 +97,6 @@ export default function DetalleProductoPage() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cantidadSeleccionada, setCantidadSeleccionada] = useState(1);
-  const [carrito, setCarrito] = useState<ItemCarrito[]>([]);
-  const [mensajeCarrito, setMensajeCarrito] = useState<string | null>(null);
   
   useEffect(() => {
     const obtenerProducto = async () => {
@@ -133,17 +132,6 @@ export default function DetalleProductoPage() {
     
     obtenerProducto();
     
-    // Recuperar carrito del localStorage si existe
-    const carritoGuardado = localStorage.getItem('carrito');
-    if (carritoGuardado) {
-      try {
-        setCarrito(JSON.parse(carritoGuardado));
-      } catch (e) {
-        console.error('Error al cargar el carrito:', e);
-        localStorage.removeItem('carrito');
-      }
-    }
-    
     // Agregar la animación para las barras
     if (!cargando && producto) {
       setTimeout(() => {
@@ -160,42 +148,19 @@ export default function DetalleProductoPage() {
     }
   }, [id, cargando, producto]);
   
-  // Guardar carrito en localStorage cuando cambie
-  useEffect(() => {
-    localStorage.setItem('carrito', JSON.stringify(carrito));
-  }, [carrito]);
-  
   // Manejar cambio en la cantidad seleccionada
   const handleCantidadChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCantidadSeleccionada(parseInt(e.target.value));
   };
   
-  // Función para añadir al carrito
+  // Añadir producto al carrito usando evento personalizado
   const añadirAlCarrito = (producto: Producto, cantidad: number) => {
-    // Verificar si el producto ya está en el carrito
-    const itemExistente = carrito.find(item => item.producto._id === producto._id);
-    
-    if (itemExistente) {
-      // Actualizar cantidad del item existente
-      setCarrito(carrito.map(item => 
-        item.producto._id === producto._id 
-          ? { ...item, cantidad: item.cantidad + cantidad } 
-          : item
-      ));
-    } else {
-      // Añadir nuevo item al carrito
-      setCarrito([...carrito, { producto, cantidad }]);
-    }
-    
-    // Mostrar mensaje de confirmación
-    setMensajeCarrito(`${producto.nombre} añadido al carrito`);
-    setTimeout(() => {
-      setMensajeCarrito(null);
-    }, 3000);
+    // Crear un evento personalizado para añadir al carrito
+    const event = new CustomEvent('add-to-cart', {
+      detail: { producto, cantidad }
+    });
+    window.dispatchEvent(event);
   };
-  
-  // Calcular total de items en el carrito
-  const totalItemsCarrito = carrito.reduce((total, item) => total + item.cantidad, 0);
   
   if (cargando) {
     return (
@@ -207,7 +172,7 @@ export default function DetalleProductoPage() {
                 <Link href="/" className="h-24 w-auto">
                   <img 
                     src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
-                    alt="Escencias Robjan&apos;s" 
+                    alt="Escencias Robjans" 
                     className="h-full object-contain rounded-xl"
                   />
                 </Link>
@@ -216,18 +181,7 @@ export default function DetalleProductoPage() {
                 <Link href="/productos" className="text-[#fed856] hover:text-white font-raleway">
                   Volver al Catálogo
                 </Link>
-                <div className="relative">
-                  <button className="text-[#fed856] hover:text-white flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                    </svg>
-                    {totalItemsCarrito > 0 && (
-                      <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center absolute -top-2 -right-2">
-                        {totalItemsCarrito}
-                      </span>
-                    )}
-                  </button>
-                </div>
+                <CartIcon />
               </div>
             </div>
           </nav>
@@ -254,7 +208,7 @@ export default function DetalleProductoPage() {
                 <Link href="/" className="h-24 w-auto">
                   <img 
                     src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
-                    alt="Escencias Robjan&apos;s" 
+                    alt="Escencias Robjans" 
                     className="h-full object-contain rounded-xl"
                   />
                 </Link>
@@ -263,18 +217,7 @@ export default function DetalleProductoPage() {
                 <Link href="/productos" className="text-[#fed856] hover:text-white font-raleway">
                   Volver al Catálogo
                 </Link>
-                <div className="relative">
-                  <button className="text-[#fed856] hover:text-white flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                    </svg>
-                    {totalItemsCarrito > 0 && (
-                      <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center absolute -top-2 -right-2">
-                        {totalItemsCarrito}
-                      </span>
-                    )}
-                  </button>
-                </div>
+                <CartIcon />
               </div>
             </div>
           </nav>
@@ -307,7 +250,7 @@ export default function DetalleProductoPage() {
                 <Link href="/" className="h-24 w-auto">
                   <img 
                     src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
-                    alt="Escencias Robjan&apos;s" 
+                    alt="Escencias Robjans" 
                     className="h-full object-contain rounded-xl"
                   />
                 </Link>
@@ -316,18 +259,7 @@ export default function DetalleProductoPage() {
                 <Link href="/productos" className="text-[#fed856] hover:text-white font-raleway">
                   Volver al Catálogo
                 </Link>
-                <div className="relative">
-                  <button className="text-[#fed856] hover:text-white flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                    </svg>
-                    {totalItemsCarrito > 0 && (
-                      <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center absolute -top-2 -right-2">
-                        {totalItemsCarrito}
-                      </span>
-                    )}
-                  </button>
-                </div>
+                <CartIcon />
               </div>
             </div>
           </nav>
@@ -359,7 +291,7 @@ export default function DetalleProductoPage() {
               <Link href="/" className="h-24 w-auto">
                 <img 
                   src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
-                  alt="Escencias Robjan&apos;s" 
+                  alt="Escencias Robjans" 
                   className="h-full object-contain rounded-xl"
                 />
               </Link>
@@ -368,18 +300,7 @@ export default function DetalleProductoPage() {
               <Link href="/productos" className="text-[#fed856] hover:text-white font-raleway">
                 Volver al Catálogo
               </Link>
-              <div className="relative">
-                <button className="text-[#fed856] hover:text-white flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                  </svg>
-                  {totalItemsCarrito > 0 && (
-                    <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center absolute -top-2 -right-2">
-                      {totalItemsCarrito}
-                    </span>
-                  )}
-                </button>
-              </div>
+              <CartIcon />
             </div>
           </div>
         </nav>
@@ -481,17 +402,10 @@ export default function DetalleProductoPage() {
       <footer className="bg-[#312b2b] text-white py-8 mt-auto border-t-2 border-[#fed856]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-[#f8f1d8] font-raleway">
-            &copy; {new Date().getFullYear()} Escencias Robjan&apos;s. Todos los derechos reservados.
+            &copy; {new Date().getFullYear()} Escencias Robjans. Todos los derechos reservados.
           </p>
         </div>
       </footer>
-      
-      {/* Mensaje de confirmación de carrito */}
-      {mensajeCarrito && (
-        <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50 font-raleway">
-          {mensajeCarrito}
-        </div>
-      )}
     </div>
   );
 } 

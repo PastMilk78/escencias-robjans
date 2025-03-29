@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
-import { Raleway } from "next/font/google";
 import "./globals.css";
+import { Inter, Playfair_Display, Raleway } from "next/font/google";
 
-const raleway = Raleway({
-  variable: "--font-raleway",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
+const raleway = Raleway({ subsets: ["latin"], variable: "--font-raleway" });
 
 export const metadata: Metadata = {
-  title: "Escencias Robjan&apos;s | Tienda de Perfumes",
-  description: "Encuentra fragancias exclusivas inspiradas en los mejores perfumes del mercado a precios accesibles.",
+  title: "Escencias Robjans - Fragancias Exclusivas",
+  description: "Descubre fragancias exclusivas inspiradas en los mejores perfumes a precios accesibles.",
 };
 
 export default function RootLayout({
@@ -20,9 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body
-        className={`${raleway.variable} font-raleway antialiased`}
-      >
+      <body className={`${inter.variable} ${playfair.variable} ${raleway.variable} font-sans`}>
         {children}
       </body>
     </html>
