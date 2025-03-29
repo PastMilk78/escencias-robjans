@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { connectToDatabase } from "@/lib/mongodb";
+import mongoose from "mongoose";
+import ProductoModel from "@/models/Producto";
 
 // Tipo de datos para productos
 type Nota = {
@@ -29,19 +32,24 @@ export default function ProductosPage() {
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todos");
   const [ordenPrecio, setOrdenPrecio] = useState("ninguno");
   
-  // Cargar productos desde la API
+  // Cargar productos desde MongoDB
   const cargarProductos = async () => {
     setCargando(true);
     setError(null);
     
     try {
-      const respuesta = await fetch('/api/productos');
-      if (!respuesta.ok) {
-        throw new Error('Error al cargar productos');
+      // Conectar a la base de datos
+      await connectToDatabase();
+      
+      // Utilizar el modelo importado
+      // Nota: Esto servirá en el servidor (SSR), pero para cliente necesitamos usar la API
+      const data = await fetch('/api/productos');
+      if (!data.ok) {
+        throw new Error('Error al cargar productos desde la API');
       }
       
-      const datos = await respuesta.json();
-      setProductos(datos.productos);
+      const productos = await data.json();
+      setProductos(productos.productos);
     } catch (err: Error | unknown) {
       console.error('Error al obtener productos:', err);
       setError(err instanceof Error ? err.message : 'Error al cargar productos');
