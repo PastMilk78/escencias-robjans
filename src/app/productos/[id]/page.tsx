@@ -29,6 +29,27 @@ type ItemCarrito = {
   cantidad: number;
 };
 
+// Función para determinar si un color es claro (para decidir color de texto)
+const esColorClaro = (hexColor: string = '#000000'): boolean => {
+  // Si no hay color, asumimos que es oscuro
+  if (!hexColor) return false;
+  
+  // Eliminar el # si existe
+  hexColor = hexColor.replace('#', '');
+  
+  // Convertir a RGB
+  const r = parseInt(hexColor.substr(0, 2), 16) || 0;
+  const g = parseInt(hexColor.substr(2, 2), 16) || 0;
+  const b = parseInt(hexColor.substr(4, 2), 16) || 0;
+  
+  // Calcular la luminancia (percepción humana del brillo)
+  // Fórmula: 0.299*R + 0.587*G + 0.114*B
+  const luminancia = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  
+  // Si la luminancia es mayor a 0.6, consideramos que es un color claro
+  return luminancia > 0.6;
+};
+
 // Productos fijos de referencia por si falla la conexión
 const productosFijos = [
   {
@@ -358,7 +379,9 @@ export default function DetalleProductoPage() {
                               backgroundColor: nota.color || '#000'
                             }}
                           >
-                            <span className="text-white font-medium text-sm">{nota.nombre}</span>
+                            <span className={`font-medium text-sm ${esColorClaro(nota.color) ? 'text-[#312b2b]' : 'text-white'}`}>
+                              {nota.nombre}
+                            </span>
                           </div>
                         </div>
                       </div>
