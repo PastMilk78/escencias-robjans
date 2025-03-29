@@ -523,9 +523,9 @@ export default function ProductosAdminPage() {
                           <div className="mt-2 w-full flex justify-center">
                             <div className="w-32 h-32 overflow-hidden rounded-md border border-gray-300">
                               <img 
-                                src={formulario.imagen} 
-                                alt="Vista previa" 
-                                className="w-full h-full object-cover" 
+                                src="https://i.postimg.cc/75pdMT0w/perfume-destacado.jpg" 
+                                alt="Vista previa del producto" 
+                                className="w-full h-32 object-cover"
                               />
                             </div>
                           </div>

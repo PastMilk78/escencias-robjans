@@ -34,42 +34,40 @@ async function getProductosDestacados() {
 
 export default async function Home() {
   const productosDestacados = await getProductosDestacados();
+  const siteName = "Escencias Robjans";
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
       {/* Barra de navegación */}
-      <header className="bg-[#312b2b] shadow-md">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <Link href="/" className="h-24 w-auto">
-                <img 
-                  src="/images/logo-escencias.jpg" 
-                  alt="Escencias Robjan&apos;s" 
-                  className="h-full object-contain rounded-xl"
-                />
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <a href="#contacto" className="button button-small bg-[#fed856] text-[#312b2b] hover:bg-[#e5c24c] hover:text-[#312b2b] mr-2 font-raleway">
-                Contacto
-              </a>
-              <Link href="/admin" className="text-[#fed856] hover:text-white font-raleway">
-                Admin
-              </Link>
-              <button className="text-[#fed856] hover:text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </button>
-              <button className="text-[#fed856] hover:text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-              </button>
-            </div>
+      <header className="bg-[#312b2b] p-4 shadow-md">
+        <div className="container mx-auto flex justify-between items-center">
+          <div className="flex items-center">
+            <img
+              src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg"
+              alt="Escencias Robjans Logo"
+              className="h-12"
+            />
+            <h1 className="text-[#fed856] text-xl font-bold ml-2 font-raleway">{siteName}</h1>
           </div>
-        </nav>
+          <div className="flex items-center space-x-4">
+            <a href="#contacto" className="button button-small bg-[#fed856] text-[#312b2b] hover:bg-[#e5c24c] hover:text-[#312b2b] mr-2 font-raleway">
+              Contacto
+            </a>
+            <Link href="/admin" className="text-[#fed856] hover:text-white font-raleway">
+              Admin
+            </Link>
+            <button className="text-[#fed856] hover:text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+            <button className="text-[#fed856] hover:text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </header>
 
       <main className="flex-grow">
@@ -116,7 +114,7 @@ export default async function Home() {
                   <div key={producto._id} className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-[#fed856]">
                     <div className="h-48 bg-[#473f3f] flex items-center justify-center overflow-hidden">
                       <img 
-                        src="/images/perfume-destacado.jpg" 
+                        src="https://i.postimg.cc/75pdMT0w/perfume-destacado.jpg" 
                         alt={producto.nombre} 
                         className="w-full h-full object-cover"
                       />

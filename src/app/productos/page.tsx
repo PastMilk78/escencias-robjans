@@ -123,13 +123,14 @@ export default function ProductosPage() {
         {/* Hero de la página de productos */}
         <div className="bg-[#312b2b] py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <h1 className="text-3xl font-extrabold text-[#fed856] sm:text-4xl font-raleway">
-                Nuestros Perfumes
-              </h1>
-              <p className="mt-4 text-lg text-[#f8f1d8] font-light font-raleway">
-                Explora nuestra colección de fragancias exclusivas
-              </p>
+            <div className="flex flex-col items-center p-4">
+              <img 
+                src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
+                alt="Escencias Robjans Logo"
+                className="h-16 mb-2"
+              />
+              <h1 className="text-xl font-bold text-[#fed856]">Catálogo de Perfumes</h1>
+              <p className="text-sm text-[#f8f1d8]">Explora nuestra exclusiva selección de fragancias</p>
             </div>
           </div>
         </div>
@@ -194,7 +195,7 @@ export default function ProductosPage() {
                   <div key={producto._id} className="bg-[#312b2b] rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-[#fed856]">
                     <div className="h-64 bg-[#473f3f] flex items-center justify-center overflow-hidden">
                       <img 
-                        src="/images/perfume-destacado.jpg" 
+                        src="https://i.postimg.cc/75pdMT0w/perfume-destacado.jpg" 
                         alt={producto.nombre} 
                         className="w-full h-full object-cover"
                       />

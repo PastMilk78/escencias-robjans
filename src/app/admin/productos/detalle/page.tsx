@@ -261,7 +261,7 @@ export default function DetalleProducto() {
             <div className="md:w-1/3 bg-[#312b2b] p-8 flex items-center justify-center">
               <div className="w-full h-64 mb-8 bg-[#473f3f] flex items-center justify-center overflow-hidden rounded-md">
                 <img 
-                  src="/images/perfume-destacado.jpg" 
+                  src="https://i.postimg.cc/75pdMT0w/perfume-destacado.jpg" 
                   alt={producto.nombre} 
                   className="w-full h-full object-cover"
                 />
