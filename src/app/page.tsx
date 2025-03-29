@@ -117,7 +117,11 @@ export default async function Home() {
                     {producto.imagen && producto.imagen.startsWith("data:") ? (
                       <img src={producto.imagen} alt={producto.nombre} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-[#fed856]">Imagen de producto</span>
+                      <img 
+                        src="/images/perfume-destacado.jpg" 
+                        alt={producto.nombre} 
+                        className="w-full h-full object-cover"
+                      />
                     )}
                   </div>
                   <div className="p-5">

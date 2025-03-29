@@ -259,17 +259,17 @@ export default function DetalleProducto() {
         <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-[#fed856]">
           <div className="md:flex">
             <div className="md:w-1/3 bg-[#312b2b] p-8 flex items-center justify-center">
-              {producto.imagen.startsWith("data:") ? (
-                <img 
-                  src={producto.imagen} 
-                  alt={producto.nombre} 
-                  className="max-h-64 max-w-full object-contain rounded-lg"
-                />
-              ) : (
-                <div className="bg-[#473f3f] h-64 w-full flex items-center justify-center rounded-lg">
-                  <span className="text-[#fed856] text-lg font-raleway">Imagen del producto</span>
-                </div>
-              )}
+              <div className="w-full h-64 mb-8 bg-[#473f3f] flex items-center justify-center overflow-hidden rounded-md">
+                {producto.imagen && producto.imagen.startsWith("data:") ? (
+                  <img src={producto.imagen} alt={producto.nombre} className="w-full h-full object-cover" />
+                ) : (
+                  <img 
+                    src="/images/perfume-destacado.jpg" 
+                    alt={producto.nombre} 
+                    className="w-full h-full object-cover"
+                  />
+                )}
+              </div>
             </div>
             <div className="md:w-2/3 p-8">
               <div className="mb-6">
