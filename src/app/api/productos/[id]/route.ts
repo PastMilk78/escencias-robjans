@@ -3,23 +3,30 @@ import { connectToDatabase } from '@/lib/mongodb';
 import Producto from '@/models/Producto';
 import mongoose from 'mongoose';
 
+// Interfaz para los parámetros
+export interface Params {
+  params: {
+    id: string;
+  };
+}
+
 // GET para obtener un producto por ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: Params
 ) {
   try {
     await connectToDatabase();
     
     // Validar que el ID sea válido
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!mongoose.Types.ObjectId.isValid(context.params.id)) {
       return NextResponse.json(
         { error: 'ID de producto inválido' },
         { status: 400 }
       );
     }
     
-    const producto = await Producto.findById(params.id);
+    const producto = await Producto.findById(context.params.id);
     
     if (!producto) {
       return NextResponse.json(
@@ -41,7 +48,7 @@ export async function GET(
 // PUT para actualizar un producto por ID
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: Params
 ) {
   try {
     const body = await request.json();
@@ -49,7 +56,7 @@ export async function PUT(
     await connectToDatabase();
     
     // Validar que el ID sea válido
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!mongoose.Types.ObjectId.isValid(context.params.id)) {
       return NextResponse.json(
         { error: 'ID de producto inválido' },
         { status: 400 }
@@ -58,7 +65,7 @@ export async function PUT(
     
     // Actualizar producto con la fecha de actualización
     const productoActualizado = await Producto.findByIdAndUpdate(
-      params.id,
+      context.params.id,
       {
         ...body,
         fecha_actualizacion: new Date()
@@ -89,20 +96,20 @@ export async function PUT(
 // DELETE para eliminar un producto por ID
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: Params
 ) {
   try {
     await connectToDatabase();
     
     // Validar que el ID sea válido
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!mongoose.Types.ObjectId.isValid(context.params.id)) {
       return NextResponse.json(
         { error: 'ID de producto inválido' },
         { status: 400 }
       );
     }
     
-    const productoEliminado = await Producto.findByIdAndDelete(params.id);
+    const productoEliminado = await Producto.findByIdAndDelete(context.params.id);
     
     if (!productoEliminado) {
       return NextResponse.json(
