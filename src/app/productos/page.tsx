@@ -130,6 +130,21 @@ export default function ProductosPage() {
     setModalAbierto(true);
     // Prevenir scroll del body cuando el modal está abierto
     document.body.style.overflow = 'hidden';
+    
+    // Reiniciar animaciones
+    setTimeout(() => {
+      const barras = document.querySelectorAll('.barra-animada');
+      barras.forEach((barra: Element) => {
+        const elemento = barra as HTMLElement;
+        elemento.style.width = '0%';
+        setTimeout(() => {
+          if (elemento.dataset.ancho) {
+            elemento.style.transition = 'width 1.5s ease-out';
+            elemento.style.width = elemento.dataset.ancho;
+          }
+        }, 100);
+      });
+    }, 50);
   };
   
   // Función para cerrar el modal
@@ -458,21 +473,24 @@ export default function ProductosPage() {
                   
                   <div className="mb-8">
                     <h3 className="text-xl font-bold text-[#312b2b] mb-4 font-raleway">Notas de Fragancia</h3>
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                       {productoSeleccionado.notas.map((nota, index) => (
-                        <div key={index} className="mb-2">
-                          <div className="flex justify-between mb-1">
-                            <span className="font-raleway">{nota.nombre}</span>
-                            <span className="font-raleway">{nota.intensidad}/10</span>
+                        <div key={index} className="mb-4">
+                          <div className="flex justify-between mb-2">
+                            <span className="font-raleway text-lg font-medium">{nota.nombre}</span>
+                            <span className="font-raleway bg-[#312b2b] text-white px-2 py-1 rounded-full text-xs">{nota.intensidad}/10</span>
                           </div>
-                          <div className="w-full bg-gray-200 rounded-full h-4">
+                          <div className="w-full bg-gray-200 rounded-full h-8 relative overflow-hidden">
                             <div 
-                              className="h-4 rounded-full" 
+                              className="h-8 rounded-full barra-animada flex items-center justify-end pr-3" 
                               style={{
-                                width: `${nota.intensidad * 10}%`,
+                                width: '0%',
                                 backgroundColor: nota.color || '#000'
                               }}
-                            ></div>
+                              data-ancho={`${nota.intensidad * 10}%`}
+                            >
+                              <span className="text-white font-medium text-sm">{nota.nombre}</span>
+                            </div>
                           </div>
                         </div>
                       ))}
