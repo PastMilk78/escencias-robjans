@@ -268,7 +268,7 @@ function ProductosAdminContent() {
             <div className="flex items-center space-x-8">
               <Link href="/" className="h-24 w-auto">
                 <img 
-                  src="/images/logo-escencias.jpg" 
+                  src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
                   alt="Escencias Robjan&apos;s" 
                   className="h-full object-contain rounded-xl"
                 />
