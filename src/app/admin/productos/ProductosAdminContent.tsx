@@ -526,7 +526,7 @@ export default function ProductosAdminContent() {
                               <img 
                                 src="https://i.postimg.cc/75pdMT0w/perfume-destacado.jpg" 
                                 alt="Vista previa del producto" 
-                                className="w-full h-32 object-cover"
+                                className="w-full h-full object-cover rounded-lg"
                               />
                             </div>
                           </div>

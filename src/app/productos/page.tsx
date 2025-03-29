@@ -127,7 +127,7 @@ export default function ProductosPage() {
               <img 
                 src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
                 alt="Escencias Robjans Logo"
-                className="h-16 mb-2"
+                className="h-24 mb-2 rounded-xl"
               />
               <h1 className="text-xl font-bold text-[#fed856]">Catálogo de Perfumes</h1>
               <p className="text-sm text-[#f8f1d8]">Explora nuestra exclusiva selección de fragancias</p>
@@ -197,7 +197,7 @@ export default function ProductosPage() {
                       <img 
                         src="https://i.postimg.cc/75pdMT0w/perfume-destacado.jpg" 
                         alt={producto.nombre} 
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover rounded-lg"
                       />
                     </div>
                     <div className="p-5">

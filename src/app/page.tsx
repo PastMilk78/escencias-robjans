@@ -45,7 +45,7 @@ export default async function Home() {
             <img
               src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg"
               alt="Escencias Robjans Logo"
-              className="h-12"
+              className="h-20 rounded-xl"
             />
             <h1 className="text-[#fed856] text-xl font-bold ml-2 font-raleway">{siteName}</h1>
           </div>
