@@ -277,14 +277,6 @@ export default function ProductosAdminContent() {
                 Panel de Administración
               </span>
             </div>
-            <div>
-              <Link
-                href="/admin"
-                className="text-[#fed856] hover:text-white transition-colors font-raleway"
-              >
-                Volver al Panel
-              </Link>
-            </div>
           </div>
         </nav>
       </header>
