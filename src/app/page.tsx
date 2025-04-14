@@ -126,8 +126,14 @@ export default async function Home() {
           <img
             src="https://perfumesdepaso.com/wp-content/uploads/2021/12/1-million-paco-rabanne.png"
             alt="Perfume Escencias Robjans"
-            className="absolute right-0 h-full w-auto object-contain"
-            style={{ maxHeight: '150%', top: '50%', transform: 'translateY(-50%)' }}
+            className="absolute right-0 h-[800px] w-auto object-contain"
+            style={{ 
+              top: '50%', 
+              transform: 'translateY(-50%)',
+              maxWidth: 'none',
+              minHeight: '100%',
+              zIndex: 1
+            }}
           />
         </div>
 
