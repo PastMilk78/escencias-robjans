@@ -168,7 +168,7 @@ function DetalleProductoContent() {
   
   if (cargando) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8f1d8]">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#594a42]">
         <p className="text-[#312b2b] text-xl font-raleway">Cargando información del producto...</p>
       </div>
     );
@@ -176,7 +176,7 @@ function DetalleProductoContent() {
   
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8f1d8]">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#594a42]">
         <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg max-w-md">
           <p className="text-lg font-raleway mb-4">{error}</p>
           <div className="flex justify-center">
@@ -202,7 +202,7 @@ function DetalleProductoContent() {
   
   if (!producto) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8f1d8]">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#594a42]">
         <p className="text-[#312b2b] text-xl font-raleway">Producto no encontrado</p>
         <Link 
           href="/admin/productos" 
@@ -215,7 +215,7 @@ function DetalleProductoContent() {
   }
   
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
+    <div className="min-h-screen flex flex-col bg-[#594a42]">
       {/* Barra de navegación */}
       <header className="bg-[#312b2b] shadow-md">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -375,7 +375,7 @@ function DetalleProductoContent() {
 export default function DetalleProducto() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8f1d8]">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#594a42]">
         <p className="text-[#312b2b] text-xl font-raleway">Cargando...</p>
       </div>
     }>

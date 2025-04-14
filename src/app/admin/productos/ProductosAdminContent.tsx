@@ -146,6 +146,11 @@ export default function ProductosAdminContent() {
   
   // Eliminar producto
   const eliminarProducto = async (id: string) => {
+    if (!id) {
+      alert('ID de producto no válido');
+      return;
+    }
+    
     if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
     
     try {
@@ -260,7 +265,7 @@ export default function ProductosAdminContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
+    <div className="min-h-screen flex flex-col bg-[#594a42]">
       {/* Barra de navegación */}
       <header className="bg-[#312b2b] shadow-md">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -374,7 +379,7 @@ export default function ProductosAdminContent() {
                             Editar
                           </Link>
                           <button
-                            onClick={() => eliminarProducto(producto._id)}
+                            onClick={() => eliminarProducto(producto._id || '')}
                             className="text-red-600 hover:text-red-900 font-raleway"
                           >
                             Eliminar

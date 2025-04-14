@@ -222,7 +222,7 @@ export default function ProductosPage() {
   const categorias = ['Todas', 'Mujer', 'Hombre', 'Unisex'];
   
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
+    <div className="min-h-screen flex flex-col bg-[#594a42]">
       {/* Header con navegación */}
       <header className="bg-[#312b2b] p-4 shadow-md">
         <div className="container mx-auto flex justify-between items-center">
@@ -230,18 +230,13 @@ export default function ProductosPage() {
             <img
               src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg"
               alt="Escencias Robjans Logo"
-              className="h-60 rounded-xl"
+              className="h-40 rounded-xl"
             />
           </Link>
           <div className="flex items-center space-x-4">
             <a href="/#contacto" className="button button-small bg-[#fed856] text-[#312b2b] hover:bg-[#e5c24c] hover:text-[#312b2b] mr-2 font-raleway">
               Contacto
             </a>
-            <button className="text-[#fed856] hover:text-white">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
             <CartIcon />
           </div>
         </div>
@@ -256,7 +251,7 @@ export default function ProductosPage() {
       </div>
       
       {/* Contenido principal */}
-      <main className="container mx-auto py-10 px-4 flex-grow bg-[#f8f1d8]">
+      <main className="container mx-auto py-10 px-4 flex-grow bg-[#594a42]">
         {/* Mensaje de error si existe */}
         {error && (
           <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded mb-6">
@@ -265,9 +260,9 @@ export default function ProductosPage() {
         )}
         
         {/* Filtros y ordenación */}
-        <div className="flex flex-col md:flex-row justify-between mb-8">
+        <div className="flex flex-col md:flex-row justify-between mb-8 bg-[#8c7465] p-4 rounded-lg shadow-md">
           <div className="mb-4 md:mb-0">
-            <label htmlFor="categoria" className="block text-sm font-medium text-gray-700 mb-2 font-raleway">Filtrar por categoría</label>
+            <label htmlFor="categoria" className="block text-sm font-medium text-white mb-2 font-raleway">Filtrar por categoría</label>
             <select
               id="categoria"
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
@@ -282,7 +277,7 @@ export default function ProductosPage() {
             </select>
           </div>
           <div>
-            <label htmlFor="orden" className="block text-sm font-medium text-gray-700 mb-2 font-raleway">Ordenar por</label>
+            <label htmlFor="orden" className="block text-sm font-medium text-white mb-2 font-raleway">Ordenar por</label>
             <select
               id="orden"
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
@@ -299,11 +294,11 @@ export default function ProductosPage() {
         
         {/* Lista de productos */}
         {cargando ? (
-          <div className="text-center py-10">
+          <div className="text-center py-10 bg-white rounded-lg shadow-lg p-8">
             <p className="text-xl text-gray-600 font-raleway">Cargando productos...</p>
           </div>
         ) : productosOrdenados.length === 0 ? (
-          <div className="text-center py-10">
+          <div className="text-center py-10 bg-white rounded-lg shadow-lg p-8">
             <p className="text-xl text-gray-600 font-raleway">No se encontraron productos en esta categoría.</p>
           </div>
         ) : (
@@ -322,7 +317,7 @@ export default function ProductosPage() {
                 </div>
                 <div className="p-6">
                   <div className="mb-2">
-                    <span className="inline-block bg-[#fed856] text-[#312b2b] text-xs px-2 py-1 rounded-full font-raleway">
+                    <span className="inline-block bg-[#8c7465] text-white text-xs px-2 py-1 rounded-full font-raleway">
                       {producto.categoria}
                     </span>
                   </div>
@@ -337,7 +332,7 @@ export default function ProductosPage() {
                   <div className="mt-4 flex justify-between items-center">
                     <button
                       onClick={() => abrirDetallesProducto(producto)}
-                      className="text-[#fed856] hover:text-white text-sm font-medium font-raleway"
+                      className="text-[#8c7465] hover:text-[#fed856] text-sm font-medium font-raleway"
                     >
                       Ver detalles
                     </button>
@@ -362,7 +357,7 @@ export default function ProductosPage() {
       </main>
       
       {/* Footer */}
-      <footer className="bg-[#594a42] text-white py-8 mt-auto border-t-2 border-[#fed856]">
+      <footer className="bg-[#312b2b] text-white py-8 mt-auto border-t-2 border-[#fed856]">
         <div className="container mx-auto px-4 text-center">
           <p className="text-[#f8f1d8] font-raleway">
             &copy; {new Date().getFullYear()} Escencias Robjans. Todos los derechos reservados.

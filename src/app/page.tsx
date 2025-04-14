@@ -97,7 +97,7 @@ export default async function Home() {
   const siteName = "Escencias Robjans";
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
+    <div className="min-h-screen flex flex-col bg-[#594a42]">
       {/* Barra de navegación */}
       <header className="bg-[#312b2b] p-4 shadow-md">
         <div className="container mx-auto flex justify-between items-center">
@@ -105,7 +105,7 @@ export default async function Home() {
             <img
               src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg"
               alt="Escencias Robjans Logo"
-              className="h-60 rounded-xl"
+              className="h-40 rounded-xl"
             />
           </div>
           <div className="flex items-center space-x-4">

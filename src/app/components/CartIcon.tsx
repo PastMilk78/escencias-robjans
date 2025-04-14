@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import { useCart } from "../context/CartContext";
 
 // Definir tipos
 type Nota = {
@@ -36,82 +37,15 @@ interface AddToCartEvent extends Event {
 }
 
 export default function CartIcon() {
-  const [carrito, setCarrito] = useState<ItemCarrito[]>([]);
   const [modalAbierto, setModalAbierto] = useState(false);
-  const [total, setTotal] = useState(0);
-
-  // Cargar carrito desde localStorage cuando el componente se monta
-  useEffect(() => {
-    const carritoGuardado = localStorage.getItem('carrito');
-    if (carritoGuardado) {
-      try {
-        const items = JSON.parse(carritoGuardado);
-        setCarrito(items);
-        calcularTotal(items);
-      } catch (e) {
-        console.error('Error al cargar el carrito:', e);
-        localStorage.removeItem('carrito');
-      }
-    }
-
-    // Añadir manejador de evento personalizado para añadir productos al carrito
-    const handleAddToCart = (event: AddToCartEvent) => {
-      const { producto, cantidad } = event.detail;
-      añadirAlCarrito(producto, cantidad);
-    };
-
-    // Agregar event listener
-    window.addEventListener('add-to-cart', handleAddToCart as EventListener);
-
-    // Limpiar event listener al desmontar
-    return () => {
-      window.removeEventListener('add-to-cart', handleAddToCart as EventListener);
-    };
-  }, []);
-
-  // Función para añadir productos al carrito
-  const añadirAlCarrito = (producto: Producto, cantidad: number) => {
-    setCarrito(prevCarrito => {
-      // Verificar si el producto ya está en el carrito
-      const itemExistente = prevCarrito.find(item => item.producto._id === producto._id);
-      
-      let nuevoCarrito;
-      if (itemExistente) {
-        // Actualizar cantidad del item existente
-        nuevoCarrito = prevCarrito.map(item => 
-          item.producto._id === producto._id 
-            ? { ...item, cantidad: item.cantidad + cantidad } 
-            : item
-        );
-      } else {
-        // Añadir nuevo item al carrito
-        nuevoCarrito = [...prevCarrito, { producto, cantidad }];
-      }
-      
-      // Actualizar localStorage
-      localStorage.setItem('carrito', JSON.stringify(nuevoCarrito));
-      
-      // Recalcular total
-      calcularTotal(nuevoCarrito);
-      
-      return nuevoCarrito;
-    });
-  };
-
-  // Recalcular total cuando cambia el carrito
-  const calcularTotal = (items: ItemCarrito[]) => {
-    const nuevoTotal = items.reduce(
-      (sum, item) => sum + item.producto.precio * item.cantidad,
-      0
-    );
-    setTotal(nuevoTotal);
-  };
-
-  // Actualizar localStorage cuando cambia el carrito
-  useEffect(() => {
-    localStorage.setItem('carrito', JSON.stringify(carrito));
-    calcularTotal(carrito);
-  }, [carrito]);
+  const { 
+    carrito, 
+    total, 
+    totalItems, 
+    actualizarCantidad, 
+    eliminarProducto, 
+    vaciarCarrito 
+  } = useCart();
 
   // Abrir/cerrar modal del carrito
   const toggleModal = () => {
@@ -124,35 +58,6 @@ export default function CartIcon() {
     }
   };
 
-  // Actualizar cantidad de un producto
-  const actualizarCantidad = (productoId: string, nuevaCantidad: number) => {
-    if (nuevaCantidad <= 0) {
-      // Eliminar producto si la cantidad es 0 o menor
-      setCarrito(carrito.filter(item => item.producto._id !== productoId));
-    } else {
-      // Actualizar cantidad
-      setCarrito(
-        carrito.map(item =>
-          item.producto._id === productoId
-            ? { ...item, cantidad: nuevaCantidad }
-            : item
-        )
-      );
-    }
-  };
-
-  // Eliminar un producto del carrito
-  const eliminarProducto = (productoId: string) => {
-    setCarrito(carrito.filter(item => item.producto._id !== productoId));
-  };
-
-  // Vaciar el carrito
-  const vaciarCarrito = () => {
-    setCarrito([]);
-    setModalAbierto(false);
-    document.body.style.overflow = 'auto';
-  };
-
   // Proceder al pago (integrará con Stripe)
   const procederAlPago = () => {
     // Aquí se implementará la integración con Stripe
@@ -160,9 +65,6 @@ export default function CartIcon() {
     // Podríamos redirigir a una página de checkout
     // router.push('/checkout');
   };
-
-  // Total de items en el carrito
-  const totalItems = carrito.reduce((total, item) => total + item.cantidad, 0);
 
   return (
     <>
@@ -214,7 +116,7 @@ export default function CartIcon() {
               ) : (
                 <>
                   <div className="space-y-4 mb-6">
-                    {carrito.map((item) => (
+                    {carrito.map((item: ItemCarrito) => (
                       <div key={item.producto._id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4">
                         <div className="flex items-center mb-2 sm:mb-0">
                           <img

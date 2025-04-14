@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function AdminPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
+    <div className="min-h-screen flex flex-col bg-[#594a42]">
       {/* Barra de navegación */}
       <header className="bg-[#312b2b] shadow-md">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
