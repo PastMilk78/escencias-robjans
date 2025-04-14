@@ -83,8 +83,8 @@ export default async function Home() {
   const siteName = "Escencias Robjans";
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#594a42]">
-      {/* Barra superior */}
+    <div className="min-h-screen flex flex-col bg-[#8e3b00]">
+      {/* Barra superior - SIMPLIFICADA */}
       <div className="bg-gradient-to-r from-[#8e3b00] to-[#a03e00] text-white py-2">
         <div className="container mx-auto flex justify-between items-center px-4">
           <div className="flex items-center space-x-2">
@@ -93,57 +93,35 @@ export default async function Home() {
               REGÍSTRATE
             </button>
           </div>
-          <div className="font-raleway">
-            Hasta 20% MENOS + envío GRATIS ✅
-          </div>
         </div>
       </div>
 
-      {/* Barra de navegación */}
+      {/* Barra de navegación - SIMPLIFICADA */}
       <header className="bg-gradient-to-r from-[#8e3b00] to-[#a03e00] py-3">
         <div className="container mx-auto flex justify-between items-center px-4">
-          <div className="flex items-center space-x-4">
-            <button className="bg-white text-black px-6 py-2 rounded-full font-raleway flex items-center">
-              PERFUMES
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            <button className="bg-white text-black px-6 py-2 rounded-full font-raleway">
-              OLAZA PERFUMES
-            </button>
-          </div>
+          <div></div>
           <div className="text-center">
             <img
               src="https://i.postimg.cc/CSLfCjn4/image.png"
               alt="Escencias Robjans Logo"
-              className="h-12 w-auto"
+              className="h-16 w-auto"
             />
           </div>
           <div className="flex items-center space-x-4">
-            <button className="bg-white text-black px-6 py-2 rounded-full font-raleway">
+            <a 
+              href="#contacto" 
+              className="bg-white text-black px-6 py-2 rounded-full font-raleway"
+            >
               SOBRE NOSOTROS
-            </button>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Buscar"
-                className="bg-white text-black px-4 py-2 rounded-full font-raleway w-24"
-              />
-              <button className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </button>
-            </div>
+            </a>
             <CartIcon />
           </div>
         </div>
       </header>
 
       {/* Sección Hero */}
-      <section className="bg-gradient-to-r from-[#8e3b00] to-[#a03e00] py-16">
-        <div className="container mx-auto px-4 md:flex items-center justify-between">
+      <section className="bg-gradient-to-r from-[#8e3b00] to-[#a03e00] py-16 relative">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between relative z-10">
           <div className="md:w-1/2 text-left">
             <h1 className="text-6xl md:text-7xl font-bold mb-2 font-playfair text-white">
               Olfatea
@@ -166,13 +144,15 @@ export default async function Home() {
               </Link>
             </div>
           </div>
-          <div className="md:w-1/2 flex justify-center">
-            <img
-              src="https://perfumesdepaso.com/wp-content/uploads/2021/12/1-million-paco-rabanne.png"
-              alt="Perfume Escencias Robjans"
-              className="max-w-sm md:max-w-lg"
-            />
-          </div>
+        </div>
+        {/* Imagen grande de fondo */}
+        <div className="absolute right-0 top-1/2 transform -translate-y-1/2 h-full max-h-full z-0 overflow-hidden">
+          <img
+            src="https://perfumesdepaso.com/wp-content/uploads/2021/12/1-million-paco-rabanne.png"
+            alt="Perfume Escencias Robjans"
+            className="h-[140%] max-w-none object-contain"
+            style={{ marginRight: "-5%", marginTop: "-10%" }}
+          />
         </div>
       </section>
 
