@@ -84,64 +84,93 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#594a42]">
+      {/* Barra superior */}
+      <div className="bg-gradient-to-r from-[#8e3b00] to-[#a03e00] text-white py-2">
+        <div className="container mx-auto flex justify-between items-center px-4">
+          <div className="flex items-center space-x-2">
+            <span className="font-raleway">Registrate y</span>
+            <button className="bg-[#e57c54] text-white px-4 py-1 rounded-full font-raleway text-sm">
+              REGÍSTRATE
+            </button>
+          </div>
+          <div className="font-raleway">
+            Hasta 20% MENOS + envío GRATIS ✅
+          </div>
+        </div>
+      </div>
+
       {/* Barra de navegación */}
-      <header className="bg-[#312b2b] p-4 shadow-md">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center">
+      <header className="bg-gradient-to-r from-[#8e3b00] to-[#a03e00] py-3">
+        <div className="container mx-auto flex justify-between items-center px-4">
+          <div className="flex items-center space-x-4">
+            <button className="bg-white text-black px-6 py-2 rounded-full font-raleway flex items-center">
+              PERFUMES
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <button className="bg-white text-black px-6 py-2 rounded-full font-raleway">
+              OLAZA PERFUMES
+            </button>
+          </div>
+          <div className="text-center">
             <img
-              src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg"
+              src="https://i.postimg.cc/CSLfCjn4/image.png"
               alt="Escencias Robjans Logo"
-              className="h-40 rounded-xl"
+              className="h-12 w-auto"
             />
           </div>
           <div className="flex items-center space-x-4">
-            <a href="#contacto" className="button button-small bg-[#fed856] text-[#312b2b] hover:bg-[#e5c24c] hover:text-[#312b2b] mr-2 font-raleway">
-              Contacto
-            </a>
-            <button className="text-[#fed856] hover:text-white">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+            <button className="bg-white text-black px-6 py-2 rounded-full font-raleway">
+              SOBRE NOSOTROS
             </button>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Buscar"
+                className="bg-white text-black px-4 py-2 rounded-full font-raleway w-24"
+              />
+              <button className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
+            </div>
             <CartIcon />
           </div>
         </div>
       </header>
 
       {/* Sección Hero */}
-      <section className="bg-gradient-to-r from-[#7C2E00] to-[#8e3b00] py-20">
+      <section className="bg-gradient-to-r from-[#8e3b00] to-[#a03e00] py-16">
         <div className="container mx-auto px-4 md:flex items-center justify-between">
-          <div className="md:w-1/2 text-left mb-10 md:mb-0">
-            <h1 className="text-5xl md:text-6xl font-bold mb-4 font-playfair text-white">
+          <div className="md:w-1/2 text-left">
+            <h1 className="text-6xl md:text-7xl font-bold mb-2 font-playfair text-white">
               Olfatea
             </h1>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-playfair text-white">
+            <h2 className="text-5xl md:text-6xl font-bold mb-8 font-playfair text-white">
               El Futuro de las Fragancias.
             </h2>
-            <p className="text-[#f8f1d8] text-xl mb-8 font-raleway">
-              Descubre fragancias exclusivas inspiradas en los mejores
-              perfumes del mercado a precios accesibles.
-            </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 mt-16">
               <Link
                 href="/productos"
-                className="inline-block bg-white text-[#7C2E00] px-8 py-3 rounded-full font-bold hover:bg-[#fed856] transition-colors font-raleway"
+                className="inline-block bg-white text-[#333] px-8 py-3 rounded-full font-bold hover:bg-[#f8f1d8] transition-colors font-raleway uppercase"
               >
-                Ver Catálogo
+                Compra los más vendidos
               </Link>
               <Link
                 href="/productos"
-                className="inline-block bg-[#312b2b] text-[#fed856] px-8 py-3 rounded-full font-bold hover:bg-[#473f3f] transition-colors font-raleway"
+                className="inline-block bg-white text-[#333] px-8 py-3 rounded-full font-bold hover:bg-[#f8f1d8] transition-colors font-raleway uppercase"
               >
-                Más Vendidos
+                Compra todo
               </Link>
             </div>
           </div>
           <div className="md:w-1/2 flex justify-center">
             <img
-              src="https://i.postimg.cc/CMd9nDz2/perfume-dorado-mano.png"
+              src="https://perfumesdepaso.com/wp-content/uploads/2021/12/1-million-paco-rabanne.png"
               alt="Perfume Escencias Robjans"
-              className="max-w-xs md:max-w-md"
+              className="max-w-sm md:max-w-lg"
             />
           </div>
         </div>
