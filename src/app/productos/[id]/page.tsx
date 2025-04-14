@@ -368,7 +368,7 @@ export default function DetalleProductoPage() {
                     {producto.notas.map((nota, index) => (
                       <div key={index} className="mb-4">
                         <div className="flex justify-between mb-2">
-                          <span className="font-raleway text-lg font-medium">{nota.nombre}</span>
+                          <span className="font-raleway text-lg font-medium text-[#312b2b]">{nota.nombre}</span>
                           <span className="font-raleway bg-[#312b2b] text-white px-2 py-1 rounded-full text-xs">{nota.intensidad}/10</span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-8 relative overflow-hidden">

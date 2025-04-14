@@ -224,7 +224,7 @@ export default function CartIcon() {
                           />
                           <div>
                             <h3 className="font-medium text-[#312b2b] font-raleway">{item.producto.nombre}</h3>
-                            <p className="text-sm text-gray-600 font-raleway">${item.producto.precio.toFixed(2)}</p>
+                            <p className="text-[#545454] font-raleway">${item.producto.precio.toFixed(2)}</p>
                           </div>
                         </div>
                         <div className="flex items-center mt-2 sm:mt-0">
@@ -234,7 +234,7 @@ export default function CartIcon() {
                           >
                             -
                           </button>
-                          <span className="bg-gray-100 px-4 py-1">{item.cantidad}</span>
+                          <span className="bg-gray-100 px-4 py-1 text-[#312b2b]">{item.cantidad}</span>
                           <button
                             onClick={() => actualizarCantidad(item.producto._id, item.cantidad + 1)}
                             className="bg-gray-200 text-gray-700 px-2 py-1 rounded-r"
