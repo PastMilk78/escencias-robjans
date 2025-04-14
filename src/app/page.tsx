@@ -108,6 +108,18 @@ export default async function Home() {
             />
           </div>
           <div className="flex items-center space-x-4">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Buscar"
+                className="bg-white text-black px-4 py-2 rounded-full font-raleway w-24"
+              />
+              <button className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
+            </div>
             <a 
               href="#contacto" 
               className="bg-white text-black px-6 py-2 rounded-full font-raleway"
@@ -119,9 +131,22 @@ export default async function Home() {
         </div>
       </header>
 
-      {/* Sección Hero */}
-      <section className="bg-gradient-to-r from-[#8e3b00] to-[#a03e00] py-16 relative">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between relative z-10">
+      {/* Sección Hero con imagen a pantalla completa */}
+      <section className="bg-gradient-to-r from-[#8e3b00] to-[#a03e00] py-16 relative min-h-[80vh] overflow-hidden">
+        {/* Imagen de fondo que abarca toda la pantalla */}
+        <div className="absolute inset-0 w-full h-full z-0">
+          <div className="absolute right-0 top-0 w-full h-full flex justify-end items-center">
+            <img
+              src="https://perfumesdepaso.com/wp-content/uploads/2021/12/1-million-paco-rabanne.png"
+              alt="Perfume Escencias Robjans"
+              className="h-[150%] max-w-none object-contain"
+              style={{ position: 'absolute', right: '0', top: '50%', transform: 'translateY(-50%)' }}
+            />
+          </div>
+        </div>
+
+        {/* Contenido de texto en primer plano */}
+        <div className="container mx-auto px-4 h-full flex items-center relative z-10">
           <div className="md:w-1/2 text-left">
             <h1 className="text-6xl md:text-7xl font-bold mb-2 font-playfair text-white">
               Olfatea
@@ -144,15 +169,6 @@ export default async function Home() {
               </Link>
             </div>
           </div>
-        </div>
-        {/* Imagen grande de fondo */}
-        <div className="absolute right-0 top-1/2 transform -translate-y-1/2 h-full max-h-full z-0 overflow-hidden">
-          <img
-            src="https://perfumesdepaso.com/wp-content/uploads/2021/12/1-million-paco-rabanne.png"
-            alt="Perfume Escencias Robjans"
-            className="h-[140%] max-w-none object-contain"
-            style={{ marginRight: "-5%", marginTop: "-10%" }}
-          />
         </div>
       </section>
 
