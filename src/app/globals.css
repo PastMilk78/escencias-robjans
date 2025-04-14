@@ -109,3 +109,20 @@ body {
 .animate-fade-in-right {
   animation: fadeInRight 1s ease-out;
 }
+
+/* Estilos para el header fijo */
+.fixed-header {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Animación para el contenido en carga */
+.content-loading {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.content-loaded {
+  opacity: 1;
+}
