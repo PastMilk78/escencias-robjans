@@ -109,28 +109,39 @@ export default async function Home() {
       </header>
 
       {/* Sección Hero */}
-      <section className="bg-[#312b2b] py-20">
-        <div className="container mx-auto px-4 flex flex-col-reverse md:flex-row items-center justify-between">
-          <div className="md:w-1/2 text-center md:text-left">
-            <h1 className="text-5xl text-[#fed856] font-bold mb-4 font-playfair">
-              Escencias Robjan's
+      <section className="bg-gradient-to-r from-[#7C2E00] to-[#8e3b00] py-20">
+        <div className="container mx-auto px-4 md:flex items-center justify-between">
+          <div className="md:w-1/2 text-left mb-10 md:mb-0">
+            <h1 className="text-5xl md:text-6xl font-bold mb-4 font-playfair text-white">
+              Olfatea
             </h1>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-playfair text-white">
+              El Futuro de las Fragancias.
+            </h2>
             <p className="text-[#f8f1d8] text-xl mb-8 font-raleway">
               Descubre fragancias exclusivas inspiradas en los mejores
               perfumes del mercado a precios accesibles.
             </p>
-            <Link
-              href="/productos"
-              className="inline-block bg-[#fed856] text-[#312b2b] px-8 py-3 rounded-lg font-bold hover:bg-[#e5c24c] transition-colors font-raleway"
-            >
-              Ver Catálogo
-            </Link>
+            <div className="flex flex-wrap gap-4">
+              <Link
+                href="/productos"
+                className="inline-block bg-white text-[#7C2E00] px-8 py-3 rounded-full font-bold hover:bg-[#fed856] transition-colors font-raleway"
+              >
+                Ver Catálogo
+              </Link>
+              <Link
+                href="/productos"
+                className="inline-block bg-[#312b2b] text-[#fed856] px-8 py-3 rounded-full font-bold hover:bg-[#473f3f] transition-colors font-raleway"
+              >
+                Más Vendidos
+              </Link>
+            </div>
           </div>
-          <div className="md:w-1/2 flex justify-center mb-10 md:mb-0">
+          <div className="md:w-1/2 flex justify-center">
             <img
-              src="https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg"
-              alt="Perfume destacado"
-              className="max-w-xs md:max-w-md rounded-xl shadow-2xl"
+              src="https://i.postimg.cc/CMd9nDz2/perfume-dorado-mano.png"
+              alt="Perfume Escencias Robjans"
+              className="max-w-xs md:max-w-md"
             />
           </div>
         </div>
