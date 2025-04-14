@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import CartIcon from '@/app/components/CartIcon';
 
 type Nota = {
@@ -28,6 +28,11 @@ type ItemCarrito = {
   producto: Producto;
   cantidad: number;
 };
+
+// Define la interfaz para los params de la ruta
+interface Params {
+  id: string;
+}
 
 // Función para determinar si un color es claro (para decidir color de texto)
 const esColorClaro = (hexColor: string = '#000000'): boolean => {
@@ -110,15 +115,13 @@ const productosFijos = [
   }
 ];
 
-export default function DetalleProductoPage() {
-  const params = useParams();
-  const id = params.id as string;
-  
+export default function ProductoDetalle({ params }: { params: Params }) {
   const [producto, setProducto] = useState<Producto | null>(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [cantidadSeleccionada, setCantidadSeleccionada] = useState(1);
-  
+  const [cantidad, setCantidad] = useState(1);
+  const router = useRouter();
+
   useEffect(() => {
     const obtenerProducto = async () => {
       setCargando(true);
@@ -126,7 +129,7 @@ export default function DetalleProductoPage() {
       
       try {
         // Primero intentamos obtener el producto de la API
-        const respuesta = await fetch(`/api/productos/${id}`);
+        const respuesta = await fetch(`/api/productos/${params.id}`);
         
         if (!respuesta.ok) {
           throw new Error('No se pudo cargar el producto');
@@ -138,7 +141,7 @@ export default function DetalleProductoPage() {
         console.error('Error al obtener el producto:', err);
         
         // Si falla, buscamos el producto en los productos fijos
-        const productoFijo = productosFijos.find(p => p._id === id);
+        const productoFijo = productosFijos.find(p => p._id === params.id);
         
         if (productoFijo) {
           setProducto(productoFijo);
@@ -167,263 +170,165 @@ export default function DetalleProductoPage() {
         });
       }, 300);
     }
-  }, [id, cargando, producto]);
-  
-  // Manejar cambio en la cantidad seleccionada
-  const handleCantidadChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setCantidadSeleccionada(parseInt(e.target.value));
-  };
-  
-  // Añadir producto al carrito usando evento personalizado
-  const añadirAlCarrito = (producto: Producto, cantidad: number) => {
-    // Crear un evento personalizado para añadir al carrito
-    const event = new CustomEvent('add-to-cart', {
-      detail: { producto, cantidad }
-    });
-    window.dispatchEvent(event);
-  };
-  
-  if (cargando) {
-    return (
-      <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
-        <header className="bg-[#312b2b] shadow-md">
-          <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <Link href="/" className="h-24 w-auto">
-                  <img 
-                    src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
-                    alt="Escencias Robjans" 
-                    className="h-full object-contain rounded-xl"
-                  />
-                </Link>
-              </div>
-              <div className="flex items-center space-x-4">
-                <Link href="/productos" className="text-[#fed856] hover:text-white font-raleway">
-                  Volver al Catálogo
-                </Link>
-                <CartIcon />
-              </div>
-            </div>
-          </nav>
-        </header>
-        
-        <main className="flex-grow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="text-center">
-              <p className="text-lg text-[#312b2b] font-raleway">Cargando detalles del producto...</p>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
-  
-  if (error && !producto) {
-    return (
-      <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
-        <header className="bg-[#312b2b] shadow-md">
-          <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <Link href="/" className="h-24 w-auto">
-                  <img 
-                    src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
-                    alt="Escencias Robjans" 
-                    className="h-full object-contain rounded-xl"
-                  />
-                </Link>
-              </div>
-              <div className="flex items-center space-x-4">
-                <Link href="/productos" className="text-[#fed856] hover:text-white font-raleway">
-                  Volver al Catálogo
-                </Link>
-                <CartIcon />
-              </div>
-            </div>
-          </nav>
-        </header>
-        
-        <main className="flex-grow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-              <p className="font-raleway">{error}</p>
-              <Link 
-                href="/productos"
-                className="mt-4 inline-block bg-[#312b2b] text-white px-4 py-2 rounded-md hover:bg-[#473f3f] font-raleway"
-              >
-                Volver al Catálogo
-              </Link>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
-  
-  if (!producto) {
-    return (
-      <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
-        <header className="bg-[#312b2b] shadow-md">
-          <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <Link href="/" className="h-24 w-auto">
-                  <img 
-                    src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
-                    alt="Escencias Robjans" 
-                    className="h-full object-contain rounded-xl"
-                  />
-                </Link>
-              </div>
-              <div className="flex items-center space-x-4">
-                <Link href="/productos" className="text-[#fed856] hover:text-white font-raleway">
-                  Volver al Catálogo
-                </Link>
-                <CartIcon />
-              </div>
-            </div>
-          </nav>
-        </header>
-        
-        <main className="flex-grow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="text-center">
-              <p className="text-lg text-[#312b2b] font-raleway">No se encontró el producto solicitado.</p>
-              <Link 
-                href="/productos"
-                className="mt-4 inline-block bg-[#312b2b] text-white px-4 py-2 rounded-md hover:bg-[#473f3f] font-raleway"
-              >
-                Volver al Catálogo
-              </Link>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
+  }, [params.id, cargando, producto]);
   
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8f1d8]">
-      <header className="bg-[#312b2b] shadow-md">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <Link href="/" className="h-24 w-auto">
-                <img 
-                  src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg" 
-                  alt="Escencias Robjans" 
-                  className="h-full object-contain rounded-xl"
-                />
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link href="/productos" className="text-[#fed856] hover:text-white font-raleway">
-                Volver al Catálogo
-              </Link>
-              <CartIcon />
-            </div>
+    <div className="min-h-screen flex flex-col bg-[#594a42]">
+      {/* Header con navegación */}
+      <header className="bg-[#312b2b] p-4 shadow-md">
+        <div className="container mx-auto flex justify-between items-center">
+          <Link href="/" className="flex items-center">
+            <img
+              src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg"
+              alt="Escencias Robjans Logo"
+              className="h-40 rounded-xl"
+            />
+          </Link>
+          <div className="flex items-center space-x-4">
+            <Link 
+              href="/productos" 
+              className="button button-small bg-[#fed856] text-[#312b2b] hover:bg-[#e5c24c] hover:text-[#312b2b] mr-2 font-raleway"
+            >
+              Ver Productos
+            </Link>
+            <a 
+              href="/#contacto" 
+              className="button button-small bg-[#fed856] text-[#312b2b] hover:bg-[#e5c24c] hover:text-[#312b2b] mr-2 font-raleway"
+            >
+              Contacto
+            </a>
+            <CartIcon />
           </div>
-        </nav>
+        </div>
       </header>
-      
-      <main className="flex-grow">
-        {error && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-            <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-6">
-              <p className="font-raleway">{error}</p>
+
+      <main className="container mx-auto py-10 px-4 flex-grow">
+        {cargando ? (
+          <div className="text-center py-10 bg-white rounded-lg shadow-lg p-8">
+            <p className="text-xl text-gray-600 font-raleway">Cargando producto...</p>
+          </div>
+        ) : error ? (
+          <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded my-4">
+            <p className="font-raleway">{error}</p>
+            <div className="mt-4">
+              <Link 
+                href="/productos" 
+                className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded hover:bg-[#e5c24c] transition-colors font-raleway"
+              >
+                Volver a Productos
+              </Link>
             </div>
           </div>
-        )}
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-            <div className="md:flex">
-              <div className="md:w-1/3 bg-[#473f3f] flex items-center justify-center">
-                <img
-                  src={producto.imagen || "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg"}
-                  alt={producto.nombre}
-                  className="w-full h-auto max-h-[500px] object-cover"
-                />
-              </div>
-              <div className="md:w-2/3 p-8">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h1 className="text-3xl font-bold text-[#312b2b] font-raleway">{producto.nombre}</h1>
-                    <p className="text-gray-600 font-raleway">Categoría: {producto.categoria}</p>
-                  </div>
-                  <span className="text-2xl font-bold text-[#312b2b] font-raleway">${producto.precio.toFixed(2)}</span>
-                </div>
-                
-                <div className="mb-6">
-                  <p className="text-gray-700 font-raleway mb-4">{producto.descripcion}</p>
-                  <p className="text-gray-700 font-raleway">
-                    <span className="font-semibold">Inspirado en:</span> {producto.inspirado_en}
+        ) : producto ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white rounded-lg shadow-lg p-6">
+            <div>
+              <img 
+                src={producto.imagen || "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg"} 
+                alt={producto.nombre}
+                className="w-full h-auto rounded-lg shadow-md max-h-96 object-cover"
+              />
+            </div>
+            <div>
+              <div className="mb-4">
+                <span className="inline-block bg-[#8c7465] text-white text-sm px-3 py-1 rounded-full mb-2 font-raleway">
+                  {producto.categoria}
+                </span>
+                <h1 className="text-3xl font-bold text-[#312b2b] font-raleway">{producto.nombre}</h1>
+                {producto.inspirado_en && (
+                  <p className="text-gray-600 mt-1 font-raleway">
+                    Inspirado en: <span className="font-semibold">{producto.inspirado_en}</span>
                   </p>
-                </div>
-                
-                <div className="mb-8">
-                  <h2 className="text-xl font-bold text-[#312b2b] mb-3 font-raleway">Notas de Fragancia</h2>
-                  <div className="space-y-6">
+                )}
+              </div>
+              
+              <div className="mb-6">
+                <p className="font-raleway text-gray-700 mb-4">{producto.descripcion}</p>
+                <p className="text-3xl font-bold text-[#312b2b] mb-2 font-raleway">${producto.precio.toFixed(2)}</p>
+                <p className="text-sm text-gray-500 font-raleway">
+                  {producto.stock > 0 
+                    ? `${producto.stock} unidades disponibles` 
+                    : "Agotado temporalmente"}
+                </p>
+              </div>
+              
+              {producto.notas && producto.notas.length > 0 && (
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold mb-3 text-[#312b2b] font-raleway">Notas de fragancia</h2>
+                  <div className="space-y-3">
                     {producto.notas.map((nota, index) => (
-                      <div key={index} className="mb-4">
-                        <div className="flex justify-between mb-2">
-                          <span className="font-raleway text-lg font-medium text-[#312b2b]">{nota.nombre}</span>
-                          <span className="font-raleway bg-[#312b2b] text-white px-2 py-1 rounded-full text-xs">{nota.intensidad}/10</span>
+                      <div key={index} className="bg-gray-100 p-3 rounded">
+                        <div className="flex justify-between mb-1">
+                          <span className="font-medium text-[#312b2b] font-raleway">{nota.nombre}</span>
+                          <span className="text-sm text-[#8c7465] font-raleway">{nota.intensidad}%</span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-8 relative overflow-hidden">
+                        <div className="w-full bg-gray-300 rounded-full h-2.5">
                           <div 
-                            className="h-8 rounded-full barra-animada flex items-center justify-end pr-3" 
-                            style={{
-                              width: `${nota.intensidad * 10}%`,
-                              backgroundColor: nota.color || '#000'
-                            }}
-                          >
-                            <span className={`font-medium text-sm ${esColorClaro(nota.color) ? 'text-[#312b2b]' : 'text-white'}`}>
-                              {nota.nombre}
-                            </span>
-                          </div>
+                            className="bg-[#fed856] h-2.5 rounded-full transition-all duration-1000 ease-out"
+                            style={{ width: `${nota.intensidad}%` }}
+                          ></div>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
-                
-                <div className="flex flex-col sm:flex-row items-center">
-                  <div className="mb-4 sm:mb-0 sm:mr-4">
-                    <label htmlFor="cantidad" className="block text-sm font-medium text-gray-700 mb-1 font-raleway">Cantidad</label>
-                    <select
-                      id="cantidad"
-                      className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
-                      value={cantidadSeleccionada}
-                      onChange={handleCantidadChange}
-                    >
-                      {[...Array(10)].map((_, i) => (
-                        <option key={i} value={i + 1}>{i + 1}</option>
-                      ))}
-                    </select>
+              )}
+              
+              {producto.stock > 0 && (
+                <div className="mt-6">
+                  <div className="flex items-center mb-4">
+                    <label htmlFor="cantidad" className="mr-3 font-raleway text-[#312b2b]">Cantidad:</label>
+                    <div className="flex items-center border border-gray-300 rounded">
+                      <button 
+                        onClick={() => setCantidad(prev => Math.max(1, prev - 1))}
+                        className="px-3 py-1 bg-gray-100 text-gray-600 hover:bg-gray-200 font-raleway"
+                      >
+                        -
+                      </button>
+                      <span className="px-4 py-1 font-raleway">{cantidad}</span>
+                      <button 
+                        onClick={() => setCantidad(prev => Math.min(producto.stock, prev + 1))}
+                        className="px-3 py-1 bg-gray-100 text-gray-600 hover:bg-gray-200 font-raleway"
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => añadirAlCarrito(producto, cantidadSeleccionada)}
-                    className="w-full sm:w-auto bg-[#fed856] text-[#312b2b] px-6 py-3 rounded-md font-bold hover:bg-[#e5c24c] transition-colors font-raleway"
+                  
+                  <button 
+                    onClick={() => {
+                      // Crear un evento personalizado para añadir al carrito
+                      const event = new CustomEvent('add-to-cart', {
+                        detail: { producto, cantidad }
+                      });
+                      window.dispatchEvent(event);
+                    }}
+                    className="w-full bg-[#fed856] text-[#312b2b] px-6 py-3 rounded-md hover:bg-[#e5c24c] transition-colors font-raleway font-bold"
+                    disabled={producto.stock <= 0}
                   >
                     Añadir al Carrito
                   </button>
                 </div>
-                
-                <div className="mt-8 pt-6 border-t border-gray-200">
-                  <p className="text-gray-600 font-raleway">
-                    <span className="font-semibold">Disponibilidad:</span> {producto.stock > 0 ? `${producto.stock} unidades en stock` : 'Agotado'}
-                  </p>
-                </div>
-              </div>
+              )}
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="text-center py-10">
+            <p className="text-xl text-white font-raleway">No se encontró el producto.</p>
+            <div className="mt-4">
+              <Link 
+                href="/productos" 
+                className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded hover:bg-[#e5c24c] transition-colors font-raleway"
+              >
+                Volver a Productos
+              </Link>
+            </div>
+          </div>
+        )}
       </main>
-      
+
+      {/* Footer */}
       <footer className="bg-[#312b2b] text-white py-8 mt-auto border-t-2 border-[#fed856]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="container mx-auto px-4 text-center">
           <p className="text-[#f8f1d8] font-raleway">
             &copy; {new Date().getFullYear()} Escencias Robjans. Todos los derechos reservados.
           </p>
