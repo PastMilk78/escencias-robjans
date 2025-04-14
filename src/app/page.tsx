@@ -110,9 +110,6 @@ export default async function Home() {
         <header className="relative z-10 py-3">
           <div className="container mx-auto flex justify-between items-center px-4">
             <div></div>
-            <div className="text-center">
-              {/* Se elimina la imagen del logo */}
-            </div>
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <input
