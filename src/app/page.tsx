@@ -135,8 +135,18 @@ export default async function Home() {
         </header>
         
         {/* Contenido de texto en primer plano */}
-        <div className="container mx-auto px-4 py-16 h-full flex items-center relative z-10">
-          <div className="md:w-1/2 text-left mt-20">
+        <div className="container mx-auto px-4 py-16 h-full flex flex-col items-start relative z-10">
+          {/* Logo agregado en la parte superior */}
+          <div className="mb-12">
+            <img 
+              src="https://i.postimg.cc/T3QxB7Tv/logo-escencias.jpg"
+              alt="Logo Escencias Robjans"
+              className="h-24 w-auto"
+            />
+          </div>
+          
+          {/* Texto principal movido más abajo */}
+          <div className="md:w-1/2 text-left mt-32">
             <h1 className="text-6xl md:text-7xl font-bold mb-2 font-playfair text-white">
               Olfatea
             </h1>
