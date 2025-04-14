@@ -84,19 +84,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#8e3b00]">
-      {/* Barra superior - SIMPLIFICADA */}
-      <div className="bg-gradient-to-r from-[#8e3b00] to-[#a03e00] text-white py-2">
-        <div className="container mx-auto flex justify-between items-center px-4">
-          <div className="flex items-center space-x-2">
-            <span className="font-raleway">Registrate y</span>
-            <button className="bg-[#e57c54] text-white px-4 py-1 rounded-full font-raleway text-sm">
-              REGÍSTRATE
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Barra de navegación - SIMPLIFICADA */}
+      {/* Barra de navegación simplificada */}
       <header className="bg-gradient-to-r from-[#8e3b00] to-[#a03e00] py-3">
         <div className="container mx-auto flex justify-between items-center px-4">
           <div></div>
@@ -131,22 +119,20 @@ export default async function Home() {
         </div>
       </header>
 
-      {/* Sección Hero con imagen a pantalla completa */}
-      <section className="bg-gradient-to-r from-[#8e3b00] to-[#a03e00] py-16 relative min-h-[80vh] overflow-hidden">
-        {/* Imagen de fondo que abarca toda la pantalla */}
-        <div className="absolute inset-0 w-full h-full z-0">
-          <div className="absolute right-0 top-0 w-full h-full flex justify-end items-center">
-            <img
-              src="https://perfumesdepaso.com/wp-content/uploads/2021/12/1-million-paco-rabanne.png"
-              alt="Perfume Escencias Robjans"
-              className="h-[150%] max-w-none object-contain"
-              style={{ position: 'absolute', right: '0', top: '50%', transform: 'translateY(-50%)' }}
-            />
-          </div>
+      {/* Sección Hero con imagen a pantalla completa como fondo */}
+      <section className="relative min-h-[80vh] overflow-hidden bg-[#8e3b00]">
+        {/* Imagen de fondo que abarca todo el espacio */}
+        <div className="absolute inset-0 w-full h-full z-0 bg-gradient-to-r from-[#8e3b00] to-[#a03e00]">
+          <img
+            src="https://perfumesdepaso.com/wp-content/uploads/2021/12/1-million-paco-rabanne.png"
+            alt="Perfume Escencias Robjans"
+            className="absolute right-0 h-full w-auto object-contain"
+            style={{ maxHeight: '150%', top: '50%', transform: 'translateY(-50%)' }}
+          />
         </div>
 
         {/* Contenido de texto en primer plano */}
-        <div className="container mx-auto px-4 h-full flex items-center relative z-10">
+        <div className="container mx-auto px-4 py-16 h-full flex items-center relative z-10">
           <div className="md:w-1/2 text-left">
             <h1 className="text-6xl md:text-7xl font-bold mb-2 font-playfair text-white">
               Olfatea
