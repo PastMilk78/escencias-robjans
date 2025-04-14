@@ -435,14 +435,14 @@ export default function ProductosPage() {
                   
                   <div className="flex flex-col sm:flex-row items-center">
                     <div className="mb-4 sm:mb-0 sm:mr-4">
-                      <label htmlFor="cantidad" className="block text-sm font-medium text-gray-700 mb-1 font-raleway">Cantidad</label>
+                      <label htmlFor="cantidad" className="block text-sm font-medium text-black mb-1 font-raleway">Cantidad</label>
                       <select
                         id="cantidad"
-                        className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                        className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway text-black bg-white"
                         value={cantidadSeleccionada}
                         onChange={handleCantidadChange}
                       >
-                        {[...Array(10)].map((_, i) => (
+                        {[...Array(Math.min(productoSeleccionado.stock, 10))].map((_, i) => (
                           <option key={i} value={i + 1}>{i + 1}</option>
                         ))}
                       </select>

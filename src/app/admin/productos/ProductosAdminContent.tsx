@@ -420,7 +420,7 @@ export default function ProductosAdminContent() {
                 <form onSubmit={guardarProducto}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2 font-raleway" htmlFor="nombre">
+                      <label className="block text-black text-sm font-bold mb-2 font-raleway" htmlFor="nombre">
                         Nombre
                       </label>
                       <input
@@ -429,12 +429,12 @@ export default function ProductosAdminContent() {
                         name="nombre"
                         value={formulario.nombre}
                         onChange={manejarCambioFormulario}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway text-black bg-white"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2 font-raleway" htmlFor="categoria">
+                      <label className="block text-black text-sm font-bold mb-2 font-raleway" htmlFor="categoria">
                         Categoría
                       </label>
                       <select
@@ -442,15 +442,15 @@ export default function ProductosAdminContent() {
                         name="categoria"
                         value={formulario.categoria}
                         onChange={manejarCambioFormulario}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway text-black bg-white"
                       >
-                        <option value="Mujer" className="bg-[#473f3f] text-white">Mujer</option>
-                        <option value="Hombre" className="bg-[#473f3f] text-white">Hombre</option>
-                        <option value="Unisex" className="bg-[#473f3f] text-white">Unisex</option>
+                        <option value="Mujer" className="bg-white text-black">Mujer</option>
+                        <option value="Hombre" className="bg-white text-black">Hombre</option>
+                        <option value="Unisex" className="bg-white text-black">Unisex</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2 font-raleway" htmlFor="precio">
+                      <label className="block text-black text-sm font-bold mb-2 font-raleway" htmlFor="precio">
                         Precio
                       </label>
                       <input
@@ -459,14 +459,14 @@ export default function ProductosAdminContent() {
                         name="precio"
                         value={formulario.precio}
                         onChange={manejarCambioFormulario}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway text-black bg-white"
                         min="0"
                         step="0.01"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2 font-raleway" htmlFor="stock">
+                      <label className="block text-black text-sm font-bold mb-2 font-raleway" htmlFor="stock">
                         Stock
                       </label>
                       <input
@@ -475,14 +475,14 @@ export default function ProductosAdminContent() {
                         name="stock"
                         value={formulario.stock}
                         onChange={manejarCambioFormulario}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway text-black bg-white"
                         min="0"
                         step="1"
                         required
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <label className="block text-gray-700 text-sm font-bold mb-2 font-raleway" htmlFor="descripcion">
+                      <label className="block text-black text-sm font-bold mb-2 font-raleway" htmlFor="descripcion">
                         Descripción
                       </label>
                       <textarea
@@ -490,13 +490,13 @@ export default function ProductosAdminContent() {
                         name="descripcion"
                         value={formulario.descripcion}
                         onChange={manejarCambioFormulario}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway text-black bg-white"
                         rows={3}
                         required
                       ></textarea>
                     </div>
                     <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2 font-raleway" htmlFor="imagen">
+                      <label className="block text-black text-sm font-bold mb-2 font-raleway" htmlFor="imagen">
                         Imagen del producto
                       </label>
                       <div className="flex flex-col space-y-2">
@@ -505,16 +505,16 @@ export default function ProductosAdminContent() {
                           id="imagen-upload"
                           accept="image/*"
                           onChange={manejarCargaImagen}
-                          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway bg-[#473f3f] text-white"
+                          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway bg-white text-black"
                         />
-                        <div className="text-gray-500 text-sm italic font-raleway">o</div>
+                        <div className="text-black text-sm italic font-raleway">o</div>
                         <input
                           type="text"
                           id="imagen"
                           name="imagen"
                           value={formulario.imagen}
                           onChange={manejarCambioFormulario}
-                          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway text-black bg-white"
                           placeholder="URL o data URL de la imagen"
                         />
                         {formulario.imagen && (
@@ -531,7 +531,7 @@ export default function ProductosAdminContent() {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2 font-raleway" htmlFor="inspirado_en">
+                      <label className="block text-black text-sm font-bold mb-2 font-raleway" htmlFor="inspirado_en">
                         Inspirado en
                       </label>
                       <input
@@ -540,14 +540,14 @@ export default function ProductosAdminContent() {
                         name="inspirado_en"
                         value={formulario.inspirado_en}
                         onChange={manejarCambioFormulario}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fed856] font-raleway text-black bg-white"
                         required
                       />
                     </div>
                     
                     {/* Nueva sección para notas */}
                     <div className="md:col-span-2 mt-4">
-                      <h3 className="text-lg font-semibold mb-3 text-[#312b2b] font-raleway">Notas del Perfume</h3>
+                      <h3 className="text-lg font-semibold mb-3 text-black font-raleway">Notas del Perfume</h3>
                       <div className="mb-4 p-4 bg-gray-50 rounded-md">
                         <div className="flex flex-wrap gap-2 mb-4">
                           {formulario.notas.map((nota, index) => (
@@ -572,19 +572,19 @@ export default function ProductosAdminContent() {
                         
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                           <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-1 font-raleway" htmlFor="nota-nombre">Nombre</label>
+                            <label className="block text-black text-sm font-bold mb-1 font-raleway" htmlFor="nota-nombre">Nombre</label>
                             <input
                               type="text"
                               id="nota-nombre"
                               name="nombre"
                               value={nuevaNota.nombre}
                               onChange={manejarCambioNota}
-                              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm font-raleway"
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm font-raleway text-black bg-white"
                               placeholder="Ej: Vainilla, Frutos rojos"
                             />
                           </div>
                           <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-1 font-raleway" htmlFor="nota-intensidad">
+                            <label className="block text-black text-sm font-bold mb-1 font-raleway" htmlFor="nota-intensidad">
                               Intensidad (1-10)
                             </label>
                             <input
@@ -597,10 +597,10 @@ export default function ProductosAdminContent() {
                               onChange={manejarCambioNota}
                               className="w-full"
                             />
-                            <div className="text-center text-sm">{nuevaNota.intensidad}</div>
+                            <div className="text-center text-black text-sm">{nuevaNota.intensidad}</div>
                           </div>
                           <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-1 font-raleway" htmlFor="nota-color">Color</label>
+                            <label className="block text-black text-sm font-bold mb-1 font-raleway" htmlFor="nota-color">Color</label>
                             <input
                               type="color"
                               id="nota-color"

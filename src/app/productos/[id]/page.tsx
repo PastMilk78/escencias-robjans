@@ -276,18 +276,18 @@ export default function ProductoDetalle({ params }: { params: Params }) {
               {producto.stock > 0 && (
                 <div className="mt-6">
                   <div className="flex items-center mb-4">
-                    <label htmlFor="cantidad" className="mr-3 font-raleway text-[#312b2b]">Cantidad:</label>
+                    <label htmlFor="cantidad" className="mr-3 font-raleway text-black font-medium">Cantidad:</label>
                     <div className="flex items-center border border-gray-300 rounded">
                       <button 
                         onClick={() => setCantidad(prev => Math.max(1, prev - 1))}
-                        className="px-3 py-1 bg-gray-100 text-gray-600 hover:bg-gray-200 font-raleway"
+                        className="px-3 py-1 bg-gray-100 text-black hover:bg-gray-200 font-raleway"
                       >
                         -
                       </button>
-                      <span className="px-4 py-1 font-raleway">{cantidad}</span>
+                      <span className="px-4 py-1 font-raleway text-black">{cantidad}</span>
                       <button 
                         onClick={() => setCantidad(prev => Math.min(producto.stock, prev + 1))}
-                        className="px-3 py-1 bg-gray-100 text-gray-600 hover:bg-gray-200 font-raleway"
+                        className="px-3 py-1 bg-gray-100 text-black hover:bg-gray-200 font-raleway"
                       >
                         +
                       </button>

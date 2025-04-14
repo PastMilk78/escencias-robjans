@@ -68,12 +68,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
       // Verificar si el producto ya está en el carrito
       const itemExistente = prevCarrito.find(item => item.producto._id === producto._id);
       
+      // Calcular la cantidad total considerando lo que ya está en el carrito
+      const cantidadActual = itemExistente ? itemExistente.cantidad : 0;
+      const nuevaCantidadTotal = cantidadActual + cantidad;
+      
+      // Verificar si hay suficiente stock
+      if (nuevaCantidadTotal > producto.stock) {
+        alert(`Solo hay ${producto.stock} unidades disponibles de este producto.`);
+        // Si hay un item existente, mantenerlo con su cantidad actual
+        return prevCarrito;
+      }
+      
       let nuevoCarrito;
       if (itemExistente) {
         // Actualizar cantidad del item existente
         nuevoCarrito = prevCarrito.map(item => 
           item.producto._id === producto._id 
-            ? { ...item, cantidad: item.cantidad + cantidad } 
+            ? { ...item, cantidad: nuevaCantidadTotal } 
             : item
         );
       } else {
@@ -112,6 +123,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       // Eliminar producto si la cantidad es 0 o menor
       setCarrito(carrito.filter(item => item.producto._id !== productoId));
     } else {
+      // Verificar si hay suficiente stock antes de actualizar
+      const item = carrito.find(item => item.producto._id === productoId);
+      if (item && nuevaCantidad > item.producto.stock) {
+        alert(`Solo hay ${item.producto.stock} unidades disponibles de este producto.`);
+        return;
+      }
+      
       // Actualizar cantidad
       setCarrito(
         carrito.map(item =>
