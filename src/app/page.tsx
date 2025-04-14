@@ -84,85 +84,75 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#8e3b00]">
-      {/* Barra de navegación simplificada */}
-      <header className="bg-gradient-to-r from-[#8e3b00] to-[#a03e00] py-3">
-        <div className="container mx-auto flex justify-between items-center px-4">
-          <div></div>
-          <div className="text-center">
-            <img
-              src="https://i.postimg.cc/CSLfCjn4/image.png"
-              alt="Escencias Robjans Logo"
-              className="h-16 w-auto"
-            />
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Buscar"
-                className="bg-white text-black px-4 py-2 rounded-full font-raleway w-24"
-              />
-              <button className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </button>
-            </div>
-            <a 
-              href="#contacto" 
-              className="bg-white text-black px-6 py-2 rounded-full font-raleway"
-            >
-              SOBRE NOSOTROS
-            </a>
-            <CartIcon />
-          </div>
-        </div>
-      </header>
-
-      {/* Sección Hero con imagen a pantalla completa como fondo */}
-      <section className="relative min-h-[80vh] overflow-hidden bg-[#8e3b00]">
+      {/* Header y Hero unidos con imagen de fondo */}
+      <div className="relative min-h-[100vh] overflow-hidden">
+        {/* Fondo base */}
+        <div className="absolute inset-0 w-full h-full z-0 bg-gradient-to-r from-[#8e3b00] to-[#a03e00]"></div>
+        
         {/* Imagen de fondo que abarca todo el espacio */}
-        <div className="absolute inset-0 w-full h-full z-0 bg-gradient-to-r from-[#8e3b00] to-[#a03e00]">
+        <div className="absolute inset-0 w-full h-full">
           <img
             src="https://perfumesdepaso.com/wp-content/uploads/2021/12/1-million-paco-rabanne.png"
             alt="Perfume Escencias Robjans"
-            className="absolute right-0 h-[800px] w-auto object-contain"
+            className="absolute right-0 h-full w-auto object-contain"
             style={{ 
-              top: '50%', 
-              transform: 'translateY(-50%)',
-              maxWidth: 'none',
+              maxHeight: 'none',
               minHeight: '100%',
-              zIndex: 1
+              maxWidth: 'none',
+              width: 'auto',
+              top: '50%', 
+              transform: 'translateY(-50%)'
             }}
           />
         </div>
-
+        
+        {/* Barra de navegación superpuesta */}
+        <header className="relative z-10 py-3">
+          <div className="container mx-auto flex justify-between items-center px-4">
+            <div></div>
+            <div className="text-center">
+              <img
+                src="https://i.postimg.cc/CSLfCjn4/image.png"
+                alt="Escencias Robjans Logo"
+                className="h-16 w-auto"
+              />
+            </div>
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Buscar"
+                  className="bg-white text-black px-4 py-2 rounded-full font-raleway w-24"
+                />
+                <button className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </button>
+              </div>
+              <a 
+                href="#contacto" 
+                className="bg-white text-black px-6 py-2 rounded-full font-raleway"
+              >
+                SOBRE NOSOTROS
+              </a>
+              <CartIcon />
+            </div>
+          </div>
+        </header>
+        
         {/* Contenido de texto en primer plano */}
         <div className="container mx-auto px-4 py-16 h-full flex items-center relative z-10">
-          <div className="md:w-1/2 text-left">
+          <div className="md:w-1/2 text-left mt-20">
             <h1 className="text-6xl md:text-7xl font-bold mb-2 font-playfair text-white">
               Olfatea
             </h1>
             <h2 className="text-5xl md:text-6xl font-bold mb-8 font-playfair text-white">
               El Futuro de las Fragancias.
             </h2>
-            <div className="flex flex-wrap gap-4 mt-16">
-              <Link
-                href="/productos"
-                className="inline-block bg-white text-[#333] px-8 py-3 rounded-full font-bold hover:bg-[#f8f1d8] transition-colors font-raleway uppercase"
-              >
-                Compra los más vendidos
-              </Link>
-              <Link
-                href="/productos"
-                className="inline-block bg-white text-[#333] px-8 py-3 rounded-full font-bold hover:bg-[#f8f1d8] transition-colors font-raleway uppercase"
-              >
-                Compra todo
-              </Link>
-            </div>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Sección de Productos Destacados */}
       <section className="py-16 bg-[#594a42]">
