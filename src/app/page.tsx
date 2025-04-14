@@ -24,8 +24,8 @@ type Producto = {
 async function getProductosDestacados() {
   try {
     await connectToDatabase();
-    // Obtener 4 productos aleatorios
-    const productos = await ProductoModel.aggregate([{ $sample: { size: 4 } }]);
+    // Obtener 3 productos aleatorios
+    const productos = await ProductoModel.aggregate([{ $sample: { size: 3 } }]);
     return JSON.parse(JSON.stringify(productos)) as Producto[]; // Serializar para Next.js
   } catch (error) {
     console.error("Error al obtener productos destacados:", error);
@@ -72,20 +72,6 @@ async function getProductosDestacados() {
         notas: [
           { nombre: "Flores", intensidad: 7, color: "#FFC0CB" },
           { nombre: "Especias", intensidad: 8, color: "#8B4513" }
-        ]
-      },
-      {
-        _id: "producto4",
-        nombre: "Perfume Elegante",
-        categoria: "Unisex",
-        precio: 349.99,
-        stock: 15,
-        descripcion: "Una mezcla elegante y sofisticada con notas amaderadas y almizcle. Perfecto para cualquier ocasión.",
-        imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
-        inspirado_en: "CK One",
-        notas: [
-          { nombre: "Almizcle", intensidad: 6, color: "#D3D3D3" },
-          { nombre: "Madera", intensidad: 7, color: "#8B4513" }
         ]
       }
     ];
@@ -163,15 +149,15 @@ export default async function Home() {
             </div>
           ) : (
             <>
-              {/* Vista previa de productos destacados (limitada a 3) */}
+              {/* Vista previa de productos destacados (3 productos) */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
-                {productosDestacados.slice(0, 3).map((producto) => (
+                {productosDestacados.map((producto) => (
                   <div
                     key={producto._id}
                     className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform hover:scale-105"
                   >
                     <img
-                      src="https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg"
+                      src={producto.imagen || "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg"}
                       alt={producto.nombre}
                       className="w-full h-64 object-cover"
                     />
@@ -189,10 +175,10 @@ export default async function Home() {
                           ${producto.precio.toFixed(2)}
                         </span>
                         <Link
-                          href={`/productos`}
+                          href={`/productos/${producto._id}`}
                           className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-md hover:bg-[#e5c24c] transition-colors font-raleway"
                         >
-                          Ver Productos
+                          Ver Detalles
                         </Link>
                       </div>
                     </div>
