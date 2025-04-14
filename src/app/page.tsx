@@ -92,7 +92,7 @@ export default async function Home() {
         {/* Imagen de fondo que abarca todo el espacio */}
         <div className="absolute inset-0 w-full h-full">
           <img
-            src="https://perfumesdepaso.com/wp-content/uploads/2021/12/1-million-paco-rabanne.png"
+            src="https://i.postimg.cc/CSLfCjn4/image.png"
             alt="Perfume Escencias Robjans"
             className="absolute right-0 h-full w-auto object-contain"
             style={{ 
