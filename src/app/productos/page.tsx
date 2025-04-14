@@ -230,9 +230,8 @@ export default function ProductosPage() {
             <img
               src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg"
               alt="Escencias Robjans Logo"
-              className="h-20 rounded-xl"
+              className="h-60 rounded-xl"
             />
-            <h1 className="text-[#fed856] text-xl font-bold ml-2 font-raleway">Escencias Robjans</h1>
           </Link>
           <div className="flex items-center space-x-4">
             <a href="/#contacto" className="button button-small bg-[#fed856] text-[#312b2b] hover:bg-[#e5c24c] hover:text-[#312b2b] mr-2 font-raleway">
@@ -249,7 +248,7 @@ export default function ProductosPage() {
       </header>
       
       {/* Banner Titulo */}
-      <div className="bg-[#473f3f] text-white py-10">
+      <div className="bg-[#594a42] text-white py-10">
         <div className="container mx-auto text-center">
           <h1 className="text-4xl font-bold text-[#fed856] font-playfair">Nuestros Perfumes</h1>
           <p className="mt-2 text-[#f8f1d8] font-raleway">Descubre fragancias exclusivas inspiradas en los mejores perfumes</p>
@@ -257,7 +256,7 @@ export default function ProductosPage() {
       </div>
       
       {/* Contenido principal */}
-      <main className="container mx-auto py-10 px-4 flex-grow">
+      <main className="container mx-auto py-10 px-4 flex-grow bg-[#f8f1d8]">
         {/* Mensaje de error si existe */}
         {error && (
           <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded mb-6">
@@ -363,7 +362,7 @@ export default function ProductosPage() {
       </main>
       
       {/* Footer */}
-      <footer className="bg-[#312b2b] text-white py-8 mt-auto">
+      <footer className="bg-[#594a42] text-white py-8 mt-auto border-t-2 border-[#fed856]">
         <div className="container mx-auto px-4 text-center">
           <p className="text-[#f8f1d8] font-raleway">
             &copy; {new Date().getFullYear()} Escencias Robjans. Todos los derechos reservados.

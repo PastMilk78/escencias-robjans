@@ -105,9 +105,8 @@ export default async function Home() {
             <img
               src="https://i.postimg.cc/K1KCM5K0/logo-escencias.jpg"
               alt="Escencias Robjans Logo"
-              className="h-20 rounded-xl"
+              className="h-60 rounded-xl"
             />
-            <h1 className="text-[#fed856] text-xl font-bold ml-2 font-raleway">{siteName}</h1>
           </div>
           <div className="flex items-center space-x-4">
             <a href="#contacto" className="button button-small bg-[#fed856] text-[#312b2b] hover:bg-[#e5c24c] hover:text-[#312b2b] mr-2 font-raleway">
@@ -152,9 +151,9 @@ export default async function Home() {
       </section>
 
       {/* Sección de Productos Destacados */}
-      <section className="py-16">
+      <section className="py-16 bg-[#594a42]">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl text-center font-bold text-[#312b2b] mb-12 font-playfair">
+          <h2 className="text-3xl text-center font-bold text-[#fed856] mb-12 font-playfair">
             Productos Destacados
           </h2>
           
@@ -260,7 +259,7 @@ export default async function Home() {
       </section>
 
       {/* Sección de Contacto con Mapa */}
-      <section id="contacto" className="py-16 bg-[#312b2b]">
+      <section id="contacto" className="py-16 bg-[#594a42]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center text-[#fed856] mb-12 font-raleway">Encuéntranos</h2>
           
