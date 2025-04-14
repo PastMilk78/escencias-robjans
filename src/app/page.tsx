@@ -111,11 +111,7 @@ export default async function Home() {
           <div className="container mx-auto flex justify-between items-center px-4">
             <div></div>
             <div className="text-center">
-              <img
-                src="https://i.postimg.cc/CSLfCjn4/image.png"
-                alt="Escencias Robjans Logo"
-                className="h-16 w-auto"
-              />
+              {/* Se elimina la imagen del logo */}
             </div>
             <div className="flex items-center space-x-4">
               <div className="relative">
