@@ -66,14 +66,24 @@ export async function POST(request: NextRequest) {
 
     console.log('Creando sesión de checkout con los siguientes items:', JSON.stringify(lineItems, null, 2));
 
+    // Asegurarnos de tener URLs de redirección absolutas y válidas
+    const origin = request.headers.get('origin') || request.nextUrl.origin;
+    const successUrl = new URL('/checkout/success', origin).toString();
+    const cancelUrl = new URL('/checkout/cancel', origin).toString();
+    
+    console.log('URLs de redirección:', {
+      success: successUrl,
+      cancel: cancelUrl
+    });
+
     // Crear la sesión de checkout
     try {
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: lineItems,
         mode: 'payment',
-        success_url: `${request.nextUrl.origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${request.nextUrl.origin}/checkout/cancel`,
+        success_url: `${successUrl}?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: cancelUrl,
         shipping_address_collection: {
           allowed_countries: ['MX'],
         },
