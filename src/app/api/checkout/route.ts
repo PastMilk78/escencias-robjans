@@ -10,12 +10,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'El carrito está vacío' }, { status: 400 });
     }
 
+    // Verificar la configuración de Stripe
+    const configOk = stripeService.checkStripeConfig();
+    if (!configOk) {
+      console.error('La configuración de Stripe está incompleta');
+      return NextResponse.json(
+        { error: 'Error de configuración del sistema de pagos. Por favor, contacte al administrador.' }, 
+        { status: 500 }
+      );
+    }
+
     // Obtener la instancia de Stripe
     const stripe = await stripeService.getStripeInstance();
     
     if (!stripe) {
+      console.error('No se pudo inicializar Stripe');
       return NextResponse.json(
-        { error: 'No se pudo inicializar Stripe. Contacta al administrador.' }, 
+        { error: 'No se pudo inicializar el sistema de pagos. Por favor, contacte al administrador.' }, 
         { status: 500 }
       );
     }
@@ -27,7 +38,7 @@ export async function POST(request: NextRequest) {
           currency: 'mxn',
           product_data: {
             name: item.producto.nombre,
-            description: item.producto.descripcion,
+            description: item.producto.descripcion || 'Perfume de alta calidad',
             images: [item.producto.imagen || 'https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg'],
             metadata: {
               product_id: item.producto._id,
@@ -38,6 +49,8 @@ export async function POST(request: NextRequest) {
         quantity: item.cantidad,
       };
     });
+
+    console.log('Creando sesión de checkout con los siguientes items:', JSON.stringify(lineItems, null, 2));
 
     // Crear la sesión de checkout
     const session = await stripe.checkout.sessions.create({
@@ -67,9 +80,17 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    console.log('Sesión de checkout creada exitosamente:', session.id);
     return NextResponse.json({ sessionId: session.id, url: session.url });
   } catch (error: any) {
-    console.error('Error creating checkout session:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Error al crear la sesión de checkout:', error);
+    let errorMessage = 'Error al procesar el pago';
+    
+    if (error.type && error.type.startsWith('Stripe')) {
+      // Manejar errores específicos de Stripe
+      errorMessage = 'Error en el sistema de pagos: ' + (error.message || 'Detalles no disponibles');
+    }
+    
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 } 

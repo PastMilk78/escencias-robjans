@@ -317,7 +317,7 @@ export default async function Home() {
             <div className="md:w-1/2">
               <div className="rounded-lg overflow-hidden h-96 border-2 border-[#fed856] shadow-xl transform transition-transform hover:scale-105">
                 <iframe 
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3721.9752990865485!2d-100.93652559678213!3d21.15805388400936!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x842b3f071b6a424f%3A0x822f90a5ec4451f4!2sQuer%C3%A9taro%20SN%2C%20Centro%2C%2037800%20Dolores%20Hidalgo%20Cuna%20de%20la%20Independencia%20Nacional%2C%20Gto.!5e0!3m2!1ses-419!2smx!4v1714182071842!5m2!1ses-419!2smx" 
+                  src="https://maps.app.goo.gl/zCz3CKYUt57DeUPLA"
                   width="100%" 
                   height="100%" 
                   style={{ border: 0 }} 
