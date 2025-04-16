@@ -22,7 +22,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## Environment Variables
 
-Create a `.env.local` file in the root directory with the following variables:
+For development, create a `.env.local` file in the root directory with the following variables:
 
 ```env
 # Stripe API Keys
@@ -32,7 +32,13 @@ NEXT_PUBLIC_STRIPE_PUBLIC_KEY=your_stripe_public_key_here
 STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret_here
 ```
 
-Replace the placeholder values with your actual Stripe API keys.
+**IMPORTANT:** For production, set these environment variables in your Vercel project settings:
+1. Go to your project in the Vercel dashboard
+2. Navigate to "Settings" > "Environment Variables"
+3. Add each of the variables listed above with their actual values
+4. Deploy your project to apply the changes
+
+Never commit actual API keys to the repository.
 
 ## Learn More
 
