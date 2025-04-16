@@ -43,3 +43,13 @@ next-env.d.ts
 # Ignorar scripts de carga de datos
 /src/scripts/
 /scripts/
+
+# environment variables
+.env
+.env*.local
+
+# sensitive files
+stripe-keys.txt
+api-keys.md
+*keys*
+*credentials*

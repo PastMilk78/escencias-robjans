@@ -20,6 +20,20 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Environment Variables
+
+Create a `.env.local` file in the root directory with the following variables:
+
+```env
+# Stripe API Keys
+STRIPE_PUBLIC_KEY=your_stripe_public_key_here
+STRIPE_SECRET_KEY=your_stripe_secret_key_here
+NEXT_PUBLIC_STRIPE_PUBLIC_KEY=your_stripe_public_key_here
+STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret_here
+```
+
+Replace the placeholder values with your actual Stripe API keys.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
