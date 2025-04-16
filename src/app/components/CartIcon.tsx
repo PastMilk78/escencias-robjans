@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "../context/CartContext";
 
 // Definir tipos
@@ -38,6 +39,8 @@ interface AddToCartEvent extends Event {
 
 export default function CartIcon() {
   const [modalAbierto, setModalAbierto] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const { 
     carrito, 
     total, 
@@ -78,12 +81,50 @@ export default function CartIcon() {
     }
   };
 
-  // Proceder al pago (integrará con Stripe)
-  const procederAlPago = () => {
-    // Aquí se implementará la integración con Stripe
-    alert("La funcionalidad de pago con Stripe se implementará próximamente.");
-    // Podríamos redirigir a una página de checkout
-    // router.push('/checkout');
+  // Proceder al pago con Stripe
+  const procederAlPago = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Preparar los datos para la API
+      const checkoutData = {
+        items: carrito,
+        userInfo: {
+          // Por ahora vacío, podríamos expandir más adelante con info del usuario
+          email: '',
+          phone: ''
+        }
+      };
+      
+      // Llamar a nuestra API de checkout
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(checkoutData),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al iniciar el proceso de pago');
+      }
+      
+      // Redirigir a la página de checkout de Stripe
+      if (data.url) {
+        // Cerrar el modal del carrito
+        setModalAbierto(false);
+        
+        // Redirigir a la URL de Stripe
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Error al proceder al pago:', error);
+      alert('Hubo un error al procesar el pago. Por favor, inténtelo de nuevo.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -186,14 +227,16 @@ export default function CartIcon() {
                       <button
                         onClick={vaciarCarrito}
                         className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors font-raleway"
+                        disabled={isLoading}
                       >
                         Vaciar Carrito
                       </button>
                       <button
                         onClick={procederAlPago}
-                        className="bg-[#fed856] text-[#312b2b] px-6 py-2 rounded-md font-bold hover:bg-[#e5c24c] transition-colors font-raleway"
+                        className="bg-[#fed856] text-[#312b2b] px-6 py-2 rounded-md font-bold hover:bg-[#e5c24c] transition-colors font-raleway disabled:opacity-50"
+                        disabled={isLoading}
                       >
-                        Proceder al Pago
+                        {isLoading ? 'Procesando...' : 'Proceder al Pago'}
                       </button>
                     </div>
                   </div>
