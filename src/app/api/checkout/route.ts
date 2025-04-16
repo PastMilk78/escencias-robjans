@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import stripe from '@/lib/stripe';
+import stripeService from '@/lib/stripe';
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,6 +8,16 @@ export async function POST(request: NextRequest) {
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: 'El carrito está vacío' }, { status: 400 });
+    }
+
+    // Obtener la instancia de Stripe
+    const stripe = await stripeService.getStripeInstance();
+    
+    if (!stripe) {
+      return NextResponse.json(
+        { error: 'No se pudo inicializar Stripe. Contacta al administrador.' }, 
+        { status: 500 }
+      );
     }
 
     // Preparar los ítems para Stripe
