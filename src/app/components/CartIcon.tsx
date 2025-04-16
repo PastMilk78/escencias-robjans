@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCart } from "../context/CartContext";
 
@@ -44,8 +44,28 @@ export default function CartIcon() {
     totalItems, 
     actualizarCantidad, 
     eliminarProducto, 
-    vaciarCarrito 
+    vaciarCarrito,
+    añadirAlCarrito
   } = useCart();
+
+  // Escuchar el evento personalizado 'add-to-cart'
+  useEffect(() => {
+    const handleAddToCart = (event: Event) => {
+      const customEvent = event as AddToCartEvent;
+      const { producto, cantidad } = customEvent.detail;
+      añadirAlCarrito(producto, cantidad);
+      // Opcionalmente mostrar el carrito después de añadir
+      setModalAbierto(true);
+    };
+
+    // Añadir el event listener
+    window.addEventListener('add-to-cart', handleAddToCart);
+
+    // Cleanup: remover el listener cuando el componente se desmonte
+    return () => {
+      window.removeEventListener('add-to-cart', handleAddToCart);
+    };
+  }, [añadirAlCarrito]);
 
   // Abrir/cerrar modal del carrito
   const toggleModal = () => {
