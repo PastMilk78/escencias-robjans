@@ -42,12 +42,13 @@ class StripeService {
 
   // Método para verificar que las variables de entorno de Stripe estén configuradas
   checkStripeConfig() {
-    const publicKey = process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY;
+    // Verificar ambas variables de clave pública para mayor compatibilidad
+    const publicKey = process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || process.env.STRIPE_PUBLIC_KEY;
     const secretKey = process.env.STRIPE_SECRET_KEY;
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
     
     const missingKeys = [];
-    if (!publicKey) missingKeys.push('NEXT_PUBLIC_STRIPE_PUBLIC_KEY');
+    if (!publicKey) missingKeys.push('NEXT_PUBLIC_STRIPE_PUBLIC_KEY o STRIPE_PUBLIC_KEY');
     if (!secretKey) missingKeys.push('STRIPE_SECRET_KEY');
     if (!webhookSecret) missingKeys.push('STRIPE_WEBHOOK_SECRET');
     

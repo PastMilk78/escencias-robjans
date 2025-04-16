@@ -40,6 +40,7 @@ interface AddToCartEvent extends Event {
 export default function CartIcon() {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMensaje, setErrorMensaje] = useState<string | null>(null);
   const router = useRouter();
   const { 
     carrito, 
@@ -85,6 +86,7 @@ export default function CartIcon() {
   const procederAlPago = async () => {
     try {
       setIsLoading(true);
+      setErrorMensaje(null); // Limpiar errores anteriores
       
       // Preparar los datos para la API
       const checkoutData = {
@@ -95,6 +97,8 @@ export default function CartIcon() {
           phone: ''
         }
       };
+      
+      console.log('Iniciando checkout con datos:', JSON.stringify(checkoutData));
       
       // Llamar a nuestra API de checkout
       const response = await fetch('/api/checkout', {
@@ -108,20 +112,24 @@ export default function CartIcon() {
       const data = await response.json();
       
       if (!response.ok) {
+        console.error('Error en respuesta de API checkout:', data);
         throw new Error(data.error || 'Error al iniciar el proceso de pago');
       }
       
       // Redirigir a la página de checkout de Stripe
       if (data.url) {
+        console.log('Redirigiendo a URL de Stripe:', data.url);
         // Cerrar el modal del carrito
         setModalAbierto(false);
         
         // Redirigir a la URL de Stripe
         window.location.href = data.url;
+      } else {
+        throw new Error('No se recibió URL de Stripe para el checkout');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al proceder al pago:', error);
-      alert('Hubo un error al procesar el pago. Por favor, inténtelo de nuevo.');
+      setErrorMensaje(error.message || 'Hubo un error al procesar el pago. Por favor, inténtelo de nuevo.');
     } finally {
       setIsLoading(false);
     }
@@ -218,6 +226,12 @@ export default function CartIcon() {
                   </div>
 
                   <div className="border-t pt-4">
+                    {errorMensaje && (
+                      <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+                        {errorMensaje}
+                      </div>
+                    )}
+                    
                     <div className="flex justify-between items-center mb-6">
                       <span className="text-lg font-medium text-[#312b2b] font-raleway">Total:</span>
                       <span className="text-xl font-bold text-[#312b2b] font-raleway">${total.toFixed(2)}</span>
