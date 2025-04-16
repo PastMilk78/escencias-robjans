@@ -286,7 +286,7 @@ export default async function Home() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
                     </div>
-                    <span className="text-lg">Calle Principal #123, Ciudad</span>
+                    <span className="text-lg">Calle Querétaro #20 Colonia Centro</span>
                   </li>
                   <li className="flex items-center font-raleway">
                     <div className="bg-[#fed856] p-3 rounded-full mr-4">
@@ -294,7 +294,7 @@ export default async function Home() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                     </div>
-                    <span className="text-lg">info@escenciasrobjans.com</span>
+                    <span className="text-lg">escenciasrobjans@gmail.com</span>
                   </li>
                   <li className="flex items-center font-raleway">
                     <div className="bg-[#fed856] p-3 rounded-full mr-4">
@@ -302,18 +302,14 @@ export default async function Home() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                       </svg>
                     </div>
-                    <span className="text-lg">+123 456 7890</span>
+                    <span className="text-lg">418 305 6738</span>
                   </li>
                 </ul>
                 <div className="mt-8 p-6 bg-[#312b2b] rounded-lg border border-[#fed856]">
                   <h4 className="text-xl text-[#fed856] font-medium mb-4 font-raleway">Horarios de Atención</h4>
                   <p className="text-[#f8f1d8] mb-3 font-raleway flex items-center">
                     <span className="inline-block bg-[#fed856] w-3 h-3 rounded-full mr-2"></span>
-                    Lunes a Viernes: 9:00 AM - 7:00 PM
-                  </p>
-                  <p className="text-[#f8f1d8] font-raleway flex items-center">
-                    <span className="inline-block bg-[#fed856] w-3 h-3 rounded-full mr-2"></span>
-                    Sábados: 10:00 AM - 4:00 PM
+                    Lunes a Sábado: 10:00 AM - 8:00 PM
                   </p>
                 </div>
               </div>
@@ -321,7 +317,7 @@ export default async function Home() {
             <div className="md:w-1/2">
               <div className="rounded-lg overflow-hidden h-96 border-2 border-[#fed856] shadow-xl transform transition-transform hover:scale-105">
                 <iframe 
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.661460824311!2d-99.16964548517653!3d19.427023545827606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1ff35f5bd1563%3A0x6c366f0e2de02ff7!2sZocalo%2C%20Centro%20Historico%2C%20Centro%2C%2006000%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX%2C%20M%C3%A9xico!5e0!3m2!1ses-419!2sus!4v1625847915946!5m2!1ses-419!2sus" 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3765.073536700303!2d-100.81736792426984!3d20.32142951246767!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x842ad409c9b66aed%3A0x2a6afd82a06ae63d!2sQuer%C3%A9taro%2020%2C%20Centro%2C%20Celaya%2C%20Gto.!5e0!3m2!1ses-419!2smx!4v1713916148935!5m2!1ses-419!2smx" 
                   width="100%" 
                   height="100%" 
                   style={{ border: 0 }} 
@@ -388,7 +384,9 @@ export default async function Home() {
               <h3 className="text-xl font-semibold mb-6 text-[#fed856] font-raleway">Síguenos</h3>
               <div className="flex justify-center md:justify-start space-x-6">
                 <a 
-                  href="#" 
+                  href="https://www.facebook.com/share/1ABvtdNdz4/?mibextid=wwXIfr" 
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="bg-[#473f3f] hover:bg-[#fed856] transition-colors p-3 rounded-full group"
                 >
                   <span className="sr-only">Facebook</span>
@@ -397,7 +395,9 @@ export default async function Home() {
                   </svg>
                 </a>
                 <a 
-                  href="#" 
+                  href="https://www.instagram.com/explore/locations/505829956452206/perfumeria-esencias-robjans/" 
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="bg-[#473f3f] hover:bg-[#fed856] transition-colors p-3 rounded-full group"
                 >
                   <span className="sr-only">Instagram</span>
@@ -406,7 +406,9 @@ export default async function Home() {
                   </svg>
                 </a>
                 <a 
-                  href="#" 
+                  href="https://wa.me/524183056738" 
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="bg-[#473f3f] hover:bg-[#fed856] transition-colors p-3 rounded-full group"
                 >
                   <span className="sr-only">WhatsApp</span>
