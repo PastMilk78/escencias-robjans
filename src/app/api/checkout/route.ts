@@ -66,10 +66,27 @@ export async function POST(request: NextRequest) {
 
     console.log('Creando sesión de checkout con los siguientes items:', JSON.stringify(lineItems, null, 2));
 
-    // Asegurarnos de tener URLs de redirección absolutas y válidas
-    const origin = request.headers.get('origin') || request.nextUrl.origin;
-    const successUrl = new URL('/checkout/success', origin).toString();
-    const cancelUrl = new URL('/checkout/cancel', origin).toString();
+    // Obtener el origen de la solicitud de forma segura
+    let originUrl = 'https://escencias-robjans.vercel.app';
+    try {
+      // Intentar obtener el origen de la solicitud actual
+      const headerOrigin = request.headers.get('origin');
+      const urlOrigin = request.nextUrl.origin;
+      
+      if (headerOrigin && headerOrigin !== 'null') {
+        originUrl = headerOrigin;
+      } else if (urlOrigin && urlOrigin !== 'null') {
+        originUrl = urlOrigin;
+      }
+      
+      console.log('Origen detectado:', originUrl);
+    } catch (err) {
+      console.warn('No se pudo determinar el origen, usando valor predeterminado:', originUrl);
+    }
+    
+    // Construir las URLs absolutas
+    const successUrl = `${originUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${originUrl}/checkout/cancel`;
     
     console.log('URLs de redirección:', {
       success: successUrl,
@@ -82,7 +99,7 @@ export async function POST(request: NextRequest) {
         payment_method_types: ['card'],
         line_items: lineItems,
         mode: 'payment',
-        success_url: `${successUrl}?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: successUrl,
         cancel_url: cancelUrl,
         shipping_address_collection: {
           allowed_countries: ['MX'],
