@@ -14,8 +14,8 @@ export default function ResenaCarousel() {
   const [resenas, setResenas] = useState<Resena[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [scrollPosition, setScrollPosition] = useState(0);
   
   useEffect(() => {
     const fetchResenas = async () => {
@@ -79,24 +79,39 @@ export default function ResenaCarousel() {
     fetchResenas();
   }, []);
 
-  // Rotación automática cada 8 segundos para dar tiempo de leer
+  // Para crear el efecto de desplazamiento continuo
   useEffect(() => {
-    if (resenas.length === 0) return;
+    if (resenas.length === 0 || !carouselRef.current) return;
     
-    const interval = setInterval(() => {
-      rotarReseñasHaciaArriba();
-    }, 8000); // Tiempo más lento para permitir leer
+    // Duplicar las reseñas para crear efecto infinito
+    const resenasContainer = carouselRef.current;
+    const resenasHeight = resenasContainer.scrollHeight / 2; // Altura de las reseñas originales
     
-    return () => clearInterval(interval);
-  }, [resenas, currentIndex]);
-  
-  // Función para rotar las reseñas hacia arriba
-  const rotarReseñasHaciaArriba = () => {
-    if (resenas.length <= 1) return;
+    const scrollSpeed = 0.5; // velocidad de desplazamiento (píxeles por frame)
+    let animationFrameId: number;
     
-    const nextIndex = (currentIndex + 1) % resenas.length;
-    setCurrentIndex(nextIndex);
-  };
+    const animate = () => {
+      // Incrementar la posición de desplazamiento
+      setScrollPosition(prevPosition => {
+        const newPosition = prevPosition + scrollSpeed;
+        
+        // Si hemos desplazado la altura completa, volver al inicio
+        if (newPosition >= resenasHeight) {
+          return 0;
+        }
+        
+        return newPosition;
+      });
+      
+      animationFrameId = requestAnimationFrame(animate);
+    };
+    
+    animationFrameId = requestAnimationFrame(animate);
+    
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [resenas, carouselRef.current]);
   
   // Renderizar estrellas según la puntuación
   const renderEstrellas = (puntuacion: number) => {
@@ -119,26 +134,6 @@ export default function ResenaCarousel() {
     return estrellas;
   };
 
-  // Obtener el array de reseñas reorganizado para mostrar la reseña actual en el centro
-  const getReorganizedResenas = () => {
-    if (resenas.length === 0) return [];
-    
-    // Crear una copia del array para no modificar el original
-    let reorganized = [...resenas];
-    
-    // Reorganizar el array para que la reseña actual esté en el centro
-    const currentIndexPosition = 2; // Posición del elemento actual (centro en un grupo de 4-5 elementos)
-    
-    // Desplazar el array para que el elemento actual esté en la posición central
-    const offset = (currentIndex - currentIndexPosition + reorganized.length) % reorganized.length;
-    reorganized = [
-      ...reorganized.slice(offset),
-      ...reorganized.slice(0, offset)
-    ];
-    
-    return reorganized;
-  };
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-48">
@@ -159,64 +154,43 @@ export default function ResenaCarousel() {
     return <div className="text-center py-8">No hay reseñas disponibles</div>;
   }
 
-  const reorganizedResenas = getReorganizedResenas();
+  // Duplicar las reseñas para crear el efecto infinito
+  const resenasInfinitas = [...resenas, ...resenas];
 
   return (
     <div className="max-w-5xl mx-auto">
-      <div className="relative flex flex-col items-center">
-        {/* Flecha indicadora arriba */}
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-6 z-10 text-[#fed856]">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
-          </svg>
-        </div>
-        
-        {/* Contenedor del carrusel vertical */}
+      <div className="relative w-full max-w-3xl mx-auto h-[500px] overflow-hidden bg-[#6b5b4e] rounded-lg border-2 border-[#fed856]">
+        {/* Contenedor del carrusel vertical con desplazamiento continuo */}
         <div
           ref={carouselRef}
-          className="flex flex-col space-y-4 py-8 w-full max-w-3xl mx-auto"
+          className="absolute w-full"
+          style={{
+            transform: `translateY(-${scrollPosition}px)`,
+          }}
         >
-          {reorganizedResenas.slice(0, 4).map((resena, index) => {
-            const isActive = index === 1; // El segundo elemento (índice 1) es el "activo"
-            
-            return (
-              <div
-                key={resena._id}
-                className={`
-                  transition-all duration-1000 ease-in-out
-                  bg-gradient-to-r from-[#473f3f] to-[#312b2b] border-2 border-[#fed856]
-                  ${isActive 
-                    ? 'scale-105 z-10 opacity-100 shadow-xl' 
-                    : 'scale-95 opacity-60 shadow-md'
-                  }
-                  p-5 rounded-xl transform
-                `}
-              >
-                <div className="flex flex-col">
-                  <div className="flex items-center mb-3">
-                    <div className="flex mr-2">
-                      {renderEstrellas(resena.puntuacion)}
-                    </div>
-                  </div>
-                  <p className="text-[#f8f1d8] mb-4 font-raleway italic">
-                    "{resena.comentario}"
-                  </p>
-                  <div className="mt-auto">
-                    <p className="text-[#fed856] font-bold font-raleway">
-                      {resena.nombre}
-                    </p>
+          {/* Primera serie de reseñas */}
+          {resenasInfinitas.map((resena, index) => (
+            <div
+              key={`${resena._id}-${index}`}
+              className="p-5 m-4 rounded-xl bg-gradient-to-r from-[#473f3f] to-[#312b2b] border-2 border-[#fed856] shadow-lg"
+            >
+              <div className="flex flex-col">
+                <div className="flex items-center mb-3">
+                  <div className="flex mr-2">
+                    {renderEstrellas(resena.puntuacion)}
                   </div>
                 </div>
+                <p className="text-[#f8f1d8] mb-4 font-raleway italic">
+                  "{resena.comentario}"
+                </p>
+                <div className="mt-auto">
+                  <p className="text-[#fed856] font-bold font-raleway">
+                    {resena.nombre}
+                  </p>
+                </div>
               </div>
-            );
-          })}
-        </div>
-        
-        {/* Flecha indicadora abajo */}
-        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-6 z-10 text-[#fed856]">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 13l-5 5m0 0l-5-5m5 5V6" />
-          </svg>
+            </div>
+          ))}
         </div>
       </div>
     </div>
