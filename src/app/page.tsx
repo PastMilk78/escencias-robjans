@@ -317,12 +317,13 @@ export default async function Home() {
             <div className="md:w-1/2">
               <div className="rounded-lg overflow-hidden h-96 border-2 border-[#fed856] shadow-xl transform transition-transform hover:scale-105">
                 <iframe 
-                  src="https://maps.app.goo.gl/zCz3CKYUt57DeUPLA"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d930.8123612065694!2d-100.93353407078688!3d21.159112095411456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x842b3f071b338b0f%3A0xa8fa347ed3e05c17!2sQuer%C3%A9taro%2020%2C%20Centro%2C%2037800%20Dolores%20Hidalgo%20Cuna%20de%20la%20Independencia%20Nacional%2C%20Gto.!5e0!3m2!1ses-419!2smx!4v1714134553399!5m2!1ses-419!2smx"
                   width="100%" 
                   height="100%" 
                   style={{ border: 0 }} 
                   allowFullScreen 
                   loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
                   title="Ubicación de Escencias Robjan&apos;s"
                 ></iframe>
               </div>
