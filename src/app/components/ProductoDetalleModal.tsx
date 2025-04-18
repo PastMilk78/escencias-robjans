@@ -31,57 +31,76 @@ const productosFijos = [
   {
     _id: "producto1",
     nombre: "Aroma Intenso",
-    categoria: "Mujer",
-    precio: 299.99,
-    stock: 25,
-    descripcion: "Una fragancia intensa inspirada en los perfumes más exclusivos. Con notas predominantes de vainilla y frutos rojos.",
+    categoria: "Hombre",
+    precio: 780,
+    stock: 15,
+    descripcion: "Fragancia amaderada con notas de sándalo y vetiver. Perfecta para ocasiones especiales.",
     imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
-    inspirado_en: "One Million",
+    inspirado_en: "Hugo Boss",
     notas: [
-      { nombre: "Vainilla", intensidad: 8, color: "#F3E5AB" },
-      { nombre: "Frutos Rojos", intensidad: 7, color: "#C41E3A" }
+      { nombre: "Sándalo", intensidad: 8, color: "#8B4513" },
+      { nombre: "Vetiver", intensidad: 7, color: "#556B2F" },
+      { nombre: "Bergamota", intensidad: 5, color: "#FFFF00" }
     ]
   },
   {
     _id: "producto2",
     nombre: "Esencia Fresca",
     categoria: "Hombre",
-    precio: 249.99,
+    precio: 650,
     stock: 30,
     descripcion: "Fragancia fresca y duradera con notas cítricas y amaderadas. Ideal para el uso diario.",
     imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
     inspirado_en: "Acqua di Gio",
     notas: [
       { nombre: "Cítrico", intensidad: 9, color: "#FFD700" },
-      { nombre: "Madera", intensidad: 6, color: "#8B4513" }
+      { nombre: "Madera", intensidad: 6, color: "#8B4513" },
+      { nombre: "Marino", intensidad: 7, color: "#1E90FF" }
     ]
   },
   {
     _id: "producto3",
     nombre: "Aroma Seductor",
     categoria: "Mujer",
-    precio: 279.99,
-    stock: 20,
-    descripcion: "Una fragancia seductora con notas florales y especiadas. Perfecta para ocasiones especiales.",
+    precio: 920,
+    stock: 10,
+    descripcion: "Fragancia oriental con notas de ámbar y almizcle. Perfecta para la noche.",
     imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
-    inspirado_en: "Coco Mademoiselle",
+    inspirado_en: "Black Opium",
     notas: [
-      { nombre: "Flores", intensidad: 7, color: "#FFC0CB" },
-      { nombre: "Especias", intensidad: 8, color: "#8B4513" }
+      { nombre: "Ámbar", intensidad: 9, color: "#FFA500" },
+      { nombre: "Almizcle", intensidad: 8, color: "#8B4513" },
+      { nombre: "Vainilla", intensidad: 7, color: "#FFFACD" }
     ]
   },
   {
     _id: "producto4",
     nombre: "Perfume Elegante",
     categoria: "Unisex",
-    precio: 349.99,
+    precio: 850,
     stock: 15,
-    descripcion: "Una mezcla elegante y sofisticada con notas amaderadas y almizcle. Perfecto para cualquier ocasión.",
+    descripcion: "Una mezcla elegante y sofisticada con notas amaderadas y cítricas. Perfecto para cualquier ocasión.",
     imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
     inspirado_en: "CK One",
     notas: [
       { nombre: "Almizcle", intensidad: 6, color: "#D3D3D3" },
+      { nombre: "Bergamota", intensidad: 8, color: "#FFFF00" },
       { nombre: "Madera", intensidad: 7, color: "#8B4513" }
+    ]
+  },
+  {
+    _id: "producto5",
+    nombre: "Esencia Floral",
+    categoria: "Mujer",
+    precio: 750,
+    stock: 20,
+    descripcion: "Delicada fragancia floral con notas de jazmín y rosa. Ideal para el día a día.",
+    imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
+    inspirado_en: "Daisy",
+    notas: [
+      { nombre: "Rosa", intensidad: 9, color: "#FF69B4" },
+      { nombre: "Jazmín", intensidad: 8, color: "#FFFFF0" },
+      { nombre: "Fresia", intensidad: 6, color: "#BA55D3" }
     ]
   }
 ];
@@ -101,6 +120,9 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
     const obtenerProducto = async () => {
       setCargando(true);
       setError(null);
+      setProducto(null); // Reset producto
+      
+      console.log('Obteniendo producto con ID:', productoId);
       
       try {
         // Primero intentamos obtener el producto de la API
@@ -111,7 +133,14 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
         }
         
         const datos = await respuesta.json();
-        setProducto(datos.producto);
+        console.log('Datos recibidos de API:', datos);
+        
+        if (datos && datos.producto) {
+          setProducto(datos.producto);
+          console.log('Producto cargado correctamente:', datos.producto);
+        } else {
+          throw new Error('Formato de respuesta incorrecto');
+        }
       } catch (err) {
         console.error('Error al obtener el producto:', err);
         
@@ -120,6 +149,7 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
         
         if (productoFijo) {
           setProducto(productoFijo);
+          console.log('Usando producto fijo:', productoFijo);
           setError("No se pudo conectar a la base de datos. Mostrando datos de demostración.");
         } else {
           setError("No se encontró el producto solicitado.");
@@ -130,22 +160,32 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
     };
     
     obtenerProducto();
-    
-    // Agregar la animación para las barras
+  }, [productoId]); // Eliminamos cargando y producto de las dependencias para evitar bucles
+
+  // Manejar la animación de las barras cuando cambia el producto
+  useEffect(() => {
     if (!cargando && producto) {
+      console.log('Iniciando animación para producto:', producto.nombre);
+      
+      // Pequeño timeout para asegurar que el DOM está listo
       setTimeout(() => {
         const barras = document.querySelectorAll('.barra-animada');
+        console.log('Barras encontradas:', barras.length);
+        
         barras.forEach((barra: Element) => {
           const elemento = barra as HTMLElement;
           elemento.style.width = '0%';
+          
           setTimeout(() => {
             elemento.style.transition = 'width 1.5s ease-out';
-            elemento.style.width = `${parseInt(elemento.dataset.intensidad || '0') * 10}%`;
+            const intensidad = parseInt(elemento.dataset.intensidad || '0');
+            console.log('Animando barra con intensidad:', intensidad);
+            elemento.style.width = `${intensidad * 10}%`;
           }, 100);
         });
       }, 300);
     }
-  }, [productoId, cargando, producto]);
+  }, [cargando, producto]);
 
   // Si no hay ID de producto, no mostramos nada
   if (!productoId) return null;
@@ -185,6 +225,12 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
                   src={producto.imagen || "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg"} 
                   alt={producto.nombre}
                   className="w-full h-auto rounded-lg shadow-xl max-h-96 object-cover transition-transform duration-500 hover:scale-105"
+                  onError={(e) => {
+                    // Fallback si la imagen no carga
+                    const imgElement = e.target as HTMLImageElement;
+                    imgElement.src = "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg";
+                    console.log('Error al cargar imagen, usando fallback');
+                  }}
                 />
                 <div className="absolute top-4 left-4">
                   <span className="inline-block bg-[#8c7465] text-white text-sm px-3 py-1 rounded-full mb-2 font-raleway">
@@ -214,7 +260,7 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
                   </div>
                 </div>
                 
-                {producto.notas && producto.notas.length > 0 && (
+                {producto.notas && producto.notas.length > 0 ? (
                   <div className="mb-8">
                     <h2 className="text-xl font-semibold mb-4 text-[#312b2b] font-raleway inline-block relative">
                       Notas de fragancia
@@ -241,7 +287,7 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
                       ))}
                     </div>
                   </div>
-                )}
+                ) : null}
                 
                 {producto.stock > 0 && (
                   <div className="mt-8">
