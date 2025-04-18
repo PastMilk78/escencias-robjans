@@ -104,28 +104,49 @@ export default function PoliticaPrivacidad() {
           </p>
 
           <h2 className="text-2xl font-bold text-[#fed856] mt-8 mb-4 font-raleway">
-            7. Seguridad de los Datos
+            7. Eliminación de Datos de Usuario
+          </h2>
+          <p className="mb-4 font-raleway">
+            Usted tiene derecho a solicitar la eliminación de sus datos personales. Para solicitar la eliminación de todos sus datos personales de nuestros sistemas, por favor envíe un correo electrónico a escenciasrobjans@gmail.com con el asunto "Solicitud de Eliminación de Datos" e incluya la siguiente información:
+          </p>
+          <ul className="list-disc pl-6 mb-4 font-raleway">
+            <li className="mb-2">Su nombre completo</li>
+            <li className="mb-2">Dirección de correo electrónico asociada a su cuenta</li>
+            <li className="mb-2">Cualquier otra información que nos ayude a identificar su cuenta</li>
+          </ul>
+          <p className="mb-4 font-raleway">
+            Procesaremos su solicitud dentro de los 30 días posteriores a la recepción. Una vez que hayamos verificado su identidad, eliminaremos permanentemente sus datos personales de nuestros sistemas, excepto aquella información que estamos obligados a conservar por razones legales o de seguridad.
+          </p>
+          <p className="mb-4 font-raleway">
+            Si ha utilizado servicios de inicio de sesión de terceros (como Facebook o Google) para crear su cuenta, también eliminaremos la información obtenida de estos servicios, pero tenga en cuenta que debe gestionar sus datos directamente con estos proveedores para una eliminación completa.
+          </p>
+          <p className="mb-4 font-raleway">
+            Para obtener instrucciones más detalladas sobre cómo solicitar la eliminación de sus datos, visite nuestra <Link href="/eliminacion-de-datos" className="text-[#fed856] underline hover:text-white">página de eliminación de datos</Link>.
+          </p>
+
+          <h2 className="text-2xl font-bold text-[#fed856] mt-8 mb-4 font-raleway">
+            8. Seguridad de los Datos
           </h2>
           <p className="mb-4 font-raleway">
             Implementamos medidas de seguridad técnicas y organizativas para proteger sus datos personales contra acceso no autorizado, pérdida o alteración. Sin embargo, ninguna transmisión por Internet o almacenamiento electrónico es completamente seguro, por lo que no podemos garantizar la seguridad absoluta.
           </p>
 
           <h2 className="text-2xl font-bold text-[#fed856] mt-8 mb-4 font-raleway">
-            8. Cookies y Tecnologías Similares
+            9. Cookies y Tecnologías Similares
           </h2>
           <p className="mb-4 font-raleway">
             Utilizamos cookies y tecnologías similares para mejorar su experiencia en nuestro sitio, recordar sus preferencias y comprender cómo los usuarios navegan por nuestro sitio. Puede ajustar la configuración de su navegador para rechazar cookies, pero esto puede afectar a la funcionalidad de nuestro sitio.
           </p>
 
           <h2 className="text-2xl font-bold text-[#fed856] mt-8 mb-4 font-raleway">
-            9. Cambios a esta Política
+            10. Cambios a esta Política
           </h2>
           <p className="mb-4 font-raleway">
             Podemos actualizar esta Política de Privacidad periódicamente. Le notificaremos de cualquier cambio significativo publicando la nueva política en nuestro sitio web con una fecha de actualización visible.
           </p>
 
           <h2 className="text-2xl font-bold text-[#fed856] mt-8 mb-4 font-raleway">
-            10. Contacto
+            11. Contacto
           </h2>
           <p className="mb-4 font-raleway">
             Si tiene preguntas o inquietudes sobre esta Política de Privacidad, por favor contáctenos:
