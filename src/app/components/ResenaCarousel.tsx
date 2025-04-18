@@ -79,13 +79,13 @@ export default function ResenaCarousel() {
     fetchResenas();
   }, []);
 
-  // Rotación automática cada 5 segundos
+  // Rotación automática cada 8 segundos para dar tiempo de leer
   useEffect(() => {
     if (resenas.length === 0) return;
     
     const interval = setInterval(() => {
       rotarReseñasHaciaArriba();
-    }, 5000);
+    }, 8000); // Tiempo más lento para permitir leer
     
     return () => clearInterval(interval);
   }, [resenas, currentIndex]);
@@ -178,24 +178,18 @@ export default function ResenaCarousel() {
         >
           {reorganizedResenas.slice(0, 4).map((resena, index) => {
             const isActive = index === 1; // El segundo elemento (índice 1) es el "activo"
-            const colorClasses = [
-              "bg-[#f03b3b] border-[#d32f2f]", // Rojo
-              "bg-[#ff9800] border-[#f57c00]", // Naranja
-              "bg-[#ffd700] border-[#fbc02d]", // Amarillo
-              "bg-[#3f51b5] border-[#303f9f]", // Azul
-            ];
             
             return (
               <div
                 key={resena._id}
                 className={`
-                  transition-all duration-700 ease-in-out
-                  ${colorClasses[index]} 
+                  transition-all duration-1000 ease-in-out
+                  bg-gradient-to-r from-[#473f3f] to-[#312b2b] border-2 border-[#fed856]
                   ${isActive 
                     ? 'scale-105 z-10 opacity-100 shadow-xl' 
-                    : 'scale-95 opacity-85 shadow-md'
+                    : 'scale-95 opacity-60 shadow-md'
                   }
-                  p-5 rounded-xl border-2 transform
+                  p-5 rounded-xl transform
                 `}
               >
                 <div className="flex flex-col">
@@ -204,11 +198,11 @@ export default function ResenaCarousel() {
                       {renderEstrellas(resena.puntuacion)}
                     </div>
                   </div>
-                  <p className={`${isActive ? 'text-white' : 'text-gray-900'} mb-4 font-raleway italic`}>
+                  <p className="text-[#f8f1d8] mb-4 font-raleway italic">
                     "{resena.comentario}"
                   </p>
                   <div className="mt-auto">
-                    <p className={`${isActive ? 'text-white font-bold' : 'text-gray-900 font-medium'} font-raleway`}>
+                    <p className="text-[#fed856] font-bold font-raleway">
                       {resena.nombre}
                     </p>
                   </div>
@@ -224,19 +218,6 @@ export default function ResenaCarousel() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 13l-5 5m0 0l-5-5m5 5V6" />
           </svg>
         </div>
-      </div>
-      
-      {/* Controles manuales */}
-      <div className="flex justify-center space-x-4 mt-16">
-        <button 
-          onClick={rotarReseñasHaciaArriba}
-          className="bg-[#fed856] text-[#312b2b] px-6 py-2 rounded-full hover:bg-[#e5c24c] transition-colors font-bold flex items-center"
-        >
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-          </svg>
-          Siguiente
-        </button>
       </div>
     </div>
   );
