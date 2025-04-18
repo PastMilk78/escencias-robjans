@@ -12,11 +12,10 @@ type Resena = {
 
 export default function ResenaCarousel() {
   const [resenas, setResenas] = useState<Resena[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [rotateDegree, setRotateDegree] = useState(0);
-  const ruletaRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     const fetchResenas = async () => {
@@ -85,21 +84,17 @@ export default function ResenaCarousel() {
     if (resenas.length === 0) return;
     
     const interval = setInterval(() => {
-      girarRuleta();
+      rotarReseñasHaciaArriba();
     }, 5000);
     
     return () => clearInterval(interval);
   }, [resenas, currentIndex]);
   
-  // Función para girar la ruleta
-  const girarRuleta = () => {
+  // Función para rotar las reseñas hacia arriba
+  const rotarReseñasHaciaArriba = () => {
     if (resenas.length <= 1) return;
     
     const nextIndex = (currentIndex + 1) % resenas.length;
-    const rotationAmount = 360 / resenas.length;
-    
-    // Actualizar la rotación
-    setRotateDegree(prevDegree => prevDegree - rotationAmount);
     setCurrentIndex(nextIndex);
   };
   
@@ -124,6 +119,26 @@ export default function ResenaCarousel() {
     return estrellas;
   };
 
+  // Obtener el array de reseñas reorganizado para mostrar la reseña actual en el centro
+  const getReorganizedResenas = () => {
+    if (resenas.length === 0) return [];
+    
+    // Crear una copia del array para no modificar el original
+    let reorganized = [...resenas];
+    
+    // Reorganizar el array para que la reseña actual esté en el centro
+    const currentIndexPosition = 2; // Posición del elemento actual (centro en un grupo de 4-5 elementos)
+    
+    // Desplazar el array para que el elemento actual esté en la posición central
+    const offset = (currentIndex - currentIndexPosition + reorganized.length) % reorganized.length;
+    reorganized = [
+      ...reorganized.slice(offset),
+      ...reorganized.slice(0, offset)
+    ];
+    
+    return reorganized;
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-48">
@@ -144,69 +159,83 @@ export default function ResenaCarousel() {
     return <div className="text-center py-8">No hay reseñas disponibles</div>;
   }
 
+  const reorganizedResenas = getReorganizedResenas();
+
   return (
-    <div className="relative w-full max-w-5xl mx-auto py-12">
-      {/* Indicador de la ruleta */}
-      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-8 h-12 z-10">
-        <div className="w-0 h-0 mx-auto border-l-[15px] border-r-[15px] border-b-[20px] border-l-transparent border-r-transparent border-b-[#fed856]"></div>
-      </div>
-      
-      {/* Contenedor de la ruleta */}
-      <div className="relative w-full h-80 overflow-hidden">
-        <div 
-          ref={ruletaRef}
-          className="absolute w-full h-full transition-transform duration-1000 ease-in-out"
-          style={{ transform: `rotate(${rotateDegree}deg)` }}
+    <div className="max-w-5xl mx-auto">
+      <div className="relative flex flex-col items-center">
+        {/* Flecha indicadora arriba */}
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-6 z-10 text-[#fed856]">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
+          </svg>
+        </div>
+        
+        {/* Contenedor del carrusel vertical */}
+        <div
+          ref={carouselRef}
+          className="flex flex-col space-y-4 py-8 w-full max-w-3xl mx-auto"
         >
-          {resenas.map((resena, index) => {
-            // Calcular la posición de cada reseña en la ruleta
-            const angle = (360 / resenas.length) * index;
+          {reorganizedResenas.slice(0, 4).map((resena, index) => {
+            const isActive = index === 1; // El segundo elemento (índice 1) es el "activo"
+            const colorClasses = [
+              "bg-[#f03b3b] border-[#d32f2f]", // Rojo
+              "bg-[#ff9800] border-[#f57c00]", // Naranja
+              "bg-[#ffd700] border-[#fbc02d]", // Amarillo
+              "bg-[#3f51b5] border-[#303f9f]", // Azul
+            ];
+            
             return (
-              <div 
+              <div
                 key={resena._id}
-                className="absolute top-0 left-0 w-full h-full flex justify-center"
-                style={{ 
-                  transform: `rotate(${angle}deg) translateY(-42%)`,
-                  transformOrigin: 'center 150%'
-                }}
+                className={`
+                  transition-all duration-700 ease-in-out
+                  ${colorClasses[index]} 
+                  ${isActive 
+                    ? 'scale-105 z-10 opacity-100 shadow-xl' 
+                    : 'scale-95 opacity-85 shadow-md'
+                  }
+                  p-5 rounded-xl border-2 transform
+                `}
               >
-                <div 
-                  className={`
-                    w-3/4 p-6 rounded-lg shadow-xl transform 
-                    ${currentIndex === index ? 'scale-100 opacity-100' : 'scale-90 opacity-40'}
-                    transition-all duration-500 ease-in-out
-                    bg-gradient-to-r from-[#473f3f] to-[#312b2b] border-2 border-[#fed856]
-                  `}
-                  style={{ transform: `rotate(-${rotateDegree + angle}deg)` }}
-                >
-                  <div className="flex flex-col h-full">
-                    <div className="flex items-center mb-3">
-                      <div className="flex mr-2">
-                        {renderEstrellas(resena.puntuacion)}
-                      </div>
+                <div className="flex flex-col">
+                  <div className="flex items-center mb-3">
+                    <div className="flex mr-2">
+                      {renderEstrellas(resena.puntuacion)}
                     </div>
-                    <p className="text-[#f8f1d8] mb-4 font-raleway italic">"{resena.comentario}"</p>
-                    <div className="mt-auto">
-                      <p className="text-[#fed856] font-bold font-raleway">{resena.nombre}</p>
-                    </div>
+                  </div>
+                  <p className={`${isActive ? 'text-white' : 'text-gray-900'} mb-4 font-raleway italic`}>
+                    "{resena.comentario}"
+                  </p>
+                  <div className="mt-auto">
+                    <p className={`${isActive ? 'text-white font-bold' : 'text-gray-900 font-medium'} font-raleway`}>
+                      {resena.nombre}
+                    </p>
                   </div>
                 </div>
               </div>
             );
           })}
         </div>
+        
+        {/* Flecha indicadora abajo */}
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-6 z-10 text-[#fed856]">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 13l-5 5m0 0l-5-5m5 5V6" />
+          </svg>
+        </div>
       </div>
       
       {/* Controles manuales */}
-      <div className="flex justify-center space-x-4 mt-8">
+      <div className="flex justify-center space-x-4 mt-16">
         <button 
-          onClick={girarRuleta}
+          onClick={rotarReseñasHaciaArriba}
           className="bg-[#fed856] text-[#312b2b] px-6 py-2 rounded-full hover:bg-[#e5c24c] transition-colors font-bold flex items-center"
         >
           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
           </svg>
-          Girar
+          Siguiente
         </button>
       </div>
     </div>
