@@ -3,7 +3,18 @@ import stripeService from '@/lib/stripe';
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('--------------------------------------------');
     console.log('Iniciando procesamiento de checkout');
+    console.log('Variables de entorno disponibles:');
+    // Solo mostrar si están definidas, sin mostrar el valor
+    console.log({
+      MONGODB_URI: !!process.env.MONGODB_URI,
+      STRIPE_PUBLIC_KEY: !!process.env.STRIPE_PUBLIC_KEY,
+      STRIPE_SECRET_KEY: !!process.env.STRIPE_SECRET_KEY,
+      NEXT_PUBLIC_STRIPE_PUBLIC_KEY: !!process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY,
+      STRIPE_WEBHOOK_SECRET: !!process.env.STRIPE_WEBHOOK_SECRET,
+    });
+    console.log('--------------------------------------------');
 
     const body = await request.json();
     const { items, userInfo } = body;
@@ -14,6 +25,12 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`Procesando checkout para ${items.length} productos`);
+    console.log('Datos de los items:', JSON.stringify(items.map((item: any) => ({
+      id: item.producto._id,
+      nombre: item.producto.nombre,
+      precio: item.producto.precio,
+      cantidad: item.cantidad
+    }))));
 
     // Verificar la configuración de Stripe
     const configOk = stripeService.checkStripeConfig();
@@ -35,6 +52,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Obtener la instancia de Stripe
+    console.log('Obteniendo instancia de Stripe...');
     const stripe = await stripeService.getStripeInstance();
     
     if (!stripe) {
@@ -44,27 +62,8 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-
-    // Preparar los ítems para Stripe
-    const lineItems = items.map((item: any) => {
-      return {
-        price_data: {
-          currency: 'mxn',
-          product_data: {
-            name: item.producto.nombre,
-            description: item.producto.descripcion || 'Perfume de alta calidad',
-            images: [item.producto.imagen || 'https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg'],
-            metadata: {
-              product_id: item.producto._id,
-            },
-          },
-          unit_amount: Math.round(item.producto.precio * 100), // Stripe usa centavos
-        },
-        quantity: item.cantidad,
-      };
-    });
-
-    console.log('Creando sesión de checkout con los siguientes items:', JSON.stringify(lineItems, null, 2));
+    
+    console.log('Instancia de Stripe obtenida correctamente');
 
     // Obtener el origen de la solicitud de forma segura
     let originUrl = 'https://escencias-robjans.vercel.app';
@@ -83,6 +82,45 @@ export async function POST(request: NextRequest) {
     } catch (err) {
       console.warn('No se pudo determinar el origen, usando valor predeterminado:', originUrl);
     }
+
+    // Preparar los ítems para Stripe
+    const lineItems = [];
+    
+    // Procesar cada producto y asegurar que las imágenes sean URLs válidas
+    for (const item of items) {
+      // URL predeterminada para imagen
+      const defaultImageUrl = 'https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg';
+      
+      // Imprimir información del producto para depuración
+      console.log('Procesando producto:', {
+        id: item.producto._id,
+        nombre: item.producto.nombre,
+        imagenOriginal: item.producto.imagen
+      });
+      
+      // Crear el item para Stripe
+      const lineItem = {
+        price_data: {
+          currency: 'mxn',
+          product_data: {
+            name: item.producto.nombre,
+            description: item.producto.descripcion || 'Perfume de alta calidad',
+            // Usar siempre la imagen predeterminada para evitar problemas
+            images: [defaultImageUrl],
+            metadata: {
+              product_id: item.producto._id,
+            },
+          },
+          unit_amount: Math.round(item.producto.precio * 100), // Stripe usa centavos
+        },
+        quantity: item.cantidad,
+      };
+      
+      lineItems.push(lineItem);
+      console.log(`Producto ${item.producto.nombre} agregado con imagen: ${defaultImageUrl}`);
+    }
+
+    console.log('Creando sesión de checkout con los siguientes items:', JSON.stringify(lineItems, null, 2));
     
     // Construir las URLs absolutas
     const successUrl = `${originUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
@@ -95,6 +133,7 @@ export async function POST(request: NextRequest) {
 
     // Crear la sesión de checkout
     try {
+      console.log('Iniciando creación de sesión en Stripe...');
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: lineItems,
@@ -123,9 +162,18 @@ export async function POST(request: NextRequest) {
       });
 
       console.log('Sesión de checkout creada exitosamente:', session.id);
+      console.log('URL de redirección:', session.url);
       return NextResponse.json({ sessionId: session.id, url: session.url });
     } catch (stripeError: any) {
       console.error('Error específico de Stripe al crear la sesión:', stripeError);
+      console.error('Mensaje de error:', stripeError.message);
+      console.error('Código de error:', stripeError.code);
+      console.error('Tipo de error:', stripeError.type);
+      
+      if (stripeError.raw) {
+        console.error('Error raw:', stripeError.raw);
+      }
+      
       return NextResponse.json(
         { 
           error: `Error de Stripe: ${stripeError.message}`,
@@ -136,6 +184,7 @@ export async function POST(request: NextRequest) {
     }
   } catch (error: any) {
     console.error('Error general al crear la sesión de checkout:', error);
+    console.error('Stack trace:', error.stack);
     let errorMessage = 'Error al procesar el pago';
     
     if (error.type && error.type.startsWith('Stripe')) {

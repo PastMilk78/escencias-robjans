@@ -10,6 +10,8 @@ class StripeService {
     // Solo importamos y configuramos Stripe cuando se necesita
     if (!this.initialized) {
       try {
+        console.log('Inicializando Stripe...');
+        
         // Importación dinámica de Stripe
         const { Stripe } = await import('stripe');
         
@@ -22,6 +24,8 @@ class StripeService {
           return null;
         }
         
+        console.log('Clave secreta de Stripe disponible, inicializando cliente...');
+        
         // Inicializar Stripe con la clave secreta
         this.stripeInstance = new Stripe(secretKey, {
           apiVersion: '2023-10-16', // Usar la versión más reciente de la API
@@ -30,11 +34,24 @@ class StripeService {
         
         this.initialized = true;
         console.log('Stripe inicializado correctamente');
+        
+        try {
+          // Hacer una petición de prueba para verificar que la clave funciona
+          const testResult = await this.stripeInstance.customers.list({ limit: 1 });
+          console.log(`Conexión con Stripe verificada. Respuesta: ${testResult.object}, data: ${testResult.data.length} items`);
+        } catch (verifyError: any) {
+          console.error('Error al verificar la conexión con Stripe:', verifyError.message);
+          console.warn('Continuando de todos modos, podría haber problemas con las operaciones de Stripe');
+        }
       } catch (error: any) {
         console.error('Error al inicializar Stripe:', error.message);
         console.error('Detalles:', error);
+        this.initialized = false;
+        this.stripeInstance = null;
         return null;
       }
+    } else {
+      console.log('Usando instancia existente de Stripe');
     }
     
     return this.stripeInstance;
@@ -42,6 +59,8 @@ class StripeService {
 
   // Método para verificar que las variables de entorno de Stripe estén configuradas
   checkStripeConfig() {
+    console.log('Verificando configuración de Stripe...');
+    
     // Verificar ambas variables de clave pública para mayor compatibilidad
     const publicKey = process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || process.env.STRIPE_PUBLIC_KEY;
     const secretKey = process.env.STRIPE_SECRET_KEY;
@@ -57,7 +76,15 @@ class StripeService {
       return false;
     }
     
+    console.log('Configuración de Stripe verificada correctamente');
     return true;
+  }
+  
+  // Método para limpiar la instancia de Stripe (útil para pruebas o reinicialización)
+  resetInstance() {
+    this.initialized = false;
+    this.stripeInstance = null;
+    console.log('Instancia de Stripe reiniciada');
   }
 }
 
