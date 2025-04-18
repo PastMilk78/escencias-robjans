@@ -278,9 +278,12 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
                           </div>
                           <div className="w-full bg-gray-300 rounded-full h-3 overflow-hidden">
                             <div 
-                              className="barra-animada bg-[#fed856] h-3 rounded-full"
+                              className="barra-animada h-3 rounded-full"
                               data-intensidad={nota.intensidad}
-                              style={{ width: '0%' }}
+                              style={{ 
+                                width: '0%', 
+                                backgroundColor: nota.color || '#fed856' 
+                              }}
                             ></div>
                           </div>
                         </div>
