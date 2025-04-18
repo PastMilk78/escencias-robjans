@@ -88,6 +88,13 @@ export default function CartIcon() {
       setIsLoading(true);
       setErrorMensaje(null); // Limpiar errores anteriores
       
+      console.log('Iniciando proceso de checkout...');
+      
+      // Verificar que el carrito tenga productos
+      if (carrito.length === 0) {
+        throw new Error('El carrito está vacío');
+      }
+      
       // Preparar los datos para la API
       const checkoutData = {
         items: carrito,
@@ -98,7 +105,7 @@ export default function CartIcon() {
         }
       };
       
-      console.log('Iniciando checkout con datos:', JSON.stringify(checkoutData));
+      console.log(`Enviando checkout con ${carrito.length} productos`);
       
       // Llamar a nuestra API de checkout
       const response = await fetch('/api/checkout', {
@@ -108,6 +115,8 @@ export default function CartIcon() {
         },
         body: JSON.stringify(checkoutData),
       });
+      
+      console.log('Respuesta de API recibida:', response.status);
       
       const data = await response.json();
       
@@ -130,6 +139,9 @@ export default function CartIcon() {
     } catch (error: any) {
       console.error('Error al proceder al pago:', error);
       setErrorMensaje(error.message || 'Hubo un error al procesar el pago. Por favor, inténtelo de nuevo.');
+      
+      // Mostrar mensaje amigable al usuario
+      alert('Lo sentimos, ha ocurrido un error al procesar el pago. Por favor, inténtelo de nuevo más tarde o contacte al administrador.');
     } finally {
       setIsLoading(false);
     }

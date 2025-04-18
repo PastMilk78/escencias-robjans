@@ -3,6 +3,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import ProductoModel from "@/models/Producto";
 import Header from "@/app/components/Header";
 import CartIcon from "@/app/components/CartIcon";
+import ResenaCarousel from "@/app/components/ResenaCarousel";
 
 // Tipo para el producto serializado desde MongoDB
 type Producto = {
@@ -262,6 +263,20 @@ export default async function Home() {
                 Te asesoramos para encontrar la fragancia perfecta según tus gustos y preferencias.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sección de Opiniones de Clientes */}
+      <section className="py-16 bg-[#594a42]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center text-[#fed856] mb-12 font-raleway relative">
+            Lo que dicen nuestros clientes
+            <span className="block w-24 h-1 bg-[#fed856] mx-auto mt-4"></span>
+          </h2>
+          
+          <div className="mt-8">
+            <ResenaCarousel />
           </div>
         </div>
       </section>
