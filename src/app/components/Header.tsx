@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import CartIcon from "./CartIcon";
+import { useSession } from "next-auth/react";
 
 export default function Header() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => {
     // Manejar la carga inicial
@@ -58,6 +60,21 @@ export default function Header() {
           >
             SOBRE NOSOTROS
           </a>
+          {session ? (
+            <Link 
+              href="/perfil" 
+              className="bg-[#fed856] text-[#312b2b] px-6 py-2 rounded-full font-raleway font-medium transition-all duration-300 hover:bg-white hover:text-[#312b2b] hover:shadow-lg"
+            >
+              MI PERFIL
+            </Link>
+          ) : (
+            <Link 
+              href="/login" 
+              className="bg-[#fed856] text-[#312b2b] px-6 py-2 rounded-full font-raleway font-medium transition-all duration-300 hover:bg-white hover:text-[#312b2b] hover:shadow-lg"
+            >
+              INICIAR SESIÓN
+            </Link>
+          )}
           <CartIcon />
         </div>
       </div>

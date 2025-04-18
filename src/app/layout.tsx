@@ -3,6 +3,7 @@ import "./globals.css";
 import { Inter, Playfair_Display, Raleway } from "next/font/google";
 import { CartProvider } from "./context/CartContext";
 import LoadingOverlay from "./components/LoadingOverlay";
+import { AuthProvider } from "./context/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
@@ -22,9 +23,11 @@ export default function RootLayout({
     <html lang="es">
       <body className={`${inter.variable} ${playfair.variable} ${raleway.variable} font-sans`}>
         <LoadingOverlay />
-        <CartProvider>
-          {children}
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            {children}
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

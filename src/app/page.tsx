@@ -133,12 +133,20 @@ export default async function Home() {
             <h2 className="text-5xl md:text-6xl font-bold mb-10 font-playfair text-white drop-shadow-lg">
               El Futuro de las Fragancias.
             </h2>
-            <Link 
-              href="/productos" 
-              className="inline-block bg-[#fed856] text-[#312b2b] px-8 py-3 rounded-full font-bold hover:bg-white transition-colors font-raleway mt-6 transform hover:scale-105 transition-transform shadow-lg"
-            >
-              DESCUBRIR FRAGANCIAS
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link 
+                href="/productos" 
+                className="inline-block bg-[#fed856] text-[#312b2b] px-8 py-3 rounded-full font-bold hover:bg-white transition-colors font-raleway transform hover:scale-105 transition-transform shadow-lg"
+              >
+                DESCUBRIR FRAGANCIAS
+              </Link>
+              <Link 
+                href="/registro" 
+                className="inline-block bg-white text-[#312b2b] px-8 py-3 rounded-full font-bold hover:bg-[#fed856] transition-colors font-raleway transform hover:scale-105 transition-transform shadow-lg"
+              >
+                REGISTRARSE
+              </Link>
+            </div>
           </div>
         </div>
       </div>
