@@ -27,7 +27,7 @@ export default function ResenaCarousel() {
         const data = await response.json();
         
         // Si no hay reseñas en la base de datos, usar reseñas de ejemplo
-        const resenasData = data.resenas && data.resenas.length > 0 
+        let resenasData = data.resenas && data.resenas.length > 0 
           ? data.resenas 
           : [
               {
@@ -67,6 +67,9 @@ export default function ResenaCarousel() {
               }
             ];
             
+        // Aleatorizar el orden de las reseñas
+        resenasData = shuffleArray([...resenasData]);
+        
         setResenas(resenasData);
       } catch (err) {
         setError('Error al cargar las reseñas');
@@ -79,6 +82,16 @@ export default function ResenaCarousel() {
     fetchResenas();
   }, []);
 
+  // Función para aleatorizar un array (algoritmo Fisher-Yates)
+  const shuffleArray = (array: any[]) => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+  };
+
   // Para crear el efecto de desplazamiento continuo
   useEffect(() => {
     if (resenas.length === 0 || !carouselRef.current) return;
@@ -87,7 +100,7 @@ export default function ResenaCarousel() {
     const resenasContainer = carouselRef.current;
     const resenasHeight = resenasContainer.scrollHeight / 2; // Altura de las reseñas originales
     
-    const scrollSpeed = 0.5; // velocidad de desplazamiento (píxeles por frame)
+    const scrollSpeed = 0.25; // velocidad de desplazamiento más lenta (píxeles por frame)
     let animationFrameId: number;
     
     const animate = () => {
@@ -158,7 +171,7 @@ export default function ResenaCarousel() {
   const resenasInfinitas = [...resenas, ...resenas];
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto relative">
       <div className="relative w-full max-w-3xl mx-auto h-[500px] overflow-hidden bg-[#6b5b4e] rounded-lg border-2 border-[#fed856]">
         {/* Contenedor del carrusel vertical con desplazamiento continuo */}
         <div
@@ -192,6 +205,18 @@ export default function ResenaCarousel() {
             </div>
           ))}
         </div>
+      </div>
+      
+      {/* Enlace a la página de administración para agregar reseñas */}
+      <div className="mt-4 text-center">
+        <a 
+          href="/diagnose" 
+          className="text-sm text-[#f8f1d8] hover:text-[#fed856] transition-colors underline font-raleway italic"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ¿Quieres dejar una reseña? Contacta con nosotros
+        </a>
       </div>
     </div>
   );

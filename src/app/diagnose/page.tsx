@@ -21,6 +21,7 @@ export default function DiagnosePage() {
   });
   const [resenaResult, setResenaResult] = useState<{success?: boolean, message?: string}>({});
   const [resenaLoading, setResenaLoading] = useState(false);
+  const [resenas, setResenas] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,6 +35,11 @@ export default function DiagnosePage() {
         const productosResponse = await fetch('/api/productos');
         const productosData = await productosResponse.json();
         setProductos(productosData.productos || []);
+        
+        // Cargar reseñas existentes
+        const resenasResponse = await fetch('/api/resenas');
+        const resenasData = await resenasResponse.json();
+        setResenas(resenasData.resenas || []);
       } catch (err) {
         setError('Error al cargar datos: ' + String(err));
       } finally {
@@ -105,6 +111,11 @@ export default function DiagnosePage() {
         comentario: '',
         puntuacion: 5
       });
+      
+      // Recargar las reseñas para ver la actualización
+      const resenasResponse = await fetch('/api/resenas');
+      const resenasData = await resenasResponse.json();
+      setResenas(resenasData.resenas || []);
     } catch (err) {
       setResenaResult({
         success: false,
@@ -117,7 +128,7 @@ export default function DiagnosePage() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Diagnóstico del Sistema</h1>
+      <h1 className="text-2xl font-bold mb-4">Panel de Administración</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white p-4 rounded shadow">
@@ -243,75 +254,144 @@ export default function DiagnosePage() {
         </div>
       )}
       
-      {/* Formulario para crear reseñas */}
-      <div className="mt-8 bg-white p-4 rounded shadow">
-        <h2 className="text-xl font-semibold mb-4">Crear Nueva Reseña</h2>
-        <form onSubmit={handleResenaSubmit}>
-          <div className="mb-4">
-            <label htmlFor="nombre" className="block text-gray-700 font-medium mb-2">
-              Nombre del Cliente
-            </label>
-            <input
-              type="text"
-              id="nombre"
-              name="nombre"
-              value={formResena.nombre}
-              onChange={handleResenaInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
+      {/* Sección de Reseñas */}
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Formulario para crear reseñas */}
+        <div className="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-600">
+          <h2 className="text-2xl font-semibold mb-4 text-center">Administrar Reseñas</h2>
+          <p className="text-gray-600 mb-6 text-center">
+            Agrega nuevas reseñas de clientes que se mostrarán en la página principal
+          </p>
           
-          <div className="mb-4">
-            <label htmlFor="comentario" className="block text-gray-700 font-medium mb-2">
-              Comentario
-            </label>
-            <textarea
-              id="comentario"
-              name="comentario"
-              value={formResena.comentario}
-              onChange={handleResenaInputChange}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            ></textarea>
-          </div>
-          
-          <div className="mb-4">
-            <label htmlFor="puntuacion" className="block text-gray-700 font-medium mb-2">
-              Puntuación (1-5 estrellas)
-            </label>
-            <select
-              id="puntuacion"
-              name="puntuacion"
-              value={formResena.puntuacion}
-              onChange={handleResenaInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value={1}>1 Estrella</option>
-              <option value={2}>2 Estrellas</option>
-              <option value={3}>3 Estrellas</option>
-              <option value={4}>4 Estrellas</option>
-              <option value={5}>5 Estrellas</option>
-            </select>
-          </div>
-          
-          <div className="flex items-center">
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              disabled={resenaLoading}
-            >
-              {resenaLoading ? 'Creando...' : 'Crear Reseña'}
-            </button>
+          <form onSubmit={handleResenaSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="nombre" className="block text-gray-700 font-medium mb-2">
+                Nombre del Cliente
+              </label>
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                value={formResena.nombre}
+                onChange={handleResenaInputChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+                placeholder="Ej: María López"
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="comentario" className="block text-gray-700 font-medium mb-2">
+                Comentario
+              </label>
+              <textarea
+                id="comentario"
+                name="comentario"
+                value={formResena.comentario}
+                onChange={handleResenaInputChange}
+                rows={4}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+                placeholder="Escribe aquí la opinión del cliente..."
+              ></textarea>
+            </div>
+            
+            <div>
+              <label htmlFor="puntuacion" className="block text-gray-700 font-medium mb-2">
+                Puntuación (1-5 estrellas)
+              </label>
+              <div className="flex items-center space-x-2">
+                {[1, 2, 3, 4, 5].map((valor) => (
+                  <button
+                    key={valor}
+                    type="button"
+                    onClick={() => setFormResena({...formResena, puntuacion: valor})}
+                    className="focus:outline-none"
+                  >
+                    <svg 
+                      className={`w-8 h-8 ${formResena.puntuacion >= valor ? 'text-yellow-500' : 'text-gray-300'}`} 
+                      fill="currentColor" 
+                      viewBox="0 0 20 20" 
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                    </svg>
+                  </button>
+                ))}
+                <span className="ml-2 text-gray-600">({formResena.puntuacion} estrellas)</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-center">
+              <button
+                type="submit"
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-300 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 font-medium"
+                disabled={resenaLoading}
+              >
+                {resenaLoading ? (
+                  <span className="flex items-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Guardando...
+                  </span>
+                ) : 'Guardar Reseña'}
+              </button>
+            </div>
             
             {resenaResult.message && (
-              <div className={`ml-4 ${resenaResult.success ? 'text-green-600' : 'text-red-600'}`}>
+              <div className={`p-4 rounded-lg ${resenaResult.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                 {resenaResult.message}
               </div>
             )}
-          </div>
-        </form>
+          </form>
+        </div>
+        
+        {/* Lista de reseñas existentes */}
+        <div className="bg-white p-6 rounded-lg shadow-md border-t-4 border-green-600">
+          <h2 className="text-2xl font-semibold mb-4 text-center">Reseñas Existentes</h2>
+          <p className="text-gray-600 mb-6 text-center">
+            Reseñas que actualmente se muestran en la página principal
+          </p>
+          
+          {loading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          ) : resenas.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              No hay reseñas registradas todavía
+            </div>
+          ) : (
+            <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+              {resenas.map((resena) => (
+                <div key={resena._id} className="p-4 border rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <div className="flex">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <svg 
+                          key={i} 
+                          className={`w-5 h-5 ${i < resena.puntuacion ? 'text-yellow-500' : 'text-gray-300'}`} 
+                          fill="currentColor" 
+                          viewBox="0 0 20 20" 
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                      ))}
+                    </div>
+                    <span className="ml-auto text-sm text-gray-500">
+                      {new Date(resena.fecha).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="text-gray-700 italic mb-2">"{resena.comentario}"</p>
+                  <p className="text-gray-900 font-medium">- {resena.nombre}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="mt-8">
