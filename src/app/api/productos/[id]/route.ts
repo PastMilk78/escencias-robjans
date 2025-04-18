@@ -62,16 +62,12 @@ const productosFijos = [
   }
 ];
 
-// Definir el tipo para parámetros
-interface Params {
-  id: string;
-}
-
 // GET para obtener un producto por ID
-export async function GET(request: NextRequest, { params }: { params: Params }) {
-  const { id } = params;
-  
+export async function GET(request: NextRequest, context: { params: { id: string } }) {
   try {
+    const id = context.params.id;
+    console.log(`Solicitando producto con ID: ${id}`);
+    
     // Verificar primero si MONGODB_URI existe
     if (!process.env.MONGODB_URI) {
       console.log('MONGODB_URI no definido, buscando en productos fijos');
@@ -87,64 +83,56 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
       }
     }
     
-    await connectToDatabase();
-    
-    // Para IDs válidos en MongoDB
-    let producto;
-    
     try {
+      await connectToDatabase();
+      
       // Intentar buscar en MongoDB primero
-      producto = await Producto.findById(id);
-    } catch (error) {
-      console.log('Error al buscar por ID en MongoDB, verificando productos fijos');
-      // Si hay error (por ejemplo, ID no válido), buscar en productos fijos
+      const producto = await Producto.findById(id);
+      
+      if (producto) {
+        return NextResponse.json({ producto }, { status: 200 });
+      }
+      
+      // Si no hay resultado en MongoDB, buscar en productos fijos
       const productoFijo = productosFijos.find(p => p._id === id);
       
       if (productoFijo) {
-        return NextResponse.json({ producto: productoFijo }, { status: 200 });
+        return NextResponse.json({ 
+          producto: productoFijo,
+          source: 'demo'
+        }, { status: 200 });
       }
-    }
-    
-    if (!producto) {
-      // Si no se encuentra en MongoDB, intentar buscar en productos fijos
+      
+      return NextResponse.json(
+        { error: 'Producto no encontrado' },
+        { status: 404 }
+      );
+    } catch (mongoError) {
+      console.error('Error específico de MongoDB:', mongoError);
+      
+      // Intentar con producto fijo como fallback
       const productoFijo = productosFijos.find(p => p._id === id);
       
       if (productoFijo) {
-        return NextResponse.json({ producto: productoFijo }, { status: 200 });
-      } else {
-        return NextResponse.json(
-          { error: 'Producto no encontrado' },
-          { status: 404 }
-        );
+        return NextResponse.json({ 
+          producto: productoFijo,
+          error: 'Error de base de datos, mostrando producto de demostración.'
+        }, { status: 200 });
       }
+      
+      throw mongoError; // Re-lanzar para el manejador general
     }
-    
-    return NextResponse.json({ producto }, { status: 200 });
   } catch (error) {
     console.error('Error al obtener producto:', error);
-    
-    // En caso de error, intentar con productos fijos
-    const productoFijo = productosFijos.find(p => p._id === id);
-      
-    if (productoFijo) {
-      return NextResponse.json(
-        { 
-          producto: productoFijo,
-          error: 'Error al obtener producto desde MongoDB. Mostrando producto de demostración.'
-        }, 
-        { status: 200 }
-      );
-    } else {
-      return NextResponse.json(
-        { error: 'Error al obtener producto' },
-        { status: 500 }
-      );
-    }
+    return NextResponse.json(
+      { error: 'Error al procesar la solicitud' },
+      { status: 500 }
+    );
   }
 }
 
 // PUT para actualizar un producto
-export async function PUT(request: NextRequest, { params }: { params: Params }) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   const { id } = params;
   
   try {
@@ -188,7 +176,7 @@ export async function PUT(request: NextRequest, { params }: { params: Params }) 
 }
 
 // DELETE para eliminar un producto
-export async function DELETE(request: NextRequest, { params }: { params: Params }) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   const { id } = params;
   
   try {
