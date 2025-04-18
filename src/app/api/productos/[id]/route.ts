@@ -65,7 +65,8 @@ const productosFijos = [
 // GET para obtener un producto por ID
 export async function GET(request: NextRequest, context: { params: { id: string } }) {
   try {
-    const id = context.params.id;
+    // Extraer el id correctamente usando await para cumplir con Next.js 15
+    const { id } = await context.params;
     console.log(`Solicitando producto con ID: ${id}`);
     
     // Verificar primero si MONGODB_URI existe
@@ -132,10 +133,11 @@ export async function GET(request: NextRequest, context: { params: { id: string 
 }
 
 // PUT para actualizar un producto
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params;
-  
+export async function PUT(request: NextRequest, context: { params: { id: string } }) {
   try {
+    // Extraer el id correctamente usando await para cumplir con Next.js 15
+    const { id } = await context.params;
+    
     const body = await request.json();
     
     await connectToDatabase();
@@ -176,10 +178,11 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE para eliminar un producto
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params;
-  
+export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
   try {
+    // Extraer el id correctamente usando await para cumplir con Next.js 15
+    const { id } = await context.params;
+    
     await connectToDatabase();
     
     const productoEliminado = await Producto.findByIdAndDelete(id);
