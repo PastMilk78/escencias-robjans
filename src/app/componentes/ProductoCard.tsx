@@ -52,9 +52,6 @@ const ProductoCard = ({ producto, onOpenModal }: ProductoCardProps) => {
           </span>
         </div>
         <h2 className="text-xl font-bold text-[#312b2b] mb-4 font-raleway">{producto.nombre}</h2>
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-sm text-gray-500 font-raleway">{producto.stock} en stock</span>
-        </div>
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={() => onOpenModal(producto._id)}
