@@ -152,12 +152,52 @@ export default function ProductosPage() {
     cargarProductos();
   }, []);
   
+  // Efecto separado para manejar el ID del producto seleccionado
+  // Lo separamos para asegurarnos de que se ejecute después de que los productos estén cargados
+  useEffect(() => {
+    if (!cargando) {
+      // Verificar si hay un ID de producto guardado en localStorage una vez que los productos estén cargados
+      try {
+        const selectedProductId = localStorage.getItem('selectedProductId');
+        console.log("Verificando ID de producto en localStorage:", selectedProductId);
+        
+        if (selectedProductId) {
+          console.log("ID de producto encontrado en localStorage:", selectedProductId);
+          
+          // Pequeña pausa para asegurar que la UI está lista
+          setTimeout(() => {
+            // Abrimos el modal con este producto
+            setProductoSeleccionadoId(selectedProductId);
+            // Limpiamos el localStorage para evitar que se abra automáticamente en futuras visitas
+            localStorage.removeItem('selectedProductId');
+            console.log("Modal abierto para producto:", selectedProductId);
+          }, 300);
+        }
+      } catch (error) {
+        console.error("Error al procesar el ID del producto seleccionado:", error);
+      }
+    }
+  }, [cargando, productos]);
+  
   // Función para abrir el modal con los detalles del producto
   const abrirDetallesProducto = (id: string) => {
     console.log("Abriendo modal para producto con ID:", id);
-    setProductoSeleccionadoId(id);
-    // Prevenir scroll del body cuando el modal está abierto
-    document.body.style.overflow = 'hidden';
+    
+    try {
+      // Verificar que tenemos un ID válido
+      if (!id) {
+        console.error("ID de producto inválido:", id);
+        return;
+      }
+      
+      // Establecer el ID del producto seleccionado (esto abrirá el modal)
+      setProductoSeleccionadoId(id);
+      
+      // Prevenir scroll del body cuando el modal está abierto
+      document.body.style.overflow = 'hidden';
+    } catch (error) {
+      console.error("Error al abrir el modal de producto:", error);
+    }
   };
   
   // Función para cerrar el modal

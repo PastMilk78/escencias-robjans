@@ -122,45 +122,53 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
       setError(null);
       setProducto(null); // Reset producto
       
-      console.log('Obteniendo producto con ID:', productoId);
+      console.log('ProductoDetalleModal - Obteniendo producto con ID:', productoId);
       
       try {
         // Primero intentamos obtener el producto de la API
         const respuesta = await fetch(`/api/productos/${productoId}`);
         
         if (!respuesta.ok) {
+          console.error('Error en respuesta API:', respuesta.status, respuesta.statusText);
           throw new Error('No se pudo cargar el producto');
         }
         
         const datos = await respuesta.json();
-        console.log('Datos recibidos de API:', datos);
+        console.log('ProductoDetalleModal - Datos recibidos de API:', datos);
         
         if (datos && datos.producto) {
           setProducto(datos.producto);
-          console.log('Producto cargado correctamente:', datos.producto);
+          console.log('ProductoDetalleModal - Producto cargado correctamente:', datos.producto);
         } else {
+          console.error('ProductoDetalleModal - Formato de respuesta incorrecto:', datos);
           throw new Error('Formato de respuesta incorrecto');
         }
       } catch (err) {
-        console.error('Error al obtener el producto:', err);
+        console.error('ProductoDetalleModal - Error al obtener el producto:', err);
         
         // Si falla, buscamos el producto en los productos fijos
+        console.log('ProductoDetalleModal - Buscando en productos fijos con ID:', productoId);
         const productoFijo = productosFijos.find(p => p._id === productoId);
         
         if (productoFijo) {
           setProducto(productoFijo);
-          console.log('Usando producto fijo:', productoFijo);
+          console.log('ProductoDetalleModal - Usando producto fijo:', productoFijo);
           setError("No se pudo conectar a la base de datos. Mostrando datos de demostración.");
         } else {
           setError("No se encontró el producto solicitado.");
         }
       } finally {
         setCargando(false);
+        // Mostrar notificación de consola cuando termine de cargar
+        console.log('ProductoDetalleModal - Carga completa para ID:', productoId);
       }
     };
     
-    obtenerProducto();
-  }, [productoId]); // Eliminamos cargando y producto de las dependencias para evitar bucles
+    // Pequeño timeout para asegurar que todo esté inicializado antes de llamar a la API
+    setTimeout(() => {
+      obtenerProducto();
+    }, 100);
+  }, [productoId]); // Dependemos solo del productoId
 
   // Manejar la animación de las barras cuando cambia el producto
   useEffect(() => {
