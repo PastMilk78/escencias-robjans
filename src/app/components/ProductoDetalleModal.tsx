@@ -32,22 +32,22 @@ const productosFijos = [
     _id: "producto1",
     nombre: "Aroma Intenso",
     categoria: "Hombre",
-    precio: 295,
+    precio: 195,
     stock: 15,
     descripcion: "Fragancia amaderada con notas de sándalo y vetiver. Perfecta para ocasiones especiales.",
     imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
-    inspirado_en: "Hugo Boss",
+    inspirado_en: "Sauvage",
     notas: [
       { nombre: "Sándalo", intensidad: 8, color: "#8B4513" },
       { nombre: "Vetiver", intensidad: 7, color: "#556B2F" },
-      { nombre: "Bergamota", intensidad: 5, color: "#FFFF00" }
+      { nombre: "Pimienta", intensidad: 6, color: "#2F4F4F" }
     ]
   },
   {
     _id: "producto2",
     nombre: "Esencia Fresca",
     categoria: "Hombre",
-    precio: 650,
+    precio: 195,
     stock: 30,
     descripcion: "Fragancia fresca y duradera con notas cítricas y amaderadas. Ideal para el uso diario.",
     imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
@@ -62,7 +62,7 @@ const productosFijos = [
     _id: "producto3",
     nombre: "Aroma Seductor",
     categoria: "Mujer",
-    precio: 920,
+    precio: 195,
     stock: 10,
     descripcion: "Fragancia oriental con notas de ámbar y almizcle. Perfecta para la noche.",
     imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
@@ -77,7 +77,7 @@ const productosFijos = [
     _id: "producto4",
     nombre: "Perfume Elegante",
     categoria: "Unisex",
-    precio: 850,
+    precio: 195,
     stock: 15,
     descripcion: "Una mezcla elegante y sofisticada con notas amaderadas y cítricas. Perfecto para cualquier ocasión.",
     imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
@@ -92,7 +92,7 @@ const productosFijos = [
     _id: "producto5",
     nombre: "Esencia Floral",
     categoria: "Mujer",
-    precio: 750,
+    precio: 195,
     stock: 20,
     descripcion: "Delicada fragancia floral con notas de jazmín y rosa. Ideal para el día a día.",
     imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
@@ -110,7 +110,7 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cantidad, setCantidad] = useState(1);
-  const [tamanioSeleccionado, setTamanioSeleccionado] = useState<string>("60ml");
+  const [tamanioSeleccionado, setTamanioSeleccionado] = useState<string>("30ml");
   
   // Definir los tamaños y precios
   const tamanios = [
@@ -122,7 +122,7 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
   // Función para obtener el precio según el tamaño seleccionado
   const obtenerPrecio = () => {
     const tamanioElegido = tamanios.find(t => t.valor === tamanioSeleccionado);
-    return tamanioElegido ? tamanioElegido.precio : (producto ? producto.precio : 0);
+    return tamanioElegido ? tamanioElegido.precio : 195; // Precio base es 195 (30ml)
   };
 
   useEffect(() => {
@@ -151,7 +151,10 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
         console.log('ProductoDetalleModal - Datos recibidos de API:', datos);
         
         if (datos && datos.producto) {
-          setProducto(datos.producto);
+          setProducto({
+            ...datos.producto,
+            precio: 195 // Establecer precio base como el de 30ml
+          });
           console.log('ProductoDetalleModal - Producto cargado correctamente:', datos.producto);
         } else {
           console.error('ProductoDetalleModal - Formato de respuesta incorrecto:', datos);
@@ -165,7 +168,10 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
         const productoFijo = productosFijos.find(p => p._id === productoId);
         
         if (productoFijo) {
-          setProducto(productoFijo);
+          setProducto({
+            ...productoFijo,
+            precio: 195 // Establecer precio base como el de 30ml
+          });
           console.log('ProductoDetalleModal - Usando producto fijo:', productoFijo);
           setError("No se pudo conectar a la base de datos. Mostrando datos de demostración.");
         } else {
@@ -359,7 +365,8 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
                       const productoConTamanio = {
                         ...producto,
                         tamanio: tamanioSeleccionado,
-                        precio: obtenerPrecio()
+                        precio: obtenerPrecio(),
+                        precioBase: 195 // Añadir precio base explícitamente
                       };
                       
                       const event = new CustomEvent('add-to-cart', {
