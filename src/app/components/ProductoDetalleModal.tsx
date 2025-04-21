@@ -32,7 +32,7 @@ const productosFijos = [
     _id: "producto1",
     nombre: "Aroma Intenso",
     categoria: "Hombre",
-    precio: 780,
+    precio: 295,
     stock: 15,
     descripcion: "Fragancia amaderada con notas de sándalo y vetiver. Perfecta para ocasiones especiales.",
     imagen: "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg",
@@ -110,6 +110,20 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cantidad, setCantidad] = useState(1);
+  const [tamanioSeleccionado, setTamanioSeleccionado] = useState<string>("60ml");
+  
+  // Definir los tamaños y precios
+  const tamanios = [
+    { valor: "30ml", nombre: "30ml", precio: 195 },
+    { valor: "60ml", nombre: "60ml", precio: 295 },
+    { valor: "120ml", nombre: "120ml", precio: 450 }
+  ];
+  
+  // Función para obtener el precio según el tamaño seleccionado
+  const obtenerPrecio = () => {
+    const tamanioElegido = tamanios.find(t => t.valor === tamanioSeleccionado);
+    return tamanioElegido ? tamanioElegido.precio : (producto ? producto.precio : 0);
+  };
 
   useEffect(() => {
     if (!productoId) {
@@ -260,12 +274,28 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
                 
                 <div className="mb-8 py-4 border-b border-[#473f3f]">
                   <div className="flex justify-between items-center">
-                    <p className="text-4xl font-bold text-[#fed856] font-raleway">${producto.precio.toFixed(2)}</p>
-                    <p className="inline-block bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-full font-bold font-raleway shadow-lg">
-                      {producto.stock > 0 
-                        ? `${producto.stock} unidades disponibles` 
-                        : "Agotado temporalmente"}
-                    </p>
+                    <p className="text-4xl font-bold text-[#fed856] font-raleway">${obtenerPrecio().toFixed(2)}</p>
+                  </div>
+                </div>
+                
+                {/* Selector de tamaño */}
+                <div className="mb-8">
+                  <h3 className="text-xl font-semibold mb-4 text-[#fed856] font-raleway">Selecciona el tamaño</h3>
+                  <div className="grid grid-cols-3 gap-4">
+                    {tamanios.map((tamanio) => (
+                      <button
+                        key={tamanio.valor}
+                        className={`py-3 px-4 rounded-lg font-bold transition-all duration-300 ${
+                          tamanioSeleccionado === tamanio.valor
+                            ? 'bg-[#fed856] text-[#312b2b] shadow-lg transform scale-105'
+                            : 'bg-[#473f3f] text-[#f8f1d8] hover:bg-[#5a4f4a]'
+                        }`}
+                        onClick={() => setTamanioSeleccionado(tamanio.valor)}
+                      >
+                        <div className="text-lg font-semibold">{tamanio.nombre}</div>
+                        <div className="text-sm mt-1">${tamanio.precio.toFixed(2)}</div>
+                      </button>
+                    ))}
                   </div>
                 </div>
                 
@@ -303,47 +333,50 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
                   </div>
                 ) : null}
                 
-                {producto.stock > 0 && (
-                  <div className="mt-8">
-                    <div className="flex items-center mb-6">
-                      <label htmlFor="cantidad" className="mr-6 font-raleway text-[#f8f1d8] font-medium text-xl">Cantidad:</label>
-                      <div className="flex items-center border-2 border-[#fed856] rounded-lg overflow-hidden">
-                        <button 
-                          onClick={() => setCantidad(prev => Math.max(1, prev - 1))}
-                          className="px-5 py-3 bg-[#473f3f] text-[#fed856] hover:bg-[#fed856] hover:text-[#312b2b] transition-colors font-raleway font-bold text-xl"
-                        >
-                          -
-                        </button>
-                        <span className="px-8 py-3 font-raleway text-[#f8f1d8] font-semibold text-lg bg-[#312b2b]">{cantidad}</span>
-                        <button 
-                          onClick={() => setCantidad(prev => Math.min(producto.stock, prev + 1))}
-                          className="px-5 py-3 bg-[#473f3f] text-[#fed856] hover:bg-[#fed856] hover:text-[#312b2b] transition-colors font-raleway font-bold text-xl"
-                        >
-                          +
-                        </button>
-                      </div>
+                <div className="mt-8">
+                  <div className="flex items-center mb-6">
+                    <label htmlFor="cantidad" className="mr-6 font-raleway text-[#f8f1d8] font-medium text-xl">Cantidad:</label>
+                    <div className="flex items-center border-2 border-[#fed856] rounded-lg overflow-hidden">
+                      <button 
+                        onClick={() => setCantidad(prev => Math.max(1, prev - 1))}
+                        className="px-5 py-3 bg-[#473f3f] text-[#fed856] hover:bg-[#fed856] hover:text-[#312b2b] transition-colors font-raleway font-bold text-xl"
+                      >
+                        -
+                      </button>
+                      <span className="px-8 py-3 font-raleway text-[#f8f1d8] font-semibold text-lg bg-[#312b2b]">{cantidad}</span>
+                      <button 
+                        onClick={() => setCantidad(prev => Math.min(10, prev + 1))}
+                        className="px-5 py-3 bg-[#473f3f] text-[#fed856] hover:bg-[#fed856] hover:text-[#312b2b] transition-colors font-raleway font-bold text-xl"
+                      >
+                        +
+                      </button>
                     </div>
-                    
-                    <button 
-                      onClick={() => {
-                        // Crear un evento personalizado para añadir al carrito
-                        const event = new CustomEvent('add-to-cart', {
-                          detail: { producto, cantidad }
-                        });
-                        window.dispatchEvent(event);
-                        // Cerrar el modal después de añadir al carrito
-                        onClose();
-                      }}
-                      className="w-full bg-[#fed856] text-[#312b2b] px-6 py-4 rounded-lg hover:bg-[#e5c24c] transition-colors font-raleway font-bold text-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform"
-                      disabled={producto.stock <= 0}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                      Añadir al Carrito
-                    </button>
                   </div>
-                )}
+                  
+                  <button 
+                    onClick={() => {
+                      // Crear un evento personalizado para añadir al carrito con el tamaño seleccionado
+                      const productoConTamanio = {
+                        ...producto,
+                        tamanio: tamanioSeleccionado,
+                        precio: obtenerPrecio()
+                      };
+                      
+                      const event = new CustomEvent('add-to-cart', {
+                        detail: { producto: productoConTamanio, cantidad }
+                      });
+                      window.dispatchEvent(event);
+                      // Cerrar el modal después de añadir al carrito
+                      onClose();
+                    }}
+                    className="w-full bg-[#fed856] text-[#312b2b] px-6 py-4 rounded-lg hover:bg-[#e5c24c] transition-colors font-raleway font-bold text-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Añadir al Carrito
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
