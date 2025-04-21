@@ -105,6 +105,25 @@ const productosFijos = [
   }
 ];
 
+// Definir los ratios de precios para los diferentes tamaños
+const RATIO_30ML = 1; // Precio base (sin multiplicar)
+const RATIO_60ML = 295 / 195; // Aproximadamente 1.51
+const RATIO_120ML = 450 / 195; // Aproximadamente 2.31
+
+// Función para calcular los precios según los ratios
+const calcularPrecioSegunTamanio = (precioBase: number, tamanio: string): number => {
+  switch(tamanio) {
+    case "30ml":
+      return precioBase * RATIO_30ML;
+    case "60ml":
+      return precioBase * RATIO_60ML;
+    case "120ml":
+      return precioBase * RATIO_120ML;
+    default:
+      return precioBase;
+  }
+};
+
 export default function ProductoDetalleModal({ productoId, onClose }: ProductoDetalleModalProps) {
   const [producto, setProducto] = useState<Producto | null>(null);
   const [cargando, setCargando] = useState(true);
@@ -112,17 +131,19 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
   const [cantidad, setCantidad] = useState(1);
   const [tamanioSeleccionado, setTamanioSeleccionado] = useState<string>("30ml");
   
-  // Definir los tamaños y precios
+  // Definir los tamaños
   const tamanios = [
-    { valor: "30ml", nombre: "30ml", precio: 195 },
-    { valor: "60ml", nombre: "60ml", precio: 295 },
-    { valor: "120ml", nombre: "120ml", precio: 450 }
+    { valor: "30ml", nombre: "30ml" },
+    { valor: "60ml", nombre: "60ml" },
+    { valor: "120ml", nombre: "120ml" }
   ];
   
   // Función para obtener el precio según el tamaño seleccionado
   const obtenerPrecio = () => {
-    const tamanioElegido = tamanios.find(t => t.valor === tamanioSeleccionado);
-    return tamanioElegido ? tamanioElegido.precio : 195; // Precio base es 195 (30ml)
+    if (!producto) return 0;
+    
+    // Usamos el precio base del producto y aplicamos el ratio
+    return calcularPrecioSegunTamanio(producto.precio, tamanioSeleccionado);
   };
 
   useEffect(() => {
@@ -151,10 +172,7 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
         console.log('ProductoDetalleModal - Datos recibidos de API:', datos);
         
         if (datos && datos.producto) {
-          setProducto({
-            ...datos.producto,
-            precio: 195 // Establecer precio base como el de 30ml
-          });
+          setProducto(datos.producto); // Usamos el precio original
           console.log('ProductoDetalleModal - Producto cargado correctamente:', datos.producto);
         } else {
           console.error('ProductoDetalleModal - Formato de respuesta incorrecto:', datos);
@@ -168,10 +186,7 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
         const productoFijo = productosFijos.find(p => p._id === productoId);
         
         if (productoFijo) {
-          setProducto({
-            ...productoFijo,
-            precio: 195 // Establecer precio base como el de 30ml
-          });
+          setProducto(productoFijo); // Usamos el precio original
           console.log('ProductoDetalleModal - Usando producto fijo:', productoFijo);
           setError("No se pudo conectar a la base de datos. Mostrando datos de demostración.");
         } else {
@@ -299,7 +314,9 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
                         onClick={() => setTamanioSeleccionado(tamanio.valor)}
                       >
                         <div className="text-lg font-semibold">{tamanio.nombre}</div>
-                        <div className="text-sm mt-1">${tamanio.precio.toFixed(2)}</div>
+                        <div className="text-sm mt-1">
+                          ${producto ? calcularPrecioSegunTamanio(producto.precio, tamanio.valor).toFixed(2) : "0.00"}
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -366,7 +383,7 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
                         ...producto,
                         tamanio: tamanioSeleccionado,
                         precio: obtenerPrecio(),
-                        precioBase: 195 // Añadir precio base explícitamente
+                        precioBase: producto ? producto.precio : 0 // Mantener el precio base original
                       };
                       
                       const event = new CustomEvent('add-to-cart', {
