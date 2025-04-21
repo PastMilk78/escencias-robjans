@@ -200,27 +200,27 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-gradient-to-br from-[#2d2520] to-[#3a302a] rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border-2 border-[#fed856]">
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition-colors z-10"
+          className="absolute top-4 right-4 text-[#fed856] hover:text-white transition-colors z-10 bg-[#312b2b] rounded-full p-1"
         >
-          <XMarkIcon className="h-6 w-6" />
+          <XMarkIcon className="h-7 w-7" />
         </button>
 
-        <div className="p-6">
+        <div className="p-8">
           {cargando ? (
-            <div className="text-center py-10">
-              <p className="text-xl text-gray-600 font-raleway">Cargando producto...</p>
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#fed856] mx-auto mt-4"></div>
+            <div className="text-center py-16">
+              <p className="text-2xl text-[#fed856] font-raleway mb-6">Cargando producto...</p>
+              <div className="animate-spin rounded-full h-14 w-14 border-b-2 border-t-2 border-[#fed856] mx-auto"></div>
             </div>
           ) : error && !producto ? (
-            <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded my-4">
-              <p className="font-raleway">{error}</p>
-              <div className="mt-4">
+            <div className="bg-[#473f3f] border border-[#fed856] text-[#fed856] px-6 py-4 rounded-lg my-6">
+              <p className="font-raleway text-lg">{error}</p>
+              <div className="mt-6">
                 <button 
                   onClick={onClose}
-                  className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded hover:bg-[#e5c24c] transition-colors font-raleway"
+                  className="bg-[#fed856] text-[#312b2b] px-6 py-3 rounded-lg hover:bg-[#e5c24c] transition-colors font-raleway font-bold"
                 >
                   Volver a Productos
                 </button>
@@ -228,11 +228,11 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
             </div>
           ) : producto ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="relative overflow-hidden rounded-lg">
+              <div className="relative overflow-hidden rounded-xl group">
                 <img 
                   src={producto.imagen || "https://i.postimg.cc/MGTww7GM/perfume-destacado.jpg"} 
                   alt={producto.nombre}
-                  className="w-full h-auto rounded-lg shadow-xl max-h-96 object-cover transition-transform duration-500 hover:scale-105"
+                  className="w-full h-auto rounded-xl shadow-2xl max-h-96 object-cover transition-transform duration-700 group-hover:scale-110"
                   onError={(e) => {
                     // Fallback si la imagen no carga
                     const imgElement = e.target as HTMLImageElement;
@@ -241,26 +241,27 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
                   }}
                 />
                 <div className="absolute top-4 left-4">
-                  <span className="inline-block bg-[#8c7465] text-white text-sm px-3 py-1 rounded-full mb-2 font-raleway">
+                  <span className="inline-block bg-[#8c7465] text-white text-sm px-4 py-2 rounded-full mb-2 font-raleway font-bold shadow-lg">
                     {producto.categoria}
                   </span>
                 </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-70 transition-opacity duration-300"></div>
               </div>
               <div>
-                <div className="mb-6 pb-6 border-b border-gray-200">
-                  <h1 className="text-3xl font-bold text-[#312b2b] font-raleway mb-2">{producto.nombre}</h1>
+                <div className="mb-8 pb-6 border-b border-[#473f3f]">
+                  <h1 className="text-4xl font-bold text-[#fed856] font-raleway mb-3">{producto.nombre}</h1>
                   {producto.inspirado_en && (
-                    <p className="text-gray-600 mt-1 font-raleway text-lg">
-                      Inspirado en: <span className="font-semibold text-[#8c7465]">{producto.inspirado_en}</span>
+                    <p className="text-white mt-2 font-raleway text-lg">
+                      Inspirado en: <span className="font-semibold text-[#fed856]">{producto.inspirado_en}</span>
                     </p>
                   )}
-                  <p className="font-raleway text-gray-700 mt-4 text-lg leading-relaxed">{producto.descripcion}</p>
+                  <p className="font-raleway text-[#f8f1d8] mt-6 text-lg leading-relaxed">{producto.descripcion}</p>
                 </div>
                 
-                <div className="mb-6 py-4 border-b border-gray-200">
+                <div className="mb-8 py-4 border-b border-[#473f3f]">
                   <div className="flex justify-between items-center">
-                    <p className="text-3xl font-bold text-[#312b2b] font-raleway">${producto.precio.toFixed(2)}</p>
-                    <p className="inline-block bg-[#312b2b] text-[#fed856] px-3 py-1 rounded-full font-raleway">
+                    <p className="text-4xl font-bold text-[#fed856] font-raleway">${producto.precio.toFixed(2)}</p>
+                    <p className="inline-block bg-[#fed856] text-[#312b2b] px-4 py-2 rounded-full font-bold font-raleway shadow-lg">
                       {producto.stock > 0 
                         ? `${producto.stock} unidades disponibles` 
                         : "Agotado temporalmente"}
@@ -270,21 +271,23 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
                 
                 {producto.notas && producto.notas.length > 0 ? (
                   <div className="mb-8">
-                    <h2 className="text-xl font-semibold mb-4 text-[#312b2b] font-raleway inline-block relative">
+                    <h2 className="text-2xl font-semibold mb-6 text-[#fed856] font-raleway inline-block relative">
                       Notas de fragancia
                       <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#fed856]"></span>
                     </h2>
-                    <div className="space-y-4 mt-6">
+                    <div className="space-y-6 mt-6">
                       {producto.notas.map((nota, index) => (
-                        <div key={index} className="bg-gray-50 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
-                          <div className="flex justify-between mb-2">
-                            <span className="font-medium text-[#312b2b] font-raleway flex items-center">
-                              <span className="inline-block w-3 h-3 rounded-full mr-2" style={{ backgroundColor: nota.color || '#fed856' }}></span>
+                        <div key={index} className="bg-[#473f3f] p-5 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border border-[#473f3f] hover:border-[#fed856]">
+                          <div className="flex justify-between mb-3">
+                            <span className="font-medium text-[#f8f1d8] font-raleway flex items-center text-lg">
+                              <span className="inline-block w-4 h-4 rounded-full mr-3" style={{ backgroundColor: nota.color || '#fed856' }}></span>
                               {nota.nombre}
                             </span>
-                            <span className="text-sm bg-[#312b2b] text-white px-2 py-0.5 rounded-full font-raleway">{nota.intensidad*10}%</span>
+                            <span className="text-[#fed856] font-bold px-3 py-1 rounded-full font-raleway">
+                              {nota.intensidad}/10
+                            </span>
                           </div>
-                          <div className="w-full bg-gray-300 rounded-full h-3 overflow-hidden">
+                          <div className="w-full bg-[#2d2520] rounded-full h-3 overflow-hidden">
                             <div 
                               className="barra-animada h-3 rounded-full"
                               data-intensidad={nota.intensidad}
@@ -303,18 +306,18 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
                 {producto.stock > 0 && (
                   <div className="mt-8">
                     <div className="flex items-center mb-6">
-                      <label htmlFor="cantidad" className="mr-4 font-raleway text-black font-medium text-lg">Cantidad:</label>
+                      <label htmlFor="cantidad" className="mr-6 font-raleway text-[#f8f1d8] font-medium text-xl">Cantidad:</label>
                       <div className="flex items-center border-2 border-[#fed856] rounded-lg overflow-hidden">
                         <button 
                           onClick={() => setCantidad(prev => Math.max(1, prev - 1))}
-                          className="px-4 py-2 bg-gray-100 text-black hover:bg-[#fed856] hover:text-[#312b2b] transition-colors font-raleway font-bold"
+                          className="px-5 py-3 bg-[#473f3f] text-[#fed856] hover:bg-[#fed856] hover:text-[#312b2b] transition-colors font-raleway font-bold text-xl"
                         >
                           -
                         </button>
-                        <span className="px-6 py-2 font-raleway text-black font-semibold">{cantidad}</span>
+                        <span className="px-8 py-3 font-raleway text-[#f8f1d8] font-semibold text-lg bg-[#312b2b]">{cantidad}</span>
                         <button 
                           onClick={() => setCantidad(prev => Math.min(producto.stock, prev + 1))}
-                          className="px-4 py-2 bg-gray-100 text-black hover:bg-[#fed856] hover:text-[#312b2b] transition-colors font-raleway font-bold"
+                          className="px-5 py-3 bg-[#473f3f] text-[#fed856] hover:bg-[#fed856] hover:text-[#312b2b] transition-colors font-raleway font-bold text-xl"
                         >
                           +
                         </button>
@@ -331,10 +334,10 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
                         // Cerrar el modal después de añadir al carrito
                         onClose();
                       }}
-                      className="w-full bg-[#fed856] text-[#312b2b] px-6 py-4 rounded-lg hover:bg-[#e5c24c] transition-colors font-raleway font-bold text-lg flex items-center justify-center"
+                      className="w-full bg-[#fed856] text-[#312b2b] px-6 py-4 rounded-lg hover:bg-[#e5c24c] transition-colors font-raleway font-bold text-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform"
                       disabled={producto.stock <= 0}
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                       Añadir al Carrito
@@ -344,12 +347,12 @@ export default function ProductoDetalleModal({ productoId, onClose }: ProductoDe
               </div>
             </div>
           ) : (
-            <div className="text-center py-10">
-              <p className="text-xl text-gray-800 font-raleway">No se encontró el producto.</p>
-              <div className="mt-4">
+            <div className="text-center py-16">
+              <p className="text-2xl text-[#fed856] font-raleway">No se encontró el producto.</p>
+              <div className="mt-6">
                 <button 
                   onClick={onClose}
-                  className="bg-[#fed856] text-[#312b2b] px-4 py-2 rounded hover:bg-[#e5c24c] transition-colors font-raleway"
+                  className="bg-[#fed856] text-[#312b2b] px-6 py-3 rounded-lg hover:bg-[#e5c24c] transition-colors font-raleway font-bold"
                 >
                   Volver a Productos
                 </button>
